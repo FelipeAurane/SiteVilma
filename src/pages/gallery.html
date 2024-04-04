@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Título da página -->
+    <title>Vilma Fotografia</title>
+
+    <!-- Links para arquivos de estilo -->
+    <link rel="stylesheet" href="/src/css/main_config.css" />
+    <link rel="stylesheet" href="/src/css/style_desktop.css" />
+    <link rel="stylesheet" href="/src/css/style_mobile.css" />
+    <link rel="stylesheet" href="/src/css/gallery.css">
+
+</head>
+
+<body>
+    <nav id="mobile-nav">
+        <div class="logo">Vilma Fotografia</div>
+    </nav>
+    <div class="container">
+        <div class="grid">
+            <div class="item" onclick="openLightbox('/src/img/p-2.jpg')"><img src="/src/img/p-2.jpg" alt="Imagem 1"></div>
+            <div class="item" onclick="openLightbox('/src/img/p-3.jpg')"><img src="/src/img/p-3.jpg" alt="Imagem 2"></div>
+            <div class="item" onclick="openLightbox('/src/img/p-4.jpg')"><img src="/src/img/p-4.jpg" alt="Imagem 3"></div>
+            <div class="item" onclick="openLightbox('/src/img/p-5.jpg')"><img src="/src/img/p-5.jpg" alt="Imagem 4"></div>
+            <div class="item" onclick="openLightbox('/src/img/p-6.jpg')"><img src="/src/img/p-6.jpg" alt="Imagem 5"></div>
+            <div class="item" onclick="openLightbox('/src/img/p-4.jpg')"><img src="/src/img/p-7.jpg" alt="Imagem 6"></div>
+            <!-- Adicione mais imagens conforme necessário -->
+        </div>
+    </div>
+
+    <div id="lightbox" onclick="closeLightbox()">
+        <span class="close">&times;</span>
+        <img id="lightbox-image" src="" alt="Imagem Ampliada">
+    </div>
+
+    <!-- Firebase -->
+    <script src="/src/assets/firebase/firebaseConfig.js"></script>
+    <!-- Principais Configurações -->
+    <script src="/src/js/mainConfig.js"></script>
+    <!-- Principais Configurações -->
+    <script src="/src/js/animation.js"></script>
+
+    <script src="/src/js/gallery.js"></script>
+
+</body>
+
+</html>
