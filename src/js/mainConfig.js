@@ -34,3 +34,8 @@ function abrirEmail() {
     var email = "viilma_silva@outlook.com";
     window.location.href = "mailto:" + email;
 }
+
+function fecharTela() {
+    document.getElementById('telaCentral').style.display = 'none';
+  }
+      
