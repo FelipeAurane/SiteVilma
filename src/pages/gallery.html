@@ -12,39 +12,41 @@
     <link rel="stylesheet" href="/src/css/style_desktop.css" />
     <link rel="stylesheet" href="/src/css/style_mobile.css" />
     <link rel="stylesheet" href="/src/css/gallery.css">
-
 </head>
 
 <body>
     <nav id="mobile-nav">
         <div class="logo">Vilma Fotografia</div>
     </nav>
+
     <div class="container">
-        <div class="grid">
-            <div class="item" onclick="openLightbox('/src/img/p-2.jpg')"><img src="/src/img/p-2.jpg" alt="Imagem 1"></div>
-            <div class="item" onclick="openLightbox('/src/img/p-3.jpg')"><img src="/src/img/p-3.jpg" alt="Imagem 2"></div>
-            <div class="item" onclick="openLightbox('/src/img/p-4.jpg')"><img src="/src/img/p-4.jpg" alt="Imagem 3"></div>
-            <div class="item" onclick="openLightbox('/src/img/p-5.jpg')"><img src="/src/img/p-5.jpg" alt="Imagem 4"></div>
-            <div class="item" onclick="openLightbox('/src/img/p-6.jpg')"><img src="/src/img/p-6.jpg" alt="Imagem 5"></div>
-            <div class="item" onclick="openLightbox('/src/img/p-4.jpg')"><img src="/src/img/p-7.jpg" alt="Imagem 6"></div>
-            <!-- Adicione mais imagens conforme necessário -->
+        <div id="imagemContainer" class="grid-container"></div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal" onclick="fecharModal()">
+        <div class="modal-content">
+            <img id="modalImage" class="modal-image" src="" alt="Imagem em tela cheia">
         </div>
     </div>
 
-    <div id="lightbox" onclick="closeLightbox()">
-        <span class="close">&times;</span>
-        <img id="lightbox-image" src="" alt="Imagem Ampliada">
-    </div>
-
+    <!-- Importar o Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage-compat.js"></script>
     <!-- Firebase -->
     <script src="/src/assets/firebase/firebaseConfig.js"></script>
-    <!-- Principais Configurações -->
-    <script src="/src/js/mainConfig.js"></script>
-    <!-- Principais Configurações -->
-    <script src="/src/js/animation.js"></script>
-
+    <!-- Funções JavaScript -->
     <script src="/src/js/gallery.js"></script>
-
+    <!-- Chamada da função para buscar e exibir as imagens -->
+    <script>
+        // Chama a função para buscar e exibir as imagens ao carregar a página
+        window.onload = function () {
+            inicializarFirebase();
+            buscarImagens();
+            atualizarCarrossel(); // Adicione essa linha
+        };
+    </script>
 </body>
 
 </html>

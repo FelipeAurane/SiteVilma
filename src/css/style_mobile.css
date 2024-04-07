@@ -242,18 +242,21 @@
             /* Centraliza o conteúdo horizontalmente */
             left: 0;
             right: 0;
-            margin-top: 1%;
+            margin-top: 2%;
 
         }
 
         .carousel-container {
             display: flex;
             overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
             width: 100%;
-            /* Garante que o carrossel ocupe toda a largura da tela */
+            user-select: none; /* Impede a seleção de texto */
+            -webkit-user-drag: none; /* Impede o evento de arrastar no Safari */
+            -webkit-touch-callout: none; /* Impede a ação de toque de longo no Safari */
+            pointer-events: none; /* Bloqueia qualquer interação do usuário */
         }
+        
+        
 
         .gallery-item {
 
@@ -264,7 +267,7 @@
         }
 
         .gallery-item img {
-            max-width: 90%;
+            max-width: 100%;
             height: auto;
             display: block;
             border-radius: 15px;

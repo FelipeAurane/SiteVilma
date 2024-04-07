@@ -475,10 +475,6 @@ a,
     position: relative;
   }
 
-  .carousel-container {
-    display: flex;
-    transition: transform 0.5s ease;
-  }
 
   .testimonial-item {
     flex: 0 0 auto;

@@ -1,25 +1,18 @@
 body {
-    -webkit-touch-callout: none;
-    /* Desativa a seleção de texto no iOS */
-    -webkit-user-select: none;
-    /* Desativa a seleção de texto no iOS */
-    -khtml-user-select: none;
-    /* Desativa a seleção de texto no Konqueror (antigo navegador) */
-    -moz-user-select: none;
-    /* Desativa a seleção de texto no Firefox */
-    -ms-user-select: none;
-    /* Desativa a seleção de texto no Internet Explorer/Edge */
-    user-select: none;
-    /* Desativa a seleção de texto em navegadores modernos */
+    -webkit-touch-callout: none; /* Desativa a seleção de texto no iOS */
+    -webkit-user-select: none; /* Desativa a seleção de texto no iOS */
+    -khtml-user-select: none; /* Desativa a seleção de texto no Konqueror (antigo navegador) */
+    -moz-user-select: none; /* Desativa a seleção de texto no Firefox */
+    -ms-user-select: none; /* Desativa a seleção de texto no Internet Explorer/Edge */
+    user-select: none; /* Desativa a seleção de texto em navegadores modernos */
 }
+
+
+
 
 /* GENERAL */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
 
-img {
-    pointer-events: none;
-    /* Desativa a interação do mouse com imagens */
-}
 
 
 .hidden {
@@ -80,10 +73,6 @@ body {
 .title {
     font-size: 3rem;
     text-align: center;
-}
-
-.carousel-container {
-    display: none;
 }
 
 

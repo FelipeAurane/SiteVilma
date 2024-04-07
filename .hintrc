@@ -11,7 +11,8 @@
         "ignore": [
           "min-height: fit-content",
           "backdrop-filter",
-          "block-size: fit-content"
+          "block-size: fit-content",
+          "user-select"
         ]
       }
     ]
