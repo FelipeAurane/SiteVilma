@@ -343,16 +343,15 @@ a,
 
 
   }
-
-  .gallery {
+  .carousel-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 5fr));
-    /* Layout responsivo */
-    gap: 5px;
-    /* Espaçamento entre as imagens */
-  }
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Largura mínima de 200 pixels */
+    gap: 10px;
+    padding: 10px;
+}
 
-  .gallery-item {
+
+  .carousel-container-item {
     overflow: hidden;
     border-radius: 10px;
     width: 320px;
@@ -476,7 +475,12 @@ a,
 
   .carousel-container {
     display: flex;
-    transition: transform 0.5s ease;
+    overflow-x: auto;
+    width: 100%;
+    user-select: none; /* Impede a seleção de texto */
+    -webkit-user-drag: none; /* Impede o evento de arrastar no Safari */
+    -webkit-touch-callout: none; /* Impede a ação de toque de longo no Safari */
+    pointer-events: none; /* Bloqueia qualquer interação do usuário */
   }
 
   .testimonial-item {

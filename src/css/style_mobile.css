@@ -424,6 +424,7 @@
     }
 
     .about-details-container {
+        margin-top: 10%;
         flex-direction: column;
         align-items: center;
         /* Centraliza os itens verticalmente */
