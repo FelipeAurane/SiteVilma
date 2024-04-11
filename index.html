@@ -26,7 +26,7 @@
   <!-- Desktop -->
   <div class="body-desktop hidden">
     <!-- Navegação para desktop -->
-    <nav id="desktop-nav">
+    <nav id="desktop-nav" onclick="voltarParaOTopo()">
       <div class="logo-left">Vilma Fotografia</div>
     </nav>
     <section id="profile">
@@ -46,7 +46,7 @@
           </button>
 
 
-          <button class="btn btn-color-1" onclick="location.href='./portifolio.html'">
+          <button class="btn btn-color-1" onclick="location.href='/src/pages/portifolio.html'">
             Portfolio
           </button>
         </div>
@@ -54,18 +54,15 @@
     </section>
 
 
-       <!-- Seção Galeria 2 -->
-       <section id="gallery">
-        <h1 class="title-gallery">Galeria</h1>
-  
-    
-          <div class="carousel-container" id="carouselContainer1"></div>
-  
-   
-          <a href="/src/pages/gallery.html">Ver Mais</a>
-   
-      </section>
-   
+    <h1 class="title">Galeria</h1>
+
+
+    <div class="carousel-container" id="carouselContainer1"></div>
+
+
+
+    </section>
+
 
 
     <section id="about">
@@ -99,7 +96,7 @@
     <section id="feedback">
 
       <h1 class="title-depoimentos">Depoimentos</h1>
-      <div class="section-container">
+      <div class="section-container1">
         <div class="carousel-container">
           <div class="testimonial-item">
             <p class="testimonial-text">Eu ameeeei fazer as fotos com você, além do atendimento maravilhoso as
@@ -155,9 +152,10 @@
 
   <!-- Mobile -->
   <div class="body-mobile hidden">
-    <nav id="mobile-nav">
+    <nav id="mobile-nav" onclick="voltarParaOTopo()">
       <div class="logo">Vilma Fotografia</div>
     </nav>
+
 
     <!-- Seção Home -->
     <section id="home">
@@ -178,7 +176,7 @@
             onclick="window.open('https://api.whatsapp.com/send?phone=5581998370180&text=Ol%C3%A1,%20Vilma!%20Tudo%20Bem?')">
             Whatsapp
           </button>
-          <button class="btn btn-color-1" onclick="location.href='/src/pages/portfolio.html'">
+          <button class="btn btn-color-1" onclick="location.href='/src/pages/portifolio.html'">
             Portfolio
           </button>
         </div>
@@ -228,6 +226,11 @@
     <!-- Seção Feedback -->
     <section id="feedback">
       <h1 class="title-depoimentos">Depoimentos</h1>
+      
+      <div id="lottie-animation"></div>
+
+
+
       <div class="feedback-container">
         <div class="feedback-carousel-container">
           <div class="testimonial-item">
@@ -284,6 +287,8 @@
   <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.7/lottie.min.js"></script>
+
 
   <script src="/src/js/dadosfirebase.js"></script>
   <!-- Principais Configurações -->

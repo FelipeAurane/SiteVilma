@@ -12,105 +12,154 @@ const firebaseConfig = {
 
 // Inicializar o Firebase
 firebase.initializeApp(firebaseConfig);
-// Função para buscar as últimas imagens e atualizar o carrossel
-function atualizarCarrossel(carouselId) {
-  const carouselContainer = document.getElementById(carouselId);
 
-  // Referência ao banco de dados
-  const dbRef = firebase.database().ref('image-carrossel');
+class DeviceControl {
+    constructor() {
+        // Verifica o tipo de dispositivo ao inicializar a classe
+        this.verificarDispositivo();
+  
+        // Adiciona um ouvinte de evento para verificar o dispositivo sempre que a janela for redimensionada
+        window.addEventListener('resize', () => this.verificarDispositivo());
+    }
+  
+    // Método para verificar o tipo de dispositivo
+    verificarDispositivo() {
+        // Verifica a largura da janela para determinar o tipo de dispositivo
+        if (window.innerWidth >= 768) {
+            // Se a largura for maior ou igual a 768 pixels, é considerado um dispositivo desktop
+            this.exibirElementosDesktop();
+        } else {
+            // Caso contrário, é considerado um dispositivo móvel
+            this.exibirElementosMobile();
+        }
+    }
+  
+    // Método para exibir elementos para dispositivos desktop
+    exibirElementosDesktop() {
+        // Exibe os elementos específicos para dispositivos desktop
+        const bodyDesktop = document.querySelector('.body-desktop');
+        if (bodyDesktop) {
+            bodyDesktop.classList.remove('hidden');
+            bodyDesktop.classList.add('visible');
+        }
+  
+        // Oculta os elementos específicos para dispositivos móveis
+        const bodyMobile = document.querySelector('.body-mobile');
+        if (bodyMobile) {
+            bodyMobile.classList.remove('visible');
+            bodyMobile.classList.add('hidden');
+        }
+    }
+  
+    // Método para exibir elementos para dispositivos móveis
+    exibirElementosMobile() {
+        // Exibe os elementos específicos para dispositivos móveis
+        const bodyMobile = document.querySelector('.body-mobile');
+        if (bodyMobile) {
+            bodyMobile.classList.remove('hidden');
+            bodyMobile.classList.add('visible');
+        }
+  
+        // Oculta os elementos específicos para dispositivos desktop
+        const bodyDesktop = document.querySelector('.body-desktop');
+        if (bodyDesktop) {
+            bodyDesktop.classList.remove('visible');
+            bodyDesktop.classList.add('hidden');
+        }
+    }
+  }
 
-  dbRef.once('value', function(snapshot) {
-      const imagens = snapshot.val();
-
-      // Limpar o conteúdo atual do carrossel
-      carouselContainer.innerHTML = '';
-
-      if (imagens) {
-          // Adicionar as imagens ao carrossel
-          Object.values(imagens).forEach(function(imagemURL) {
-              const galleryItem = document.createElement('div');
-              galleryItem.classList.add('gallery-item');
-
-              // Criar elemento de imagem e definir dimensões
-              const imagemElemento = document.createElement('img');
-              imagemElemento.src = imagemURL;
-              imagemElemento.alt = 'Imagem';
-              imagemElemento.style.width = '90%'; // Definir largura da imagem
-              imagemElemento.style.height = 'auto'; // Permitir que a altura seja ajustada automaticamente
-
-              galleryItem.appendChild(imagemElemento);
-              carouselContainer.appendChild(galleryItem);
-          });
-      } else {
-          // Caso não haja imagens, exibir uma mensagem ou realizar outra ação
-          console.log('Não há imagens disponíveis.');
-      }
-  });
+  function atualizarCarrossel(carouselId) {
+    const carouselContainer = document.getElementById(carouselId);
+  
+    // Referência ao banco de dados
+    const dbRef = firebase.database().ref('image-carrossel');
+  
+    dbRef.on('value', function(snapshot) {
+        const imagens = snapshot.val();
+  
+        // Limpar o conteúdo atual do carrossel
+        carouselContainer.innerHTML = '';
+  
+        if (imagens) {
+            // Adicionar as imagens ao carrossel
+            Object.values(imagens).forEach(function(imagemURL) {
+                const galleryItem = document.createElement('div');
+                galleryItem.classList.add('gallery-item');
+  
+                // Criar elemento de imagem e definir dimensões
+                const imagemElemento = document.createElement('img');
+                imagemElemento.src = imagemURL;
+                imagemElemento.alt = 'Imagem';
+                imagemElemento.style.width = '90%'; // Definir largura da imagem
+                imagemElemento.style.height = '100%'; // Permitir que a altura seja ajustada automaticamente
+  
+                galleryItem.appendChild(imagemElemento);
+                carouselContainer.appendChild(galleryItem);
+            });
+        } else {
+            // Caso não haja imagens, exibir uma mensagem ou realizar outra ação
+            console.log('Não há imagens disponíveis.');
+        }
+    });
 }
 
 
+function atualizarCarrosselDesk(carouselId) {
+    const carouselContainer = document.getElementById(carouselId);
 
-class DeviceControl {
-  constructor() {
-      // Verifica o tipo de dispositivo ao inicializar a classe
-      this.verificarDispositivo();
+    // Referência ao banco de dados
+    const dbRef = firebase.database().ref('image-carrossel');
 
-      // Adiciona um ouvinte de evento para verificar o dispositivo sempre que a janela for redimensionada
-      window.addEventListener('resize', () => this.verificarDispositivo());
-  }
+    dbRef.on('value', function(snapshot) {
+        const imagens = snapshot.val();
 
-  // Método para verificar o tipo de dispositivo
-  verificarDispositivo() {
-      // Verifica a largura da janela para determinar o tipo de dispositivo
-      if (window.innerWidth >= 768) {
-          // Se a largura for maior ou igual a 768 pixels, é considerado um dispositivo desktop
-          this.exibirElementosDesktop();
-      } else {
-          // Caso contrário, é considerado um dispositivo móvel
-          this.exibirElementosMobile();
-      }
-  }
+        // Limpar o conteúdo atual do carrossel
+        carouselContainer.innerHTML = '';
 
-  // Método para exibir elementos para dispositivos desktop
-  exibirElementosDesktop() {
-      // Exibe os elementos específicos para dispositivos desktop
-      const bodyDesktop = document.querySelector('.body-desktop');
-      if (bodyDesktop) {
-          bodyDesktop.classList.remove('hidden');
-          bodyDesktop.classList.add('visible');
-      }
+        if (imagens) {
+            // Obter todas as imagens e reverter a ordem para exibir os itens mais recentes primeiro
+            const todasImagens = Object.values(imagens).reverse();
 
-      // Oculta os elementos específicos para dispositivos móveis
-      const bodyMobile = document.querySelector('.body-mobile');
-      if (bodyMobile) {
-          bodyMobile.classList.remove('visible');
-          bodyMobile.classList.add('hidden');
-      }
-  }
+            // Selecionar apenas os 4 itens mais recentes
+            const ultimasQuatroImagens = todasImagens.slice(0, 4);
 
-  // Método para exibir elementos para dispositivos móveis
-  exibirElementosMobile() {
-      // Exibe os elementos específicos para dispositivos móveis
-      const bodyMobile = document.querySelector('.body-mobile');
-      if (bodyMobile) {
-          bodyMobile.classList.remove('hidden');
-          bodyMobile.classList.add('visible');
-      }
+            // Adicionar as imagens ao carrossel
+            ultimasQuatroImagens.forEach(function(imagemURL) {
+                const galleryItem = document.createElement('div');
+                galleryItem.classList.add('gallery-item');
 
-      // Oculta os elementos específicos para dispositivos desktop
-      const bodyDesktop = document.querySelector('.body-desktop');
-      if (bodyDesktop) {
-          bodyDesktop.classList.remove('visible');
-          bodyDesktop.classList.add('hidden');
-      }
-  }
+                // Criar elemento de imagem
+                const imagemElemento = document.createElement('img');
+                imagemElemento.src = imagemURL;
+                imagemElemento.alt = 'Imagem';
+                imagemElemento.classList.add('imagem'); // Adicionar classe para definir o tamanho
+
+                // Definir tamanho fixo para todas as imagens
+                imagemElemento.style.width = '300px'; // Definir largura fixa
+                imagemElemento.style.height = '400px'; // Definir altura fixa
+
+                galleryItem.appendChild(imagemElemento);
+                carouselContainer.appendChild(galleryItem);
+            });
+        } else {
+            // Caso não haja imagens, exibir uma mensagem ou realizar outra ação
+            console.log('Não há imagens disponíveis.');
+        }
+    });
 }
 
 
 // Cria uma instância da classe DeviceControl ao carregar a página
 window.onload = () => {
-  atualizarCarrossel('carouselContainer1');
-  atualizarCarrossel('carouselContainer2');
+    atualizarCarrosselDesk('carouselContainer1');
+    atualizarCarrossel('carouselContainer2');
   const deviceControl = new DeviceControl();
-  atualizarCarrossel(); // Chama a função para atualizar o carrossel após instanciar a classe DeviceControl
 };
+
+// Função para verificar se é um dispositivo móvel
+function isMobileDevice() {
+    return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+}
+
+

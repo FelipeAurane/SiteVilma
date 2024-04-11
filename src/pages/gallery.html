@@ -15,8 +15,11 @@
 </head>
 
 <body>
+    <nav id="desktop-nav">
+        <div class="logo-left" onclick="voltarParaOTopo()">Vilma Fotografia</div>
+      </nav>
     <nav id="mobile-nav">
-        <div class="logo">Vilma Fotografia</div>
+        <div class="logo" onclick="voltarParaOTopo()">Vilma Fotografia</div>
     </nav>
 
     <div class="container">
@@ -38,6 +41,8 @@
     <script src="/src/assets/firebase/firebaseConfig.js"></script>
     <!-- Funções JavaScript -->
     <script src="/src/js/gallery.js"></script>
+    
+    <script src="/src/js/animation.js"></script>
     <!-- Chamada da função para buscar e exibir as imagens -->
     <script>
         // Chama a função para buscar e exibir as imagens ao carregar a página

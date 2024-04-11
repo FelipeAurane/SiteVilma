@@ -304,12 +304,11 @@
 
 
     #contact {
-        margin-top: 50px;
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        height: 70vh;
+        height: 60vh;
         margin-bottom: 5px;
     }
 
@@ -318,7 +317,6 @@
     @media screen and (max-width: 767px) {
         .contact-grid {
             display: grid;
-            margin-top: 30px;
             margin-left: 25px;
             margin-bottom: 20px;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -486,21 +484,37 @@
     #feedback {
         text-align: center;
         display: flex;
-        height: 40vh;
-        margin-bottom: 150px;
+        height: 50vh;
+        margin-bottom: 100px;
         flex-direction: column;
         /* Exibir os itens um abaixo do outro */
     }
 
     .title-depoimentos {
-        margin-bottom: 40px;
+        margin-bottom: 20px;
     }
 
+
+    #lottie-animation svg path {
+        fill: #6d6d6d; /* Altera a cor de preenchimento para #333 */
+        stroke: #242424; /* Altera a cor da borda para #333 */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
+    
+  #lottie-animation {
+    padding-left: 20%; /* Define o preenchimento */
+    margin-bottom:40px;
+    padding-right: 20%;
+    box-sizing: border-box; /* Mantém o tamanho total, incluindo padding */
+}
 
 
     .feedback-container {
         width: 100%;
-
         overflow-x: auto;
         /* Adiciona scroll horizontal */
     }
@@ -519,7 +533,7 @@
 
     .testimonial-item {
         flex: 0 0 auto;
-        width: 60%;
+        width: 65%;
         margin-right: auto;
         /* Margem direita automática para centralizar o item */
         margin-left: auto;

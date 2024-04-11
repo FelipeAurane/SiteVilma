@@ -469,7 +469,13 @@ a,
     margin-bottom: 40px;
   }
 
-  .section-container {
+  .section-container1 {
+    display: flex;
+    justify-content: center;
+}
+
+
+  .section-container1 {
     width: 100%;
     overflow: hidden;
     position: relative;

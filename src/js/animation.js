@@ -59,3 +59,25 @@ function fadeInElements() {
 document.addEventListener('DOMContentLoaded', function() {
   fadeInElements();
 });
+
+
+function voltarParaOTopo() {
+  window.scrollTo({ top: 0, behavior: 'smooth' }); // Rola a página de volta para o topo suavemente
+}
+
+
+
+// Selecione o elemento HTML
+const animationContainer = document.getElementById('lottie-animation');
+
+// Carregue o arquivo JSON da animação
+const animationData = {
+    container: animationContainer,
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: 'star.json' // substitua pelo caminho do seu arquivo JSON
+};
+
+// Inicialize a animação
+const animacao = lottie.loadAnimation(animationData);
