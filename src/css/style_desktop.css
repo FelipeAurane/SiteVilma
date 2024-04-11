@@ -345,10 +345,13 @@ a,
   }
   .carousel-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Largura mínima de 200 pixels */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Largura mínima de 300 pixels */
     gap: 10px;
     padding: 10px;
+    justify-content: center; /* Centraliza os itens horizontalmente */
+    align-items: center; /* Centraliza os itens verticalmente */
 }
+
 
 
   .carousel-container-item {
