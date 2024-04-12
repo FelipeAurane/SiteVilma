@@ -69,6 +69,11 @@ a,
       /* Borda arredondada */
   }
 
+  body {
+    overflow-x: hidden;
+}
+
+
   .pic {
     width: 400px;
     /* Ajuste conforme desejado */
@@ -350,6 +355,13 @@ a,
     padding: 10px;
     justify-content: center; /* Centraliza os itens horizontalmente */
     align-items: center; /* Centraliza os itens verticalmente */
+    display: flex;
+    overflow-x: auto;
+    width: 100%;
+    user-select: none; /* Impede a seleção de texto */
+    -webkit-user-drag: none; /* Impede o evento de arrastar no Safari */
+    -webkit-touch-callout: none; /* Impede a ação de toque de longo no Safari */
+    pointer-events: none; /* Bloqueia qualquer interação do usuário */
 }
 
 
@@ -476,15 +488,15 @@ a,
     position: relative;
   }
 
-  .carousel-container {
+  .carousel-container1 {
     display: flex;
-    overflow-x: auto;
+    overflow-x: hidden; /* Desativa o scroll horizontal */
     width: 100%;
     user-select: none; /* Impede a seleção de texto */
     -webkit-user-drag: none; /* Impede o evento de arrastar no Safari */
     -webkit-touch-callout: none; /* Impede a ação de toque de longo no Safari */
     pointer-events: none; /* Bloqueia qualquer interação do usuário */
-  }
+}
 
   .testimonial-item {
     flex: 0 0 auto;

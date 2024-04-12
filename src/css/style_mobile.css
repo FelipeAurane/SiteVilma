@@ -496,8 +496,8 @@
 
 
     #lottie-animation svg path {
-        fill: #6d6d6d; /* Altera a cor de preenchimento para #333 */
-        stroke: #242424; /* Altera a cor da borda para #333 */
+        fill: rgb(255, 169, 169); /* Altera a cor de preenchimento para #333 */
+        stroke: rgb(253, 162, 162); /* Altera a cor da borda para #333 */
         display: flex;
         justify-content: center;
         align-items: center;

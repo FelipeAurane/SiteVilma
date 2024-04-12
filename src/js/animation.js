@@ -76,7 +76,7 @@ const animationData = {
     renderer: 'svg',
     loop: true,
     autoplay: true,
-    path: 'star.json' // substitua pelo caminho do seu arquivo JSON
+    path: 'start.json' // substitua pelo caminho do seu arquivo JSON
 };
 
 // Inicialize a animação
