@@ -17,7 +17,7 @@
   "author": "Felipe Henrique Da Silva",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.19.2",
+    "express": "^4.21.1",
     "express-device": "^0.4.2",
     "firebase": "^10.10.0",
     "serve-static": "^1.15.0"
