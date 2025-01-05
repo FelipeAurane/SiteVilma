@@ -1,0 +1,205 @@
+body {
+    -webkit-touch-callout: none; /* Desativa a seleção de texto no iOS */
+    -webkit-user-select: none; /* Desativa a seleção de texto no iOS */
+    -khtml-user-select: none; /* Desativa a seleção de texto no Konqueror (antigo navegador) */
+    -moz-user-select: none; /* Desativa a seleção de texto no Firefox */
+    -ms-user-select: none; /* Desativa a seleção de texto no Internet Explorer/Edge */
+    user-select: none; /* Desativa a seleção de texto em navegadores modernos */
+}
+
+
+
+
+/* GENERAL */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
+
+
+.hidden {
+    display: none;
+}
+
+.visible {
+    display: block;
+}
+
+
+body {
+    font-family: "Poppins", sans-serif;
+    /* Define a fonte para todo o corpo do documento */
+    background-color: rgb(255, 222, 222);
+}
+
+
+
+
+
+
+/*=====================Para Desktop e Mobile======================*/
+
+.pic {
+    width: 400px;
+    height: auto;
+    border-radius: 25rem;
+}
+
+
+.section__pic-container {
+    display: flex;
+    height: 400px;
+    width: 400px;
+    margin: auto 0;
+}
+
+.section__text-mobile {
+    align-self: center;
+    text-align: center;
+}
+
+.section__text p {
+    font-weight: 600;
+}
+
+.section__text__p1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.section__text__p2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+}
+
+.title {
+    font-size: 3rem;
+    text-align: center;
+}
+
+
+#socials-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    gap: 1rem;
+}
+
+
+/* ICONS */
+
+.icon {
+    cursor: pointer;
+    height: 2rem;
+}
+
+/* BUTTONS */
+
+.btn-container-mobile {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+
+.btn {
+    font-weight: 600;
+    transition: all 300ms ease;
+    padding: 1rem;
+    width: 8rem;
+    border-radius: 2rem;
+}
+
+.btn-color-1,
+.btn-color-2 {
+    border: rgb(53, 53, 53) 0.1rem solid;
+}
+
+.btn-color-1:hover,
+.btn-color-2:hover {
+    cursor: pointer;
+}
+
+.btn-color-1,
+.btn-color-2:hover {
+    background: rgb(53, 53, 53);
+    color: white;
+}
+
+.btn-color-1:hover {
+    background: rgb(0, 0, 0);
+}
+
+.btn-color-2 {
+    background: none;
+}
+
+.btn-color-2:hover {
+    border: rgb(255, 255, 255) 0.1rem solid;
+}
+
+.btn-container {
+    gap: 1rem;
+}
+
+
+
+.telaCentral {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    height: 70%;
+    width: 60%;
+    border-radius: 15px;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    z-index: 9999;
+  }
+  
+  .fechar {
+    position: absolute;
+    top: 18px;
+    right: 25px;
+    cursor: pointer;
+  }
+  
+  .conteudo {
+    text-align: center;
+  }
+
+  .aviso-cookie {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgb(63, 63, 63);
+    color: #fff;
+    padding: 10px;
+    z-index: 9999;
+    text-align: center;
+  }
+
+  .aviso-cookie.mostrar {
+    bottom: 0; /* Move para cima para mostrar */
+  }
+  
+  .aviso-cookie button {
+    background-color: rgb(255, 222, 222);
+    border-radius: 25px;
+    color: rgb(53, 53, 53);
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+
+  .aviso-cookie button {
+    border: rgb(53, 53, 53) 0.1rem solid;
+  }
+  .aviso-cookie button:hover {
+    background: rgba(238, 206, 206, 0.863);
+    color: white;
+  }
+  

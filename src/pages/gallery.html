@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Título da página -->
+    <title>Vilma Fotografia</title>
+
+    <!-- Links para arquivos de estilo -->
+    <link rel="stylesheet" href="/src/css/main_config.css" />
+    <link rel="stylesheet" href="/src/css/style_desktop.css" />
+    <link rel="stylesheet" href="/src/css/style_mobile.css" />
+    <link rel="stylesheet" href="/src/css/gallery.css">
+</head>
+
+<body>
+    <nav id="desktop-nav">
+        <div class="logo-left" onclick="voltarParaOTopo()">Vilma Fotografia</div>
+      </nav>
+    <nav id="mobile-nav">
+        <div class="logo" onclick="voltarParaOTopo()">Vilma Fotografia</div>
+    </nav>
+
+    <div class="container">
+        <div id="imagemContainer" class="grid-container"></div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal" onclick="fecharModal()">
+        <div class="modal-content">
+            <img id="modalImage" class="modal-image" src="" alt="Imagem em tela cheia">
+        </div>
+    </div>
+
+    <!-- Importar o Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage-compat.js"></script>
+    <!-- Firebase -->
+    <script src="/src/assets/firebase/firebaseConfig.js"></script>
+    <!-- Funções JavaScript -->
+    <script src="/src/js/gallery.js"></script>
+    
+    <script src="/src/js/animation.js"></script>
+    <!-- Chamada da função para buscar e exibir as imagens -->
+    <script>
+        // Chama a função para buscar e exibir as imagens ao carregar a página
+        window.onload = function () {
+            inicializarFirebase();
+            buscarImagens();
+            atualizarCarrossel(); // Adicione essa linha
+        };
+    </script>
+</body>
+
+</html>

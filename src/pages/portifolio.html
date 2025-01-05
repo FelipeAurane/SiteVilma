@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Portfólio em Construção</title>
+    <!-- Adicione o link para o seu arquivo CSS -->
+    <link rel="stylesheet" href="/src/css/portifolio.css">
+    <!-- Links para arquivos de estilo -->
+    <link rel="stylesheet" href="/src/css/main_config.css" />
+    <link rel="stylesheet" href="/src/css/style_desktop.css" />
+    <link rel="stylesheet" href="/src/css/style_mobile.css" />
+
+</head>
+
+<body class="body-loading">
+
+    <!-- Desktop -->
+    <div class="body-desktop hidden">
+        <!-- Navegação para desktop -->
+        <nav id="desktop-nav" onclick="voltarParaOTopo()">
+            <div class="logo-left">Vilma Fotografia</div>
+        </nav>
+        <section id="profile">
+            <div class="section__pic-container">
+                <!-- Imagem para dispositivos móveis -->
+                <img src="/src/img/vilmasobremim.png" alt="Foto do perfil" class="pic">
+            </div>
+
+            <div class="section__text-desktop">
+                <p>Esta página ainda está em construção. Por favor, volte em breve.</p>
+
+            </div>
+        </section>
+
+    </div>
+
+    <div class="body-mobile hidden">
+        <nav id="mobile-nav" onclick="voltarParaOTopo()">
+            <div class="logo">Vilma Fotografia</div>
+        </nav>
+        <section id="home">
+            <!-- Conteúdo da seção Home -->
+            <div class="section__pic-container">
+                <!-- Imagem frontal -->
+                <img src="/src/img/vilmasobremim.png" alt="Foto do perfil" class="pic" id="pic-front">
+                <!-- Imagem traseira -->
+                <img src="/src/img/img-logo.jpg" alt="Foto do perfil" class="pic" id="pic-back">
+            </div>
+
+            <div class="section__text-mobile">
+
+                <p>Esta página ainda está em construção. Por favor, volte em breve.</p>
+
+
+            </div>
+        </section>
+    </div>
+    <!-- Importar o Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage-compat.js"></script>
+
+    <script src="/src/js/dadosfirebase.js"></script>
+    <!-- Principais Configurações -->
+    <script src="/src/js/animation.js"></script>
+</body>
+
+</html>
