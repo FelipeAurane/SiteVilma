@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 'use strict';
 
 /**
@@ -80,4 +81,24 @@ app.listen(port, () => {
     console.log(`\nSem ${faltando.join(', ')} no .env — a API vai responder erro.`);
     console.log('Rode: npm run verificar');
   }
+=======
+const express = require('express');
+const path = require('path');
+const serveStatic = require('serve-static');
+
+const app = express();
+const port = 3000;
+
+// Define o diretório onde estão os arquivos estáticos (HTML, CSS, JS)
+app.use(serveStatic(path.join(__dirname,)));
+
+// Define a rota raiz
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname,'index.html'));
+});
+
+// Inicia o servidor
+app.listen(port, () => {
+  console.log(`Servidor iniciado em http://localhost:${port}`);
+>>>>>>> ba2b8d0eeb44a6e511850429271e9d679029bef9
 });

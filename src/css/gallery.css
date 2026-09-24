@@ -1,0 +1,123 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin-top: 50px;
+    padding: 10px;
+    /* Reduz a margem interna para dispositivos móveis */
+}
+
+.item {
+    overflow: hidden;
+    border-radius: 10px;
+    position: relative;
+    /* Adiciona uma posição relativa para cada item */
+}
+
+.item img {
+    width: 100%;
+    display: block;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    /* Adiciona o cursor de ponteiro para indicar que a imagem é clicável */
+}
+
+.item:hover img {
+    transform: scale(1.05);
+    /* Diminui o aumento de escala ao passar o mouse */
+}
+
+/* Estilo para o lightbox */
+#lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+#lightbox-image {
+    max-width: 80%;
+    max-height: 80%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 15px;
+    /* Adiciona margem automática para centralizar */
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    font-size: 40px;
+    color: white;
+    cursor: pointer;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    padding: 10px;
+}
+
+.imagem {
+    display: block;
+    width: 100%; /* Garante que a imagem ocupe todo o espaço disponível */
+    height: 100%; /* Garante que a imagem ocupe todo o espaço disponível */
+    object-fit: cover; /* Redimensiona proporcionalmente e preenche o espaço alocado */
+    border-radius: 15px;
+}
+
+
+
+  /* Estilo para o modal */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Fundo escuro com transparência */
+}
+
+.modal-open {
+overflow: hidden;
+}
+
+
+.modal-content {
+    margin: auto;
+    padding: 20px;
+    border-radius: 15px;
+    width: 100%;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+
+
+.modal-image {
+    max-width: 100%;
+    max-height: calc(100vh - 100px);
+    /* Altura máxima do modal - 100px para a margem e o botão fechar */
+    border-radius: 15px;
+    display: block;
+    margin: auto;
+}

@@ -1,0 +1,55 @@
+/* Estilos para a página de portfólio */
+
+/* Estilos para desktop */
+@media screen and (min-width: 768px) {
+    body {
+        font-family: Arial, sans-serif; /* Defina a fonte padrão */
+        margin: 0; /* Remova as margens padrão */
+        padding: 0; /* Remova o preenchimento padrão */
+    }
+
+    .portfolio-container {
+        display: flex; /* Use flexbox para centralizar o conteúdo verticalmente */
+        justify-content: center; /* Centralize horizontalmente */
+        align-items: center; /* Centralize verticalmente */
+        height: 100vh; /* Faça a altura ocupar toda a tela */
+        background-color: #f8f8f8; /* Cor de fundo */
+    }
+
+    .message {
+        text-align: center; /* Centralize o texto */
+    }
+
+    .message p {
+        font-size: 24px; /* Tamanho do texto */
+        color: #333; /* Cor do texto */
+        margin-bottom: 20px; /* Espaçamento inferior */
+    }
+}
+
+/* Estilos para dispositivos móveis */
+@media screen and (max-width: 767px) {
+    body {
+        font-family: Arial, sans-serif; /* Defina a fonte padrão */
+        margin: 0; /* Remova as margens padrão */
+        padding: 0; /* Remova o preenchimento padrão */
+    }
+
+    .portfolio-container {
+        display: flex; /* Use flexbox para centralizar o conteúdo verticalmente */
+        justify-content: center; /* Centralize horizontalmente */
+        align-items: center; /* Centralize verticalmente */
+        height: 100vh; /* Faça a altura ocupar toda a tela */
+        background-color: #f8f8f8; /* Cor de fundo */
+    }
+
+    .message {
+        text-align: center; /* Centralize o texto */
+    }
+
+    .message p {
+        font-size: 18px; /* Tamanho do texto */
+        color: #333; /* Cor do texto */
+        margin-bottom: 20px; /* Espaçamento inferior */
+    }
+}

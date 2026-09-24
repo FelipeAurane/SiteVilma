@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dependências
 node_modules/
 
@@ -28,3 +29,6 @@ Thumbs.db
 .DS_Store
 
 .env*.local
+=======
+node_modules
+>>>>>>> ba2b8d0eeb44a6e511850429271e9d679029bef9

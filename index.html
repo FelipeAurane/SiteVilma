@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <!-- Metadados da página -->
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Descrição do seu site aqui">
+  <meta name="keywords" content="palavras-chave, para, SEO, aqui">
+  <meta name="author" content="Seu Nome">
+
+  <!-- Ícone da página -->
+  <link rel="icon" type="image/jpeg" href="/src/img/img-logo.jpg">
+
+  <!-- Título da página -->
+  <title>Vilma Fotografia</title>
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/src/css/main_config.css">
+  <link rel="stylesheet" href="/src/css/style_desktop.css">
+  <link rel="stylesheet" href="/src/css/style_mobile.css">
+</head>
+
+<body class="body-loading">
+
+  <!-- Desktop -->
+  <div class="body-desktop hidden">
+    <nav id="desktop-nav" onclick="voltarParaOTopo()">
+      <div class="logo-left">Vilma Fotografia</div>
+    </nav>
+    <section id="profile">
+
+      <div class="section__text-desktop">
+        <h1 class="title">Tecnologia WebG</h1>
+        <p class="section__text__p2">Este site foi construido usando Tecnologia WebG sendo assim so podera ser
+          visualizada por aparelhos mobile</p>
+        <div class="btn-container-desktop">
+          <button class="btn btn-color-2"
+            onclick="window.open('https://api.whatsapp.com/send?phone=5581998370180&text=Ol%C3%A1,%20Vilma!%20Tudo%20Bem?')">
+            Saiba Mais
+          </button>
+        </div>
+      </div>
+
+      <div class="back">
+        <div class="back-content">
+          <!-- Conteúdo da sua div aqui -->
+        </div>
+      </div>
+      
+    </section>
+    </section id="back">
+    <div id="footerone">Criado e desenvolvido por <a href="#" id="finds-link">FINDS</a></div>
+    </section>
+  </div>
+
+  <!-- Mobile -->
+  <div class="body-mobile hidden">
+    <nav id="mobile-nav" onclick="voltarParaOTopo()">
+      <div class="logo">Vilma Fotografia</div>
+    </nav>
+
+    <!-- Home -->
+    <section id="home">
+      <div class="section__pic-container">
+        <img src="/src/img/vilmasobremim.png" alt="Foto do perfil" class="pic" id="pic-front">
+        <img src="/src/img/logo2.png" alt="Foto do perfil" class="pic" id="pic-back">
+      </div>
+      <div class="section__text-mobile">
+        <p class="section__text__p12">Olá, Eu Sou</p>
+        <h1 class="title">Vilma Silva</h1>
+        <p class="section__text__p2">Fotografia</p>
+        <div class="btn-container-mobile">
+          <button class="btn btn-color-2"
+            onclick="window.open('https://api.whatsapp.com/send?phone=5581998370180&text=Ol%C3%A1,%20Vilma!%20Tudo%20Bem?')">
+            Whatsapp
+          </button>
+          <button class="btn btn-color-1" onclick="location.href='/src/pages/portifolio.html'">
+            Portfolio
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Galeria Mobile -->
+    <section id="gallery">
+      <h1 class="title-gallery">Galeria</h1>
+      <div class="carousel mobile">
+        <div class="carousel-container" id="carouselContainer2"></div>
+      </div>
+      <div class="centralizado">
+        <a href="/src/pages/gallery.html">Ver Mais</a>
+      </div>
+    </section>
+
+    <!-- Sobre Mobile -->
+    <section id="about">
+      <div class="section-container">
+        <div class="about-details-container">
+          <p class="section__text__p1">Saiba Mais</p>
+          <h1 class="title-about">Sobre mim</h1>
+          <div class="section__pic">
+            <img src="/src/img/vilmasobrmim.png" alt="Foto do perfil" class="about-pic" />
+          </div>
+          <div class="about-containers">
+            <div class="text-container">
+              <p>Sou Vilma Silva, Fotógrafa de alimentos e produtos. Desde adolescente sonhei em estudar
+                fotografia, mas tudo tem um tempo certo para acontecer. Busquei conhecimento com os melhores
+                professores para entregar um trabalho marcado pelo compromisso com a excelência e a
+                criatividade, e hoje sou realizada no que faço. Através das minhas lentes, procuro revelar a
+                textura, as cores e os detalhes que tornam cada prato único e irresistível. Fotografar é o
+                que mais amo fazer. Vejo que através do meu trabalho eu posso mudar vidas, e isso é
+                incrível.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feedback Mobile -->
+    <section id="feedback">
+      <h1 class="title-depoimentos">Depoimentos</h1>
+      <div id="lottie-animation"></div>
+      <div class="feedback-container">
+        <div class="feedback-carousel-container">
+          <div class="testimonial-item">
+            <p class="testimonial-text">Eu ameeeei fazer as fotos com você, além do atendimento maravilhoso as
+              fotos ficaram incríveis, obrigada por todo cuidado. Meu cardápio está irresistível, super
+              recomendo.</p>
+          </div>
+          <div class="testimonial-item">
+            <p class="testimonial-text">Fiz as fotos do meu cardápio e amei, muito obrigada por toda atenção e
+              dedicação com meu restaurante.</p>
+          </div>
+          <div class="testimonial-item">
+            <p class="testimonial-text">Atendimento maravilhoso, com as fotos eu tive aumento nas vendas, eu
+              recomendo muito o trabalho de Vilma.</p>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="prev-button">&lt; Anterior</button>
+          <button class="next-button">Próximo &gt;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contato Mobile -->
+    <section id="contact">
+      <h1 class="titulo_mobile">Fale Comigo</h1>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <img src="/src/img/arroba.png" alt="Ícone de E-mail" class="icon contact-icon email-icon" />
+          <p><a href="#" onclick="abrirEmail()">E-mail</a></p>
+        </div>
+        <div class="contact-info">
+          <img src="/src/img/instagram.png" alt="Ícone do Instagram" class="icon contact-icon" />
+          <p><a href="https://www.instagram.com/viilmafotografia/">Instagram</a></p>
+        </div>
+        <div class="contact-info">
+          <img src="/src/img/whatsapp.png" alt="Ícone do Whatsapp" class="icon contact-icon" />
+          <p><a href="https://wa.me/+5581998370180?text=Olá,+Vilma+Silva!+Tudo+bem%3F">Whatsapp</a></p>
+        </div>
+        <div class="contact-info">
+          <img src="/src/img/youtube.png" alt="Ícone do YouTube" class="icon contact-icon" />
+          <p><a href="https://www.youtube.com/@VilmaFotografia">YouTube</a></p>
+        </div>
+      </div>
+      <div id="footerone">Criado e desenvolvido por <a href="#" id="finds-link">FINDS</a></div>
+    </section>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.7/lottie.min.js"></script>
+  <script src="/src/js/dadosfirebase.js"></script>
+  <script src="/src/js/animation.js"></script>
+</body>
+
+</html>
