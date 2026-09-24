@@ -1,0 +1,152 @@
+{
+    "hero": {
+        "image": "./img/bg.jpg",
+        "title": "Vilma Silva",
+        "subtitle": "Fotógrafa de Comida",
+        "button": {
+            "text": "Orçamentos",
+            "whatsapp": "5581998370180",
+            "message": "Olá, gostaria de solicitar um orçamento para fotografia de comida."
+        }
+    },
+    "categories": [
+        {
+            "id": "massas",
+            "name": "Massas",
+            "subtitle": "Textura e brilho",
+            "description": "Especializada em capturar a textura única e o brilho apetitoso das massas",
+            "image": "./img/massas/cover.jpg",
+            "gallery": [
+                "./img/massas/pasta1.jpg",
+                "./img/massas/pasta2.jpg",
+                "./img/massas/pasta3.jpg",
+                "./img/massas/pasta4.jpg"
+            ],
+            "featured": true,
+            "order": 1
+        },
+        {
+            "id": "doces",
+            "name": "Doces",
+            "subtitle": "Pratos do dia",
+            "description": "Fotografias que destacam a doçura e apresentação perfeita dos seus doces",
+            "image": "./img/doces/cover.jpg",
+            "gallery": [
+                "./img/doces/sweet1.jpg",
+                "./img/doces/sweet2.jpg",
+                "./img/doces/sweet3.jpg",
+                "./img/doces/sweet4.jpg",
+                "./img/doces/sweet5.jpg"
+            ],
+            "featured": true,
+            "order": 2
+        },
+        {
+            "id": "bolos",
+            "name": "Bolos",
+            "subtitle": "Ofertas especiais",
+            "description": "Capturando cada camada, textura e decoração dos seus bolos especiais",
+            "image": "./img/bolos/cover.jpg",
+            "gallery": [
+                "./img/bolos/cake1.jpg",
+                "./img/bolos/cake2.jpg",
+                "./img/bolos/cake3.jpg"
+            ],
+            "featured": false,
+            "order": 3
+        },
+        {
+            "id": "frituras",
+            "name": "Frituras",
+            "subtitle": "Assista nossos vídeos",
+            "description": "Destacando o dourado perfeito e a crocância irresistível das frituras",
+            "image": "./img/frituras/cover.jpg",
+            "gallery": [
+                "./img/frituras/fried1.jpg",
+                "./img/frituras/fried2.jpg",
+                "./img/frituras/fried3.jpg",
+                "./img/frituras/fried4.jpg"
+            ],
+            "featured": false,
+            "order": 4
+        },
+        {
+            "id": "bebidas",
+            "name": "Bebidas",
+            "subtitle": "Refrescantes e especiais",
+            "description": "Fotografias que capturam a frescura e apresentação das bebidas",
+            "image": "./img/bebidas/cover.jpg",
+            "gallery": [
+                "./img/bebidas/drink1.jpg",
+                "./img/bebidas/drink2.jpg"
+            ],
+            "featured": false,
+            "order": 5
+        }
+    ],
+    "services": [
+        {
+            "id": "food-photography",
+            "name": "Fotografia de Comida",
+            "description": "Sessões profissionais para restaurantes, cafés e produtos alimentícios",
+            "price": "A partir de R$ 200",
+            "duration": "2-4 horas",
+            "includes": [
+                "Até 50 fotos editadas",
+                "Iluminação profissional",
+                "Edição profissional",
+                "Entrega em alta resolução"
+            ]
+        },
+        {
+            "id": "menu-photography",
+            "name": "Fotografia para Cardápio",
+            "description": "Fotos especializadas para cardápios físicos e digitais",
+            "price": "A partir de R$ 150",
+            "duration": "1-3 horas",
+            "includes": [
+                "Fotos otimizadas para cardápio",
+                "Fundo neutro ou personalizado",
+                "Edição para impressão",
+                "Versões para redes sociais"
+            ]
+        },
+        {
+            "id": "social-media",
+            "name": "Conteúdo para Redes Sociais",
+            "description": "Fotos e vídeos para Instagram, Facebook e outras plataformas",
+            "price": "A partir de R$ 100",
+            "duration": "1-2 horas",
+            "includes": [
+                "Fotos no formato quadrado",
+                "Stories e posts",
+                "Vídeos curtos",
+                "Hashtags sugeridas"
+            ]
+        }
+    ],
+    "contact": {
+        "whatsapp": "5581998370180",
+        "instagram": "@vilmasilva_fotografia",
+        "email": "contato@vilmasilva.com.br",
+        "address": {
+            "city": "Caruaru",
+            "state": "PE",
+            "country": "Brasil"
+        }
+    },
+    "settings": {
+        "theme": "pink",
+        "showSplashScreen": true,
+        "enableNotifications": true,
+        "autoUpdate": true,
+        "cacheExpiration": 300000,
+        "language": "pt-BR"
+    },
+    "metadata": {
+        "version": 1,
+        "lastUpdated": "2025-06-04T12:00:00.000Z",
+        "updatedBy": "admin",
+        "environment": "production"
+    }
+}

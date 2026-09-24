@@ -1,0 +1,33 @@
+{
+  "name": "vilmafotografia",
+  "version": "2.0.0",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "hash": "node scripts/gerar-hash-senha.js",
+    "secret": "node scripts/gerar-session-secret.js",
+    "verificar": "node scripts/verificar.js",
+    "semear": "node scripts/semear.js",
+    "test": "node tests/autorizacao.test.js && node tests/fluxo.test.js",
+    "icones": "node scripts/gerar-icones.js --android",
+    "app:sync": "npx cap sync android",
+    "app:build": "node scripts/build-app.js",
+    "app:instalar": "node scripts/instalar-app.js"
+  },
+  "dependencies": {
+    "@capgo/capacitor-native-biometric": "^8.6.11",
+    "express": "^4.19.2",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
+    "dotenv": "^16.6.1"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "ISC"
+}

@@ -1,0 +1,898 @@
+/**
+ * Vilma Fotografia — folha principal da home.
+ *
+ * Um só HTML para celular e desktop. O celular é a referência (sensação de
+ * aplicativo, hero ocupando a tela inteira) e o desktop é o mesmo site
+ * redimensionado: a navegação sai da gaveta e vira barra horizontal, e o
+ * portfólio passa de duas para três colunas.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&display=swap');
+
+/* ------------------------------------------------------------- tokens */
+
+:root {
+  --preto: #0e0e10;
+  --preto-suave: #17171a;
+  --preto-vidro: rgba(14, 14, 16, .72);
+
+  --creme: #f6f3ee;
+  --creme-fundo: #efeae1;
+
+  --branco: #ffffff;
+  --texto-sobre-escuro: rgba(255, 255, 255, .72);
+  --texto-sobre-escuro-fraco: rgba(255, 255, 255, .5);
+  --texto-escuro: #26262a;
+  --texto-escuro-fraco: #6d6d76;
+
+  --borda-clara: rgba(255, 255, 255, .16);
+  --borda-escura: rgba(0, 0, 0, .1);
+
+  --cabecalho-altura: 68px;
+  --gutter: 20px;
+  --largura-maxima: 1240px;
+
+  --transicao: .35s cubic-bezier(.22, .61, .36, 1);
+}
+
+/* -------------------------------------------------------------- reset */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  /* A rolagem continua funcionando; só a barra some. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+body {
+  font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+  background: var(--preto);
+  color: var(--texto-escuro);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Trava a rolagem enquanto a gaveta está aberta. */
+body.no-scroll {
+  overflow: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--branco);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ------------------------------------------------------ splash screen */
+
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--preto);
+  transition: opacity .5s ease, visibility .5s ease;
+}
+
+.splash-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.splash-screen .loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.splash-screen .name {
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: .42em;
+  text-indent: .42em;
+  text-transform: uppercase;
+  color: var(--branco);
+}
+
+.splash-screen .linha {
+  display: block;
+  width: 0;
+  height: 1px;
+  background: var(--borda-clara);
+  animation: cresce 2.6s cubic-bezier(.22, .61, .36, 1) forwards;
+}
+
+@keyframes cresce {
+  to { width: 120px; }
+}
+
+/* ----------------------------------------------------------- cabeçalho */
+
+.cabecalho {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* Acima da gaveta: sem isto o X fica atrás dela e não dá para fechar
+     pelo botão. Abaixo do splash, que cobre tudo. */
+  z-index: 9600;
+  height: var(--cabecalho-altura);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--gutter);
+  transition: background var(--transicao), backdrop-filter var(--transicao),
+              border-color var(--transicao);
+  border-bottom: 1px solid transparent;
+}
+
+/* Ganha fundo depois que o hero sai da tela. */
+.cabecalho.rolado {
+  background: var(--preto-vidro);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom-color: var(--borda-clara);
+}
+
+.marca {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  line-height: 1;
+  color: var(--branco);
+}
+
+.marca-nome {
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: .34em;
+  text-indent: .34em;
+  text-transform: uppercase;
+}
+
+.marca-tipo {
+  font-size: 7.5px;
+  font-weight: 300;
+  letter-spacing: .34em;
+  text-indent: .34em;
+  text-transform: uppercase;
+  color: var(--texto-sobre-escuro-fraco);
+}
+
+/* ------------------------------------------------- botão hambúrguer */
+
+/*
+ * O mesmo botão de antes — três barras com a do meio deslocada.
+ * Mudou de lado (agora à direita) e de cor (branco sobre o hero escuro),
+ * e a gaveta passou a entrar pelo mesmo lado.
+ */
+.menu-toggle {
+  position: relative;
+  z-index: 2;
+  width: 30px;
+  height: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  user-select: none;
+}
+
+.menu-toggle .view1,
+.menu-toggle .view2,
+.menu-toggle .view3 {
+  width: 100%;
+  height: 2px;
+  border-radius: 60px;
+  background: var(--branco);
+  transition: transform var(--transicao), opacity var(--transicao),
+              margin var(--transicao), background var(--transicao);
+}
+
+.menu-toggle .view2 {
+  margin-left: 5px;
+}
+
+/* Vira um X quando a gaveta abre. */
+.menu-toggle.aberto .view1 {
+  transform: translateY(10px) rotate(45deg);
+}
+
+.menu-toggle.aberto .view2 {
+  opacity: 0;
+  margin-left: 0;
+}
+
+.menu-toggle.aberto .view3 {
+  transform: translateY(-10px) rotate(-45deg);
+}
+
+/* --------------------------------------------------- gaveta (celular) */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: min(82%, 340px);
+  height: 100%;
+  z-index: 9500;
+  padding: calc(var(--cabecalho-altura) + 24px) 28px 40px;
+  display: flex;
+  flex-direction: column;
+  background: var(--preto-suave);
+  border-left: 1px solid var(--borda-clara);
+  transition: right var(--transicao);
+}
+
+.navbar.open {
+  right: 0;
+}
+
+.navbar .logo {
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  color: var(--texto-sobre-escuro-fraco);
+  margin-bottom: 28px;
+}
+
+.menu {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu li a {
+  display: block;
+  padding: 16px 0;
+  font-size: 19px;
+  font-weight: 300;
+  color: var(--branco);
+  border-bottom: 1px solid var(--borda-clara);
+  transition: padding-left var(--transicao), color var(--transicao);
+}
+
+.menu li a:hover {
+  padding-left: 8px;
+  color: var(--texto-sobre-escuro);
+}
+
+.blok-menu {
+  margin-top: auto;
+}
+
+.overlay-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(0, 0, 0, .6);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transicao), visibility var(--transicao);
+}
+
+.overlay-fundo.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* A barra horizontal do desktop não existe no celular. */
+.menu-desktop,
+.cabecalho .btn-orcamento {
+  display: none;
+}
+
+/* --------------------------------------------------------------- hero */
+
+/*
+ * Ocupa a tela inteira, sozinho. svh leva em conta a barra do navegador
+ * no celular, então nada da próxima seção aparece por baixo.
+ */
+#hero {
+  position: relative;
+  height: 100svh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: var(--preto);
+}
+
+/*
+ * Sem min-height de propósito: o hero é exatamente uma tela, sempre.
+ * Um piso em pixels faria a próxima seção espiar por baixo em tela curta
+ * (celular deitado), que é justo o que não pode acontecer.
+ */
+
+/* Fallback para navegador sem svh. */
+@supports not (height: 100svh) {
+  #hero { height: 100vh; }
+}
+
+/*
+ * No celular a mídia é o fundo da tela inteira. No desktop ela vira a
+ * coluna da direita (ver a media query lá embaixo).
+ */
+.hero-midia {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--preto);
+}
+
+/* Imagem e vídeo se comportam igual — content.js troca um pelo outro. */
+.hero-midia img,
+.hero-midia video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+/* Escurece o pé da foto para o texto ter contraste. */
+/*
+ * O texto fica sobre a foto, então o pé precisa ficar bem escuro — sem
+ * isto a legenda some quando o assunto da foto é claro.
+ */
+.hero-veu {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top,
+      rgba(12, 12, 14, .96) 0%,
+      rgba(12, 12, 14, .88) 26%,
+      rgba(12, 12, 14, .55) 48%,
+      rgba(12, 12, 14, .14) 72%,
+      rgba(12, 12, 14, .5) 100%);
+}
+
+/* Centralizado no celular: texto, subtítulo e botão no eixo da tela. */
+.hero-conteudo {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 0 var(--gutter) 15svh;
+  color: var(--branco);
+  text-align: center;
+}
+
+/* Tela curta (celular deitado, janela baixa): aperta para tudo caber. */
+@media (max-height: 620px) {
+  .hero-conteudo { padding-bottom: 8svh; }
+  .hero-etiqueta { margin-bottom: 8px; }
+  .title-name { font-size: clamp(30px, 8vw, 40px); margin-bottom: 8px; }
+  .subtitle { font-size: 13px; margin-bottom: 16px; }
+  .scroll-down { bottom: 14px; }
+  .scroll-down::before { height: 26px; }
+}
+
+.hero-etiqueta {
+  font-size: 9.5px;
+  font-weight: 400;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  color: var(--texto-sobre-escuro-fraco);
+  margin-bottom: 14px;
+}
+
+.title-name {
+  font-size: clamp(38px, 12vw, 52px);
+  font-weight: 300;
+  letter-spacing: -.01em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.subtitle {
+  max-width: 30ch;
+  margin: 0 auto 26px;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.6;
+  color: var(--texto-sobre-escuro);
+}
+
+.view-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* -------------------------------------------------------------- botões */
+
+.btn-orcamento {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 22px;
+  border-radius: 999px;
+  background: var(--branco);
+  color: var(--preto);
+  font-size: 13px;
+  font-weight: 500;
+  transition: transform var(--transicao), background var(--transicao);
+}
+
+.btn-orcamento:hover {
+  transform: translateY(-2px);
+  background: var(--creme);
+}
+
+.btn-orcamento svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+}
+
+/*
+ * Indicador de rolagem.
+ *
+ * Era a palavra "SCROLL", que não diz nada para quem não é da área. Agora é
+ * uma seta que desce sozinha mais o nome do que tem logo abaixo — a pessoa
+ * entende para onde ir sem precisar saber o termo.
+ */
+.scroll-down {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 26px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  color: var(--branco);
+  transition: opacity var(--transicao), visibility var(--transicao);
+}
+
+.scroll-down.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.scroll-seta {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--borda-clara);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .06);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: pula 1.9s ease-in-out infinite;
+  transition: background var(--transicao), border-color var(--transicao);
+}
+
+.scroll-seta svg {
+  width: 19px;
+  height: 19px;
+}
+
+.scroll-down:hover .scroll-seta {
+  background: rgba(255, 255, 255, .16);
+  border-color: rgba(255, 255, 255, .34);
+}
+
+.scroll-rotulo {
+  font-size: 10.5px;
+  font-weight: 300;
+  letter-spacing: .06em;
+  color: var(--texto-sobre-escuro);
+}
+
+@keyframes pula {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+/* --------------------------------------------------------- portfólio */
+
+.next-section {
+  position: relative;
+  z-index: 3;
+  background: var(--creme);
+  color: var(--texto-escuro);
+  padding: 56px 0 64px;
+}
+
+.faixa {
+  width: 100%;
+  max-width: var(--largura-maxima);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.secao-cabeca {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 26px;
+}
+
+.title-cardapio {
+  font-size: clamp(26px, 7vw, 34px);
+  font-weight: 300;
+  letter-spacing: -.01em;
+  margin-bottom: 6px;
+}
+
+.cardapio-content-bunner p {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--texto-escuro-fraco);
+}
+
+#banner-subtitle {
+  display: none;
+}
+
+.cardapio-content-bunner .cardapio-image-one {
+  display: none;
+}
+
+.secao-link {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--texto-escuro-fraco);
+  transition: gap var(--transicao), color var(--transicao);
+}
+
+.secao-link:hover {
+  gap: 12px;
+  color: var(--texto-escuro);
+}
+
+.cardapio-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+/* ------------------------------------------------------------- cartão */
+
+.cardapio-content {
+  position: relative;
+  aspect-ratio: 4 / 3.2;
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(140deg, #2b2b31, #17171a);
+  cursor: pointer;
+  isolation: isolate;
+}
+
+.cardapio-content .cardapio-image-one {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .6s cubic-bezier(.22, .61, .36, 1);
+}
+
+.cardapio-content:hover .cardapio-image-one {
+  transform: scale(1.06);
+}
+
+.cardapio-content::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 10, 12, .88) 0%, rgba(10, 10, 12, .25) 48%, transparent 75%);
+  pointer-events: none;
+}
+
+.cartao-rodape {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 13px;
+  color: var(--branco);
+}
+
+.cartao-nome {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.cartao-sub {
+  display: block;
+  font-size: 10px;
+  font-weight: 300;
+  color: var(--texto-sobre-escuro-fraco);
+  margin-top: 2px;
+}
+
+.cartao-seta {
+  flex: none;
+  font-size: 15px;
+  line-height: 1;
+  opacity: .8;
+  transition: transform var(--transicao);
+}
+
+.cardapio-content:hover .cartao-seta {
+  transform: translateX(4px);
+}
+
+.aviso-vazio {
+  grid-column: 1 / -1;
+  padding: 44px 20px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--texto-escuro-fraco);
+  border: 1px dashed var(--borda-escura);
+  border-radius: 10px;
+}
+
+/* ------------------------------------------------------ sobre a Vilma */
+
+.sobre-section {
+  position: relative;
+  z-index: 3;
+  background: var(--preto);
+  color: var(--branco);
+  padding: 56px 0;
+}
+
+.sobre-grade {
+  display: grid;
+  gap: 26px;
+}
+
+.sobre-foto {
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+}
+
+.sobre-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sobre-titulo {
+  font-size: clamp(24px, 6.5vw, 30px);
+  font-weight: 300;
+  margin-bottom: 14px;
+}
+
+.sobre-texto {
+  font-size: 13.5px;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--texto-sobre-escuro);
+  margin-bottom: 22px;
+}
+
+.btn-vazado {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border: 1px solid var(--borda-clara);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--branco);
+  transition: gap var(--transicao), background var(--transicao);
+}
+
+.btn-vazado:hover {
+  gap: 13px;
+  background: rgba(255, 255, 255, .07);
+}
+
+/* ------------------------------------------------------------ rodapé */
+
+footer {
+  position: relative;
+  z-index: 3;
+  background: var(--preto);
+  border-top: 1px solid var(--borda-clara);
+  padding: 30px var(--gutter) 36px;
+  text-align: center;
+}
+
+footer p {
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--texto-sobre-escuro-fraco);
+}
+
+/* ==================================================================== */
+/*  Desktop — mesmo site, redimensionado                                */
+/* ==================================================================== */
+
+@media (min-width: 900px) {
+  :root {
+    --cabecalho-altura: 82px;
+    --gutter: 40px;
+  }
+
+  /* A gaveta e o hambúrguer dão lugar à barra horizontal. */
+  .menu-toggle,
+  .navbar,
+  .overlay-fundo {
+    display: none;
+  }
+
+  .menu-desktop {
+    display: flex;
+    align-items: center;
+    gap: 34px;
+    margin-left: 60px;
+    margin-right: auto;
+    list-style: none;
+  }
+
+  .menu-desktop a {
+    font-size: 12.5px;
+    font-weight: 300;
+    color: var(--texto-sobre-escuro);
+    transition: color var(--transicao);
+  }
+
+  .menu-desktop a:hover,
+  .menu-desktop a.ativo {
+    color: var(--branco);
+  }
+
+  .cabecalho .btn-orcamento {
+    display: inline-flex;
+    padding: 11px 20px;
+    font-size: 12.5px;
+  }
+
+  .marca-nome { font-size: 17px; }
+  .marca-tipo { font-size: 8px; }
+
+  /*
+   * Hero partido: informação na coluna da esquerda, mídia só na direita.
+   * No celular a mídia continua sendo o fundo da tela inteira.
+   */
+  #hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.06fr);
+    align-items: stretch;
+  }
+
+  .hero-midia {
+    position: relative;
+    inset: auto;
+    grid-column: 2;
+    grid-row: 1;
+    height: 100%;
+  }
+
+  /*
+   * 28% em vez de "center": a foto atual é retrato e, centralizada, o corte
+   * cai no torso. Serve bem também para foto ou vídeo panorâmico.
+   */
+  .hero-midia img,
+  .hero-midia video {
+    object-position: center 28%;
+  }
+
+  /* Transição mais seca e degradê no topo para proteger os elementos flutuantes (como o botão) */
+  .hero-veu {
+    background: 
+      linear-gradient(to right, var(--preto) 0%, rgba(14, 14, 16, .15) 6%, transparent 15%),
+      linear-gradient(to bottom, rgba(14, 14, 16, .6) 0%, transparent 18%);
+  }
+
+  .hero-conteudo {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    text-align: left;
+    padding: 0 clamp(30px, 4vw, 64px) 0
+             max(var(--gutter), calc((100vw - var(--largura-maxima)) / 2 + var(--gutter)));
+  }
+
+  .hero-etiqueta { font-size: 10.5px; margin-bottom: 18px; }
+  .title-name { font-size: clamp(46px, 4.4vw, 68px); margin-bottom: 18px; }
+
+  .subtitle {
+    font-size: 15.5px;
+    max-width: 32ch;
+    margin: 0 0 34px;
+  }
+
+  .view-buttons { justify-content: flex-start; }
+
+  .scroll-down {
+    left: max(var(--gutter), calc((100vw - var(--largura-maxima)) / 2 + var(--gutter)));
+    transform: none;
+    bottom: 38px;
+    align-items: flex-start;
+    padding-left: 0;
+  }
+
+  /* Portfólio em três colunas. */
+  .next-section { padding: 88px 0 96px; }
+  .secao-cabeca { margin-bottom: 38px; }
+  .cardapio-container { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .cardapio-content { aspect-ratio: 4 / 2.9; border-radius: 12px; }
+  .cartao-rodape { padding: 16px 18px; }
+  .cartao-nome { font-size: 15px; }
+  .cartao-sub { font-size: 11px; }
+
+  /* Sobre: foto à esquerda, texto à direita. */
+  .sobre-section { padding: 90px 0; }
+
+  .sobre-grade {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 60px;
+  }
+
+  .sobre-foto { aspect-ratio: 5 / 4; }
+  .sobre-titulo { font-size: 36px; }
+  .sobre-texto { font-size: 15px; max-width: 46ch; }
+
+  footer { padding: 34px var(--gutter); }
+}
+
+@media (min-width: 1400px) {
+  .title-name { font-size: 84px; }
+}

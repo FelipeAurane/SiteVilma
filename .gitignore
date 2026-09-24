@@ -1,0 +1,30 @@
+# Dependências
+node_modules/
+
+# Segredos — nunca versionar
+.env
+.env.*
+!.env.example
+
+# Vercel
+.vercel
+
+# Android / Capacitor
+# O projeto android/ é gerado por "npx cap add android"; só os artefatos
+# de build e a configuração local da máquina ficam de fora.
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/capacitor-cordova-android-plugins/
+android/app/src/main/assets/public/
+*.apk
+*.aab
+*.keystore
+!debug.keystore
+
+# Sistema
+Thumbs.db
+.DS_Store
+
+.env*.local

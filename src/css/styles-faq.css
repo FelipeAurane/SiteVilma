@@ -1,0 +1,195 @@
+@font-face {
+  font-family: Bahagia;
+  src: url(../font/Bahagia.otf);
+}
+
+
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  overflow-x: hidden; /* Impede o scroll horizontal */
+  overflow-y: auto; /* Permite o scroll vertical */
+  height: 100%; /* Garante que a altura do body ocupe toda a tela */
+    -webkit-user-select: none; /* Para navegadores baseados no WebKit */
+-moz-user-select: none;    /* Para navegadores Firefox antigos */
+-ms-user-select: none;     /* Para navegadores Internet Explorer */
+user-select: none;         /* Padrão */
+}
+
+
+
+
+
+/* Desativar Scroll */
+body.no-scroll {
+overflow: hidden;
+}
+
+
+
+.topbar-cabecalho {
+  background-color: rgba(255, 255, 255, 0.7); /* Cor de fundo com opacidade para o efeito de blur ser visível */
+  padding: 15px 10px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex; /* Ativa Flexbox para posicionar itens */
+  align-items: center; /* Alinha itens verticalmente */
+  justify-content: center; /* Centraliza os itens horizontalmente */
+  border-bottom: 1px solid #dddddda6; /* Linha na parte de baixo */
+  backdrop-filter: blur(10px); /* Aplica o efeito de desfoque */
+  -webkit-backdrop-filter: blur(10px); /* Suporte para navegadores WebKit */
+}
+
+
+
+
+.topbar-cabecalho,
+.topbar-cabecalho-curso {
+    background-color: rgba(255, 255, 255, 0.7);
+  padding: 20px 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #dddddda6;
+    backdrop-filter: blur(10px);
+}
+
+.topbar-cabecalho-curso {
+    position: fixed;
+    z-index: 3;
+}
+
+.menu-back {
+    width: 40px;
+    height: 40px;
+    position: absolute; /* Posiciona o botão à esquerda */
+    left: 10px; /* Alinha com o padding do contêiner */
+    bottom: 10px; /* Alinha com o padding do contêiner */
+}
+
+.cabecalhoOne1 {
+    color: #333; /* Cor do texto para contraste */
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.cabecalhoOne1 {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+#div-main {
+  height: 100vh;
+  margin-top: 14%;
+  padding: 4%;
+  display: flex;
+  justify-content: center;
+  background-color: white;
+}
+
+
+.sobre-div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4%;
+    margin-top: 15%;
+    height: 50vh;
+  }
+
+  .img-faq{
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    object-fit: cover;
+  }
+  
+  .sobre-h1{
+    font-size: 2.5em;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  #container {
+    display: flex;
+    margin-top: 15%;
+    flex-direction: column;
+    gap: 18px;
+    width: 500px;
+  }
+  
+  .accordion {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .accordion-header {
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .accordion-header span {
+    max-width: 100%;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .accordion-body {
+      color: #444;
+      font-size: 14px;
+      opacity: 0;
+      height: 0;
+      overflow: hidden;
+      transition: opacity 0.3s, height 0.3s;
+      display: flex;
+      flex-direction: column; /* Organiza os itens em coluna */
+      justify-content: flex-start; /* Alinha o conteúdo ao topo */
+      padding: 0 10px; /* Adiciona algum preenchimento */
+  }
+  
+  .accordion-body.active {
+      height: auto;
+      opacity: 1;
+      padding: 5px 0px; /* Apenas quando o conteúdo está ativo */
+  }
+  
+  
+  .accordion-content{
+    font-weight: 600;
+  }
+  
+  .arrow {
+    transition: transform .2s linear;
+  }
+  
+  .accordion:has(.active) .arrow {
+    transform: rotate(180deg);
+  }
+
+  footer{
+    margin-top: 15%;
+  }

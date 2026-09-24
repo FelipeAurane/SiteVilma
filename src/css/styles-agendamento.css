@@ -1,0 +1,134 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.empty {
+  background-color: transparent;
+  border: none;
+}
+.disabled {
+  color: #ccc;
+  pointer-events: none;
+}
+
+
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f4f8;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  background-color: #ffffff00;
+  border-radius: 12px;
+  position: absolute;
+  top: 0;
+}
+
+
+h1 {
+  font-size: 2.2rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.calendar-card {
+  border-radius: 12px;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendar-nav {
+  background-color: #91919170;
+  border: none;
+  color: white;
+  font-size: 1.4rem;
+  padding: 8px 15px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.calendar-nav:hover {
+  background-color: #2980b9;
+}
+
+.month-name {
+  font-size: 1.7rem;
+  font-weight: bold;
+  color: #3498db;
+}
+
+.current-day {
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.weekdays {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  color: #7f8c8d;
+  margin-bottom: 15px;
+}
+
+.weekday {
+  width: 14.2%;
+}
+
+.dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.date {
+  width: 40px;
+  height: 40px;
+  background-color: #ecf0f1;
+  padding: 12px;
+  text-align: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.date:hover {
+  background-color: #bdc3c7;
+  transform: scale(1.1);
+}
+
+
+.available {
+  background-color: #27ae60;
+  color: white;
+  font-weight: bold;
+}
+
+.unavailable {
+  text-align: center;
+  background-color: #e74c3c;
+  color: white;
+  font-weight: bold;
+}

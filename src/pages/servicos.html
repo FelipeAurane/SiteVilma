@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <meta name="description" content="Seja a protagonista da sua beleza com Jacy Braz. Cursos, serviços e dicas de maquiagem para você se tornar sua melhor versão.">
+  <meta name="keywords" content="Jacy Makeup, maquiagem, cursos de maquiagem, beleza, agendamento, maquiagem profissional">
+  <meta name="author" content="Jacy Braz">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:title" content="Jacy Makeup - Seja a protagonista da sua beleza">
+  <meta property="og:description" content="Cursos, serviços e dicas de maquiagem para você se tornar sua melhor versão.">
+  <meta property="og:image" content="./img/capa.jpg">
+  <meta property="og:url" content="https://jacymakeup.vercel.app">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Jacy Makeup - Seja a protagonista da sua beleza">
+  <meta name="twitter:description" content="Cursos, serviços e dicas de maquiagem para você se tornar sua melhor versão.">
+  <meta name="twitter:image" content="./img/capa.jpg">
+
+  <title>Jacy Makeup - Transforme sua Beleza</title>
+  <link rel="stylesheet" href="../css/styles-faq.css">
+  <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    .next-section {
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .service-item:first-child {
+      margin-top: 15%;
+    }
+
+    .service-item {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+      transition: transform 0.3s ease;
+      position: relative; /* Establish positioning context for absolute positioning */
+    }
+
+    .service-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .service-image-placeholder {
+      height: 150px;
+      width: 100%; /* Ensure it takes full width of .service-item */
+      background-color: #8B4513;
+      border-radius: 8px 8px 0 0;
+      margin-bottom: 1rem;
+      box-sizing: border-box; /* Include padding and border in width calculation */
+    }
+
+    .service-item h3 {
+      font-size: 1.5rem;
+      margin: 0.5rem 0;
+      color: #333;
+      padding-left: 5%;
+      text-align: left;
+    }
+
+    .service-item, .service-description {
+      font-size: 1rem;
+      margin: 0.5rem 0;
+      color: #666;
+      margin-bottom: 10%;
+      text-align: left;
+    }
+
+    .service-description {
+      padding-left: 5%;
+    }
+
+
+
+.service-price {
+    bottom: 105px; /* Ajuste a posição vertical conforme necessário */
+    right: 5px; /* Ajuste a posição horizontal conforme necessário */
+    position: absolute; /* Posiciona o preço no canto inferior direito */
+    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 0.7); /* Fundo semi-transparente para legibilidade */
+    color: #fff; /* Cor do texto */
+    font-weight: bold;
+    border-radius: 4px; /* Bordas arredondadas */
+    font-size: 14px; /* Tamanho da fonte */
+}
+
+    .whatsapp-btn {
+      background: #000;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s ease;
+      position: absolute; /* Position absolutely within .service-item */
+      bottom: 0.5rem; /* 0.5rem from the bottom */
+      right: 0.5rem; /* 0.5rem from the right */
+    }
+
+    .whatsapp-btn:hover {
+      background: #333;
+    }
+
+    .service-error {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .service-item {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar-cabecalho-curso">
+    <a href="../index.html">
+      <img src="../img/seta-esquerda.png" alt="Menu" style="width: 40px; height: 40px;" class="menu-back">
+    </a>
+    <a class="cabecalhoOne1">Serviços</a>
+  </div>
+
+  <!-- Tela Principal -->
+  <section>
+    <section id="next-section" class="next-section">
+      <!-- Os serviços serão renderizados aqui pelo JavaScript -->
+    </section>
+  </section>
+
+  <!-- Scripts -->
+  <script src="../js/scripts.js"></script>
+  <script type="module" src="../js/content.js"></script>
+</body>
+</html>

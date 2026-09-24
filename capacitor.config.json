@@ -1,0 +1,16 @@
+{
+  "appId": "br.com.vilmafotografia.painel",
+  "appName": "Painel Vilma",
+  "webDir": "src",
+  "android": {
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "CapacitorCookies": {
+      "enabled": true
+    },
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}

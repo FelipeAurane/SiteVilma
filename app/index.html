@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Painel Vilma</title>
+    <style>
+        :root {
+            color-scheme: dark;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+            background: #0f1419;
+            color: #fff;
+            font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+            text-align: center;
+        }
+
+        .caixa {
+            max-width: 320px;
+        }
+
+        .anel {
+            width: 68px;
+            height: 68px;
+            margin: 0 auto 26px;
+            border: 5px solid #fff;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+        }
+
+        .anel::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+        }
+
+        h1 {
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, .66);
+            margin-bottom: 22px;
+        }
+
+        button {
+            width: 100%;
+            min-height: 46px;
+            padding: 0 20px;
+            font: 600 15px inherit;
+            color: #fff;
+            background: #667eea;
+            border: 0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!--
+        Tela de reserva do aplicativo.
+
+        Em uso normal o app abre direto a URL definida em capacitor.config.json
+        (o painel no ar). Esta página só aparece quando o aparelho está sem
+        internet ou o site não responde.
+    -->
+    <div class="caixa">
+        <div class="anel"></div>
+        <h1>Sem conexão com o site</h1>
+        <p>
+            O painel funciona online. Confira a internet do aparelho
+            e tente de novo.
+        </p>
+        <button type="button" onclick="location.reload()">Tentar de novo</button>
+    </div>
+</body>
+
+</html>

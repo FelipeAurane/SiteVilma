@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <meta name="description"
+    content="Seja a protagonista da sua beleza com Jacy Braz. Cursos, serviços e dicas de maquiagem para você se tornar sua melhor versão.">
+  <meta name="keywords"
+    content="Jacy Makeup, maquiagem, cursos de maquiagem, beleza, agendamento, maquiagem profissional">
+  <meta name="author" content="Jacy Braz">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:title" content="Jacy Makeup - Seja a protagonista da sua beleza">
+  <meta property="og:description"
+    content="Cursos, serviços e dicas de maquiagem para você se tornar sua melhor versão.">
+  <meta property="og:image" content="./img/capa.jpg">
+  <meta property="og:url" content="https://jacymakeup.vercel.app">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Jacy Makeup - Seja a protagonista da sua beleza">
+  <meta name="twitter:description"
+    content="Cursos, serviços e dicas de maquiagem para você se tornar sua melhor versão.">
+  <meta name="twitter:image" content="./img/capa.jpg">
+
+  <title>Jacy Makeup - Transforme sua Beleza</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/styles-faq.css">
+  <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+  <div class="topbar-cabecalho">
+    <a href="../index.html">
+      <img src="../img/seta-esquerda.png" alt="Voltar" style="width: 40px; height: 40px;" class="menu-back">
+    </a>
+    <a class="cabecalho" style="margin-left: 10%;">Dúvidas</a>
+  </div>
+
+  <!-- Tela Principal -->
+  <section id="div-main">
+    <div id="container">
+      <!-- FAQs serão renderizados dinamicamente aqui -->
+      <div class="empty-state" id="empty-faqs" style="display: none;">
+        <i class="fa-solid fa-circle-info" style="font-size: 4rem; margin-bottom: 15px;"></i>
+        <h3>Nenhuma dúvida encontrada</h3>
+        <p>Não há FAQs disponíveis no momento.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rodapé -->
+  <footer>
+    <p>© 2025 Conectta. Todos os direitos reservados.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script type="module">
+    import { getContent } from "../js/api.js";
+
+    const CONFIG = {
+      CACHE_KEY: 'vilma_silva_faq_data'
+    };
+
+    // Default data structure
+    const defaultFaqs = [
+      {
+        question: "Quem é Vilma Silva?",
+        answer: "Lorem ipsum dolor sit amet consectetur adipisicing elit."
+      },
+      {
+        question: "Quais são os serviços oferecidos?",
+        answer: "Lorem ipsum dolor sit amet consectetur adipisicing elit."
+      }
+    ];
+
+    class FaqManager {
+      constructor() {
+        this.currentFaqs = null;
+        this.isOnline = navigator.onLine;
+      }
+
+      getLocalData() {
+        try {
+          const data = localStorage.getItem(CONFIG.CACHE_KEY);
+          if (data) {
+            const parsedData = JSON.parse(data);
+            console.log('💾 FAQs carregados do cache local');
+            return this.validateFaqs(parsedData.faqs);
+          }
+        } catch (error) {
+          console.error('❌ Erro ao carregar dados locais:', error);
+        }
+        return null;
+      }
+
+      saveLocalData(faqs) {
+        try {
+          const validatedFaqs = this.validateFaqs(faqs);
+          localStorage.setItem(CONFIG.CACHE_KEY, JSON.stringify({ faqs: validatedFaqs }));
+          console.log('💾 FAQs salvos no cache local');
+          return validatedFaqs;
+        } catch (error) {
+          console.error('❌ Erro ao salvar dados locais:', error);
+          return faqs;
+        }
+      }
+
+      validateFaqs(faqs) {
+        if (!Array.isArray(faqs)) {
+          console.warn('⚠️ FAQs inválidos - usando dados padrão');
+          return defaultFaqs;
+        }
+        return faqs.map(faq => ({
+          question: faq.question || 'Pergunta não definida',
+          answer: faq.answer || 'Resposta não definida'
+        }));
+      }
+
+      async fetchRemoteFaqs() {
+        if (!this.isOnline) {
+          console.log('📡 Sem conexão para buscar FAQs');
+          return null;
+        }
+        try {
+          console.log('🔄 Buscando perguntas no servidor...');
+          const remoteData = await getContent("faqs");
+          if (remoteData) {
+            console.log('✅ Perguntas recebidas');
+            return this.validateFaqs(remoteData);
+          } else {
+            console.warn('⚠️ Nenhuma pergunta cadastrada');
+            return null;
+          }
+        } catch (error) {
+          console.error('❌ Erro ao buscar perguntas:', error);
+          return null;
+        }
+      }
+
+      renderFaqs(faqs) {
+        const container = document.getElementById('container');
+        const emptyState = document.getElementById('empty-faqs');
+        if (!container) {
+          console.error('Container não encontrado');
+          return;
+        }
+        container.innerHTML = '';
+        if (!emptyState) {
+          console.warn('Elemento empty-faqs não encontrado');
+        }
+        if (faqs.length === 0) {
+          if (emptyState) {
+            emptyState.style.display = 'block';
+          }
+          return;
+        }
+        if (emptyState) {
+          emptyState.style.display = 'none';
+        }
+        // Montado com textContent: pergunta e resposta vêm do servidor e
+        // precisam virar texto, nunca HTML.
+        faqs.forEach(faq => {
+          const accordion = document.createElement('div');
+          accordion.className = 'accordion';
+
+          const header = document.createElement('button');
+          header.className = 'accordion-header';
+
+          const question = document.createElement('span');
+          question.textContent = faq.question;
+          header.appendChild(question);
+
+          const arrow = document.createElement('i');
+          arrow.className = 'fa-solid fa-chevron-down arrow';
+          header.appendChild(arrow);
+
+          const body = document.createElement('div');
+          body.className = 'accordion-body';
+
+          const answer = document.createElement('p');
+          answer.style.textAlign = 'start';
+          answer.textContent = faq.answer;
+          body.appendChild(answer);
+
+          accordion.append(header, body);
+          container.appendChild(accordion);
+        });
+        this.setupAccordionEvents();
+      }
+
+      setupAccordionEvents() {
+        const accordions = document.querySelectorAll('.accordion');
+        accordions.forEach(accordion => {
+          accordion.addEventListener('click', () => {
+            const body = accordion.querySelector('.accordion-body');
+            const isActive = body.classList.contains('active');
+            // Fechar todos os outros accordions
+            document.querySelectorAll('.accordion-body').forEach(otherBody => {
+              otherBody.classList.remove('active');
+            });
+            // Alternar o accordion clicado
+            if (!isActive) {
+              body.classList.add('active');
+            }
+          });
+        });
+      }
+
+      async initialize() {
+        console.log('🚀 Inicializando FaqManager...');
+        let localData = this.getLocalData();
+        if (localData) {
+          this.currentFaqs = localData;
+          console.log('⚡ Carregando FAQs do cache');
+          this.renderFaqs(localData);
+        } else {
+          console.log('🔧 Usando FAQs padrão');
+          this.currentFaqs = defaultFaqs;
+          this.saveLocalData(defaultFaqs);
+          this.renderFaqs(defaultFaqs);
+        }
+        if (this.isOnline) {
+          const remoteData = await this.fetchRemoteFaqs();
+          if (remoteData) {
+            this.currentFaqs = remoteData;
+            this.saveLocalData(remoteData);
+            this.renderFaqs(remoteData);
+          }
+        }
+        console.log('✅ FaqManager inicializado');
+      }
+    }
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', async () => {
+      console.log('🚀 Iniciando aplicação de FAQs...');
+      try {
+        const faqManager = new FaqManager();
+        await faqManager.initialize();
+        console.log('✅ Aplicação de FAQs inicializada com sucesso');
+      } catch (error) {
+        console.error('❌ Erro ao inicializar aplicação:', error);
+      }
+    });
+  </script>
+</body>
+
+</html>

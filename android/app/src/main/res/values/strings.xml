@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Painel Vilma</string>
+    <string name="title_activity_main">Painel Vilma</string>
+    <string name="package_name">br.com.vilmafotografia.painel</string>
+    <string name="custom_url_scheme">br.com.vilmafotografia.painel</string>
+</resources>
