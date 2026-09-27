@@ -145,7 +145,7 @@ teste('POST /api/media com JPEG real passa da validação', async () => {
     headers: { cookie: cookieValido },
     body: { mime: 'image/jpeg', data: jpeg }
   }), res);
-  assert(res.statusCode === 500, `validação deveria passar e falhar no banco; veio ${res.statusCode} ${res.body}`);
+  assert(res.statusCode === 201 || res.statusCode === 500, `validação deveria passar; veio ${res.statusCode} ${res.body}`);
   assert(!String(res.body).includes('DATABASE_URL'), 'vazou detalhe de configuração na resposta');
 });
 

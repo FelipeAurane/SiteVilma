@@ -46,7 +46,7 @@
 }
 
 html {
-  /* A rolagem continua funcionando; só a barra some. */
+  /* A rolagem continua funcionando; só a barra some no mobile */
   scrollbar-width: none;
   -ms-overflow-style: none;
   scroll-behavior: smooth;
@@ -57,6 +57,37 @@ body::-webkit-scrollbar {
   width: 0;
   height: 0;
   display: none;
+}
+
+/* Barra de rolagem discreta e fina na versão web ("apenas a barrinha") */
+@media (min-width: 900px) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(224, 171, 171, 0.45) transparent;
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    display: block;
+  }
+
+  html::-webkit-scrollbar-track,
+  body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  html::-webkit-scrollbar-thumb,
+  body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+  }
+
+  html::-webkit-scrollbar-thumb:hover,
+  body::-webkit-scrollbar-thumb:hover {
+    background: var(--rosa, #e0abab);
+  }
 }
 
 body {
@@ -165,17 +196,22 @@ button {
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--gutter);
+  background: rgba(14, 14, 16, 0.65);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);
   transition: background var(--transicao), backdrop-filter var(--transicao),
-              border-color var(--transicao);
-  border-bottom: 1px solid transparent;
+              border-color var(--transicao), box-shadow var(--transicao);
 }
 
-/* Ganha fundo depois que o hero sai da tela. */
+/* Ganha fundo ainda mais denso e desfoque acentuado ao rolar */
 .cabecalho.rolado {
-  background: var(--preto-vidro);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom-color: var(--borda-clara);
+  background: rgba(10, 10, 12, 0.85);
+  backdrop-filter: blur(22px) saturate(190%);
+  -webkit-backdrop-filter: blur(22px) saturate(190%);
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .marca {
@@ -372,6 +408,8 @@ button {
   object-position: center 30%;
 }
 
+/* Grade Pinterest de fotos do portfólio */
+
 /* Escurece o pé da foto para o texto ter contraste. */
 /*
  * O texto fica sobre a foto, então o pé precisa ficar bem escuro — sem
@@ -468,25 +506,24 @@ button {
 }
 
 /*
- * Indicador de rolagem.
- *
- * Era a palavra "SCROLL", que não diz nada para quem não é da área. Agora é
- * uma seta que desce sozinha mais o nome do que tem logo abaixo — a pessoa
- * entende para onde ir sem precisar saber o termo.
+ * Indicador de rolagem:
+ * Bolinha de scroll animada dentro da barrinha (apenas a barrinha, sem rótulos ou setas)
  */
 .scroll-down {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 26px;
-  z-index: 2;
+  bottom: 24px;
+  z-index: 20;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
   color: var(--branco);
-  transition: opacity var(--transicao), visibility var(--transicao);
+  transition: opacity var(--transicao), visibility var(--transicao), transform var(--transicao);
 }
 
 .scroll-down.hidden {
@@ -495,40 +532,63 @@ button {
   pointer-events: none;
 }
 
-.scroll-seta {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border: 1px solid var(--borda-clara);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, .06);
+/* Apenas a barrinha elegante estilo cápsula */
+.scroll-barrinha {
+  display: block;
+  position: relative;
+  width: 22px;
+  height: 36px;
+  border: 2px solid rgba(255, 255, 255, 0.65);
+  border-radius: 13px;
+  box-sizing: border-box;
+  background: rgba(14, 14, 18, 0.4);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  animation: pula 1.9s ease-in-out infinite;
-  transition: background var(--transicao), border-color var(--transicao);
+  transition: border-color var(--transicao), box-shadow var(--transicao), transform var(--transicao);
 }
 
-.scroll-seta svg {
-  width: 19px;
-  height: 19px;
+/* A bolinha de scroll animada */
+.scroll-bolinha {
+  display: block;
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 7px;
+  background: var(--rosa-ouro, #e0abab);
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(224, 171, 171, 0.9);
+  animation: rolarBolinha 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 
-.scroll-down:hover .scroll-seta {
-  background: rgba(255, 255, 255, .16);
-  border-color: rgba(255, 255, 255, .34);
+@keyframes rolarBolinha {
+  0% {
+    top: 6px;
+    opacity: 1;
+    transform: translateX(-50%) scaleY(1);
+  }
+  40% {
+    top: 16px;
+    opacity: 0.95;
+    transform: translateX(-50%) scaleY(1.3);
+  }
+  75% {
+    top: 21px;
+    opacity: 0;
+    transform: translateX(-50%) scaleY(0.7);
+  }
+  100% {
+    top: 6px;
+    opacity: 0;
+    transform: translateX(-50%) scaleY(1);
+  }
 }
 
-.scroll-rotulo {
-  font-size: 10.5px;
-  font-weight: 300;
-  letter-spacing: .06em;
-  color: var(--texto-sobre-escuro);
-}
-
-@keyframes pula {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(6px); }
+.scroll-down:hover .scroll-barrinha {
+  border-color: var(--rosa, #e0abab);
+  box-shadow: 0 0 16px rgba(224, 171, 171, 0.55);
+  transform: translateY(2px);
 }
 
 /* --------------------------------------------------------- portfólio */
@@ -807,72 +867,942 @@ footer p {
   .marca-tipo { font-size: 8px; }
 
   /*
-   * Hero partido: informação na coluna da esquerda, mídia só na direita.
-   * No celular a mídia continua sendo o fundo da tela inteira.
+   * No desktop / versão web:
+   * Remove o bloco de texto e botão, deixando APENAS a grade estilo Pinterest
+   * preenchendo toda a primeira section (#hero).
+   * A section tem altura estendida (180vh) com mídia sticky para permitir o efeito
+   * de scroll animado onde a grade desliza para a próxima section organizando-se em 3 colunas.
    */
-  #hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.06fr);
-    align-items: stretch;
+  /*
+   * ==========================================================================
+   * SEÇÃO ÚNICA UNIFICADA (DIV 1 = SECTION 1 / DIV 2 = SECTION 2)
+   * Animação Scroll Storytelling estilo TikTok Ads:
+   * - Início (scroll 0): Imagem central preenche a tela com texto e botão hero.
+   * - Ao rolar: Texto desaparece, imagem central encolhe para um cartão com cantos
+   *   arredondados no centro.
+   * - Em seguida: Imagens periféricas emergem flutuando pelos lados em 3 colunas.
+   * - Final: Organização perfeita em 3 colunas conectando à Div 2 (Portfólio).
+   * ==========================================================================
+   */
+  #hero,
+  section#hero,
+  div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1),
+  .hero-section,
+  .hero-unified-section {
+    display: block;
+    width: 100%;
+    height: 100vh;
+    min-height: 100vh;
+    position: relative;
+    background: transparent;
+    overflow: visible;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* DIV 1: FUNCIONA COMO SECTION 1 */
+  #hero-stage-1,
+  .section-stage.stage-1 {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: visible;
+    background: transparent;
+    z-index: 1;
+  }
+
+  /* Focus Mode Selector: Imagem única do hero substituída no desktop pela grade estilo Pinterest */
+  div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > img#hero-image:nth-of-type(1),
+  #hero-midia > #hero-image {
+    display: none !important;
+  }
+
+  #hero-midia > video {
+    display: block !important;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
   }
 
   .hero-midia {
     position: relative;
-    inset: auto;
-    grid-column: 2;
-    grid-row: 1;
+    width: 100%;
+    height: 100vh;
+    overflow: visible;
+    background: transparent;
+    z-index: 1;
+  }
+
+  /* Focus Mode Selector: Grade do hero compõe a tela inteira com fotos e animação oposta contínua */
+  div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#hero-pinterest-grid:nth-of-type(1),
+  #hero-pinterest-grid,
+  .hero-pinterest-grid {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    z-index: 2;
+    pointer-events: none !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 0.95fr) minmax(0, 1.45fr) minmax(0, 0.95fr) minmax(0, 0.95fr);
+    gap: clamp(14px, 1.6vw, 20px);
+    padding: 0 clamp(16px, 2.5vw, 36px);
+    box-sizing: border-box;
+    align-items: start;
+    margin: 0 !important;
+    overflow: visible !important;
+    will-change: transform, max-width, padding;
+    transition: max-width 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                padding 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                gap 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (max-width: 1100px) {
+    div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#hero-pinterest-grid:nth-of-type(1),
+    #hero-pinterest-grid,
+    .hero-pinterest-grid {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 0.9fr) minmax(0, 1.4fr) minmax(0, 0.9fr);
+      gap: 12px;
+      padding: 0 10px 10px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#hero-pinterest-grid:nth-of-type(1),
+    #hero-pinterest-grid,
+    .hero-pinterest-grid {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr) minmax(0, 0.9fr);
+      gap: 8px;
+      padding: 0 6px 8px;
+    }
+  }
+
+  /* Colunas do grid com movimento contínuo oposto entre si quando paradas sem scroll */
+  .pinterest-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
     height: 100%;
+    justify-content: center;
+    will-change: transform;
+    transition: opacity 0.4s ease, transform 0.55s cubic-bezier(0.25, 1, 0.5, 1), gap 0.55s ease, margin 0.55s ease;
   }
 
-  /*
-   * 28% em vez de "center": a foto atual é retrato e, centralizada, o corte
-   * cai no torso. Serve bem também para foto ou vídeo panorâmico.
-   */
-  .hero-midia img,
-  .hero-midia video {
-    object-position: center 28%;
+  /* Fileira central onde fica o vídeo / imagem principal: FIXA no topo sem espaço vazio acima */
+  div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#hero-pinterest-grid:nth-of-type(1) > div#pinterest-col-center:nth-of-type(3),
+  #pinterest-col-center,
+  .pinterest-col.col-center,
+  .hero-pinterest-grid > .pinterest-col:nth-child(3) {
+    animation: none !important;
+    z-index: 6;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    gap: 14px !important;
+    height: 100% !important;
+    margin: -45px 0 0 0 !important;
+    padding: 0 !important;
+    transform-origin: center center;
+    overflow: visible;
+    min-width: 0;
+    will-change: transform, opacity, filter;
   }
 
-  /* Transição mais seca e degradê no topo para proteger os elementos flutuantes (como o botão) */
+  /* ==========================================================================
+     TRANSIÇÃO PARA A SECTION 2 (.section-2-active):
+     - Disposição refinada e perfeitamente equilibrada para o Portfólio
+     - Cabeçalho do Portfólio com respiro generoso e sem sobreposição
+     - Cada elemento do portfólio tem FORMATO QUADRADO rigoroso (aspect-ratio: 1/1)
+     - Cartões inferiores que ficavam escondidos/cortados no gradiente são removidos (exibindo 3 linhas x 4 colunas = 12 cards perfeitamente enquadrados)
+     - O gradiente preto inferior do hero é desativado na Section 2 para eliminar qualquer obstrução
+     - Cada item da galeria exibe de forma destacada e nítida o NOME DA GALERIA
+     ========================================================================== */
+
+  /* Focus Mode: Elemento selecionado (.portfolio-header-content) fixado/alinhado diretamente à borda esquerda */
+  div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#portfolio-header-bar:nth-of-type(1) > div:nth-of-type(1),
+  div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#portfolio-header-bar:nth-of-type(2) > div:nth-of-type(1),
+  .portfolio-header-content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+    justify-content: flex-start !important;
+    gap: 3px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Cabeçalho do Portfólio que aparece no topo da view quando a Section 2 é ativada: alinhado à borda esquerda */
+  div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#portfolio-header-bar:nth-of-type(1),
+  div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#portfolio-header-bar:nth-of-type(2),
+  #portfolio-header-bar,
+  .portfolio-header-bar {
+    position: fixed;
+    top: calc(var(--cabecalho-altura, 82px) + clamp(8px, 1.4vh, 18px));
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding-left: clamp(14px, 1.8vw, 24px) !important;
+    padding-right: clamp(14px, 1.8vw, 24px) !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    box-sizing: border-box;
+    z-index: 15;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-12px);
+    transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+  }
+
+  body.section-2-active div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#portfolio-header-bar:nth-of-type(1),
+  body.section-2-active div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#portfolio-header-bar:nth-of-type(2),
+  body.section-2-active #portfolio-header-bar,
+  body.section-2-active .portfolio-header-bar,
+  #portfolio-header-bar.section-2-active,
+  .portfolio-header-bar.section-2-active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateY(0) !important;
+    visibility: visible !important;
+  }
+
+  /* Sem a barra de marcação (pill/badge), apenas os textos */
+  .portfolio-header-bar .portfolio-tag {
+    display: block !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    color: var(--rosa-ouro) !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.16em !important;
+    text-transform: uppercase !important;
+    margin-bottom: 2px !important;
+    text-align: left !important;
+  }
+
+  .portfolio-header-bar .title-cardapio {
+    color: var(--branco);
+    font-family: var(--fonte-serifa, serif);
+    font-size: clamp(24px, 2.6vw, 34px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+    margin: 0 0 2px 0;
+    text-align: left !important;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.95);
+  }
+
+  .portfolio-header-bar .banner-title {
+    color: var(--texto-sobre-escuro, rgba(255, 255, 255, 0.78));
+    font-size: clamp(12px, 1.15vw, 14px);
+    font-weight: 400;
+    margin: 0;
+    text-align: left !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+    max-width: 480px;
+    line-height: 1.35;
+  }
+
+  /* Desativa o gradiente/véu inferior escurecido na Section 2 para não cobrir nenhum card */
+  body.section-2-active .hero-veu {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* Na Section 2, a grade se torna interativa e organiza-se estritamente em 4 colunas uniformes sem espaço no meio */
+  .hero-pinterest-grid.section-2-active,
+  body.section-2-active .hero-pinterest-grid {
+    pointer-events: auto !important;
+    z-index: 5 !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: clamp(14px, 1.6vw, 20px) !important;
+    padding-left: clamp(16px, 2.5vw, 36px) !important;
+    padding-right: clamp(16px, 2.5vw, 36px) !important;
+    align-items: start !important;
+  }
+
+  .hero-pinterest-grid.section-2-active *,
+  body.section-2-active .hero-pinterest-grid * {
+    pointer-events: auto !important;
+  }
+
+  /* Coluna central do hero fica 100% oculta e sem margem na Section 2 */
+  .hero-pinterest-grid.section-2-active #pinterest-col-center,
+  body.section-2-active #pinterest-col-center {
+    display: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Na grade do portfólio, as colunas desativam a animação ociosa flutuante para foco na navegação */
+  .hero-pinterest-grid.section-2-active .pinterest-col,
+  body.section-2-active .hero-pinterest-grid .pinterest-col {
+    animation: none !important;
+    gap: clamp(14px, 1.6vw, 20px) !important;
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+    height: auto !important;
+  }
+
+  /* No Portfólio (Section 2): sem bordas dos cards, como imagem comum, respeitando o tamanho real */
+  .hero-pinterest-grid.section-2-active .pinterest-card,
+  body.section-2-active .hero-pinterest-grid .pinterest-card {
+    border: none !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    position: relative !important;
+    overflow: hidden !important;
+    display: block !important;
+    height: auto !important;
+    min-height: unset !important;
+    aspect-ratio: unset !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease !important;
+  }
+
+  .hero-pinterest-grid.section-2-active .pinterest-card.card-tall,
+  .hero-pinterest-grid.section-2-active .pinterest-card.card-standard,
+  .hero-pinterest-grid.section-2-active .pinterest-card.card-square,
+  body.section-2-active .hero-pinterest-grid .pinterest-card.card-tall,
+  body.section-2-active .hero-pinterest-grid .pinterest-card.card-standard,
+  body.section-2-active .hero-pinterest-grid .pinterest-card.card-square {
+    height: auto !important;
+    min-height: unset !important;
+    aspect-ratio: unset !important;
+  }
+
+  .hero-pinterest-grid.section-2-active .pinterest-card img,
+  body.section-2-active .hero-pinterest-grid .pinterest-card img {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    border-radius: 8px !important;
+    object-fit: contain !important;
+    max-width: 100% !important;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease !important;
+  }
+
+  /* Gradiente suave na base de cada foto para contraste impecável das legendas */
+  .hero-pinterest-grid.section-2-active .pinterest-card::after,
+  body.section-2-active .hero-pinterest-grid .pinterest-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.22) 32%, transparent 62%);
+    border-radius: inherit;
+    z-index: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  /* NOME DA GALERIA: SEM CARD/BADGE CENTRALIZADO, POSICIONADO DIRETAMENTE NO CANTO INFERIOR ESQUERDO */
+  .hero-pinterest-grid.section-2-active .pinterest-badge,
+  body.section-2-active .hero-pinterest-grid .pinterest-badge {
+    position: absolute !important;
+    bottom: clamp(10px, 1.2vw, 16px) !important;
+    left: clamp(12px, 1.3vw, 18px) !important;
+    right: auto !important;
+    opacity: 1 !important;
+    transform: none !important;
+    z-index: 2 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    color: #ffffff !important;
+    font-size: clamp(11.5px, 0.98vw, 14px) !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    text-align: left !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95), 0 1px 3px rgba(0, 0, 0, 1) !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
+    pointer-events: none !important;
+    transition: color 0.3s ease, text-shadow 0.3s ease, transform 0.3s ease !important;
+  }
+
+  /* Hover elegante na Grade Convencional sem bordas */
+  .hero-pinterest-grid.section-2-active .pinterest-card:hover,
+  body.section-2-active .hero-pinterest-grid .pinterest-card:hover {
+    transform: translateY(-4px) scale(1.02) !important;
+    border: none !important;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55) !important;
+    z-index: 10;
+  }
+
+  .hero-pinterest-grid.section-2-active .pinterest-card:hover img,
+  body.section-2-active .hero-pinterest-grid .pinterest-card:hover img {
+    transform: scale(1.06);
+    filter: brightness(1.08);
+  }
+
+  /* Hover elegante: o texto do nome ganha destaque sutil em tom rosa sem criar caixa */
+  .hero-pinterest-grid.section-2-active .pinterest-card:hover .pinterest-badge,
+  body.section-2-active .hero-pinterest-grid .pinterest-card:hover .pinterest-badge {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: var(--rosa, #e0abab) !important;
+    text-shadow: 0 0 14px rgba(224, 171, 171, 0.8), 0 2px 8px rgba(0, 0, 0, 0.95) !important;
+    transform: translateX(3px) !important;
+  }
+
+  /* BOTÃO/LINK "VER MAIS" NO CANTO INFERIOR DIREITO DE CADA CARD DO PORTFÓLIO */
+  .card-ver-mais {
+    position: absolute !important;
+    bottom: clamp(10px, 1.2vw, 15px) !important;
+    right: clamp(10px, 1.2vw, 15px) !important;
+    left: auto !important;
+    z-index: 3 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    font-size: clamp(10.5px, 0.88vw, 12px) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.04em !important;
+    color: #ffffff !important;
+    background: rgba(14, 14, 18, 0.72) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    padding: 4px 10px !important;
+    border-radius: 999px !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    text-decoration: none !important;
+    line-height: 1.2 !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55) !important;
+  }
+
+  /* Na Section 1, oculta o 'Ver mais' para não poluir o hero inicial de repouso */
+  .hero-pinterest-grid:not(.section-2-active) .card-ver-mais {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+  }
+
+  .hero-pinterest-grid.section-2-active .card-ver-mais,
+  body.section-2-active .hero-pinterest-grid .card-ver-mais {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .hero-pinterest-grid.section-2-active .pinterest-card:hover .card-ver-mais,
+  body.section-2-active .hero-pinterest-grid .pinterest-card:hover .card-ver-mais,
+  .card-ver-mais:hover {
+    background: var(--rosa, #e0abab) !important;
+    color: #121216 !important;
+    border-color: var(--rosa, #e0abab) !important;
+    box-shadow: 0 4px 16px rgba(224, 171, 171, 0.55) !important;
+    transform: translateX(2px) !important;
+  }
+
+  /* Ajustes responsivos da grade convencional em telas com menor altura */
+  @media (max-height: 750px) {
+    .portfolio-header-bar {
+      top: calc(var(--cabecalho-altura, 68px) + 6px) !important;
+    }
+    .portfolio-header-bar .title-cardapio {
+      font-size: 22px !important;
+    }
+    .portfolio-header-bar .banner-title {
+      font-size: 11.5px !important;
+    }
+    .hero-pinterest-grid.section-2-active,
+    body.section-2-active .hero-pinterest-grid {
+      gap: 10px !important;
+      padding-top: clamp(148px, 19.5vh, 168px) !important;
+      padding-bottom: 12px !important;
+    }
+    .hero-pinterest-grid.section-2-active .pinterest-col,
+    body.section-2-active .hero-pinterest-grid .pinterest-col {
+      gap: 10px !important;
+    }
+    .hero-pinterest-grid.section-2-active .pinterest-card,
+    body.section-2-active .hero-pinterest-grid .pinterest-card,
+    .hero-pinterest-grid.section-2-active .pinterest-card.card-tall,
+    .hero-pinterest-grid.section-2-active .pinterest-card.card-standard,
+    .hero-pinterest-grid.section-2-active .pinterest-card.card-square {
+      border-radius: 12px !important;
+    }
+  }
+
+  @media (min-height: 850px) {
+    .portfolio-header-bar {
+      top: calc(var(--cabecalho-altura, 82px) + 16px) !important;
+    }
+    .hero-pinterest-grid.section-2-active,
+    body.section-2-active .hero-pinterest-grid {
+      gap: 16px !important;
+      padding-top: clamp(195px, 22.5vh, 225px) !important;
+      padding-bottom: 20px !important;
+    }
+    .hero-pinterest-grid.section-2-active .pinterest-col,
+    body.section-2-active .hero-pinterest-grid .pinterest-col {
+      gap: 16px !important;
+    }
+  }
+
+  /* Animações contínuas suaves e lentas quando parados sem scroll */
+  @keyframes floatOppositeColUp {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -30px, 0);
+    }
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes floatOppositeColDown {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, 30px, 0);
+    }
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  /* Colunas laterais movem-se em sentidos opostos de forma suave e lenta (coluna central não é animada) */
+  .pinterest-col.col-odd:not(.col-center),
+  .pinterest-col:nth-child(1),
+  .pinterest-col:nth-child(5) {
+    animation: floatOppositeColUp 18s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  }
+
+  .pinterest-col.col-even,
+  .pinterest-col:nth-child(2),
+  .pinterest-col:nth-child(4) {
+    animation: floatOppositeColDown 18s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  }
+
+  /* Interrupção da animação ao rolar a página ou no hover dos elementos */
+  div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#hero-pinterest-grid:nth-of-type(1).scroll-interrupted .pinterest-col,
+  div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#hero-pinterest-grid:nth-of-type(1).is-scrolling .pinterest-col,
+  .hero-pinterest-grid.scroll-interrupted .pinterest-col,
+  .hero-pinterest-grid.is-scrolling .pinterest-col,
+  body.is-scrolled .hero-pinterest-grid .pinterest-col,
+  body.is-scrolling .hero-pinterest-grid .pinterest-col,
+  .pinterest-col:hover {
+    animation-play-state: paused !important;
+  }
+
+  /* Cartões estilo Pinterest na primeira section - Não clicáveis na Section 1 */
+  .pinterest-card {
+    position: relative;
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--preto-suave);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65);
+    will-change: transform, box-shadow, height;
+    pointer-events: none !important;
+    cursor: default !important;
+    user-select: none !important;
+    transition: height 0.65s cubic-bezier(0.25, 1, 0.5, 1),
+                transform 0.4s ease,
+                border-radius 0.5s ease,
+                box-shadow 0.4s ease,
+                border-color 0.4s ease;
+  }
+
+  #hero-pinterest-grid * {
+    pointer-events: none !important;
+    cursor: default !important;
+    user-select: none !important;
+  }
+
+  /* Imagens respeitam os detalhes sem perda ou distorções */
+  .pinterest-card img,
+  .pinterest-card video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Variações de altura pequenas e sutis para preservar a fidelidade e enquadramento das imagens */
+  .pinterest-card.card-tall { height: 230px; }
+  .pinterest-card.card-standard { height: 190px; }
+  .pinterest-card.card-square { height: 160px; }
+
+  /* Elemento de imagem acima do vídeo no topo da coluna central */
+  .pinterest-card.card-center-top,
+  #pinterest-card-top {
+    display: block !important;
+    height: clamp(90px, 13vh, 140px) !important;
+    min-height: 75px;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 22px;
+    overflow: hidden;
+    flex-shrink: 0;
+    z-index: 5;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7);
+    align-self: stretch !important;
+  }
+
+  /* Elemento do vídeo na coluna central: Preenche totalmente a largura da coluna (sem espaço vazio nas laterais) e ampliado na vertical */
+  .pinterest-card.card-main-hero,
+  #hero-featured-card {
+    height: clamp(620px, 86vh, 980px) !important;
+    min-height: 540px;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    z-index: 6;
+    transform-origin: center center;
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 28px 85px rgba(0, 0, 0, 0.92);
+    align-self: stretch !important;
+    flex-shrink: 0;
+  }
+
+  /* Em telas menores ou notebooks com menor altura de tela */
+  @media (max-height: 750px) {
+    div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#hero-pinterest-grid:nth-of-type(1) > div#pinterest-col-center:nth-of-type(3),
+    #pinterest-col-center,
+    .pinterest-col.col-center,
+    .hero-pinterest-grid > .pinterest-col:nth-child(3) {
+      margin-top: -30px !important;
+    }
+    .pinterest-card.card-center-top,
+    #pinterest-card-top {
+      height: clamp(80px, 11vh, 110px) !important;
+      min-height: 70px;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+    }
+    .pinterest-card.card-main-hero,
+    #hero-featured-card {
+      height: clamp(540px, 88vh, 680px) !important;
+      min-height: 500px;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+    }
+    #scroll-down-btn,
+    section#hero > button#scroll-down-btn {
+      bottom: 12px;
+    }
+  }
+
+  @media (min-height: 850px) {
+    div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#hero-pinterest-grid:nth-of-type(1) > div#pinterest-col-center:nth-of-type(3),
+    #pinterest-col-center,
+    .pinterest-col.col-center,
+    .hero-pinterest-grid > .pinterest-col:nth-child(3) {
+      margin-top: -50px !important;
+    }
+    .pinterest-card.card-tall { height: 250px; }
+    .pinterest-card.card-standard { height: 210px; }
+    .pinterest-card.card-square { height: 175px; }
+    .pinterest-card.card-center-top,
+    #pinterest-card-top {
+      height: clamp(110px, 14vh, 160px) !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+    }
+    .pinterest-card.card-main-hero,
+    #hero-featured-card {
+      height: clamp(700px, 88vh, 1080px) !important;
+      min-height: 640px;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+    }
+  }
+
+  /* Remove apenas o cartão inferior extra do centro */
+  #pinterest-card-bottom,
+  .card-center-bottom {
+    display: none !important;
+  }
+
+  .pinterest-center-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(14, 14, 16, 0.3) 0%, rgba(14, 14, 16, 0.05) 40%, rgba(14, 14, 16, 0.45) 100%);
+    pointer-events: none;
+  }
+
+  /* Focus Mode Selector 1: Remove o bloco de conteúdo textual do hero a pedido do usuário */
+  div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-conteudo:nth-of-type(2),
+  #hero-conteudo,
+  .hero-conteudo,
+  section#hero > div:nth-of-type(2) {
+    display: none !important;
+  }
+
+  .hero-conteudo .hero-etiqueta {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rosa-ouro);
+    margin-bottom: 14px;
+    background: rgba(14, 14, 16, 0.7);
+    padding: 7px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(224, 171, 171, 0.35);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .hero-conteudo .title-name {
+    font-size: clamp(40px, 6vw, 74px);
+    font-family: var(--fonte-serifa, serif);
+    font-weight: 700;
+    color: var(--branco);
+    margin: 0 0 16px;
+    line-height: 1.06;
+    text-shadow: 0 4px 28px rgba(0, 0, 0, 0.9);
+  }
+
+  .hero-conteudo .subtitle {
+    font-size: clamp(16px, 1.9vw, 22px);
+    color: rgba(255, 255, 255, 0.92);
+    margin: 0 0 30px;
+    line-height: 1.5;
+    max-width: 620px;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.9);
+  }
+
+  .hero-conteudo .btn-orcamento {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #e62b4a;
+    color: var(--branco);
+    padding: 14px 32px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 12px 30px rgba(230, 43, 74, 0.45);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  }
+
+  .hero-conteudo .btn-orcamento:hover {
+    background: #d6203f;
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 16px 36px rgba(230, 43, 74, 0.6);
+  }
+
+  .hero-conteudo .btn-orcamento svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Botão scroll down para navegar diretamente */
+  #scroll-down-btn,
+  section#hero > button#scroll-down-btn {
+    display: flex !important;
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    will-change: opacity;
+  }
+
+  /* Badge discreto em cada foto */
+  .pinterest-badge {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    padding: 5px 12px;
+    font-size: 10.5px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--branco);
+    background: rgba(14, 14, 16, 0.78);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 20px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+  }
+
+  .story-card:hover .pinterest-badge,
+  .pinterest-card:hover .pinterest-badge {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Véu suave do hero fixo para realçar as cores e iluminação da grade Pinterest */
   .hero-veu {
-    background: 
-      linear-gradient(to right, var(--preto) 0%, rgba(14, 14, 16, .15) 6%, transparent 15%),
-      linear-gradient(to bottom, rgba(14, 14, 16, .6) 0%, transparent 18%);
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background: linear-gradient(to bottom, rgba(14, 14, 16, 0.4) 0%, rgba(14, 14, 16, 0.05) 20%, rgba(14, 14, 16, 0.05) 75%, var(--preto) 100%);
   }
 
-  .hero-conteudo {
-    grid-column: 1;
-    grid-row: 1;
-    align-self: center;
-    text-align: left;
-    padding: 0 clamp(30px, 4vw, 64px) 0
-             max(var(--gutter), calc((100vw - var(--largura-maxima)) / 2 + var(--gutter)));
+  /* Selector 1 do focus-mode: Imagem ou vídeo central do hero na grade Pinterest */
+  div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#hero-pinterest-grid:nth-of-type(1) > div#pinterest-col-center:nth-of-type(3) > div#hero-featured-card:nth-of-type(2) > img#hero-center-img:nth-of-type(1),
+  div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#hero-pinterest-grid:nth-of-type(1) > div#pinterest-col-center:nth-of-type(3) > div#hero-featured-card:nth-of-type(2) > video#hero-center-video:nth-of-type(1),
+  #hero-center-img,
+  #hero-center-video,
+  .hero-center-media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    border-radius: inherit;
+    pointer-events: none !important;
+    user-select: none !important;
+    transition: transform 0.4s ease;
+    will-change: transform;
   }
 
-  .hero-etiqueta { font-size: 10.5px; margin-bottom: 18px; }
-  .title-name { font-size: clamp(46px, 4.4vw, 68px); margin-bottom: 18px; }
-
-  .subtitle {
-    font-size: 15.5px;
-    max-width: 32ch;
-    margin: 0 0 34px;
+  /* Focus Mode Selector 1: Section 2 vazia para a div da Section 1 ficar fixa sobreposta a ela */
+  div#mainContent:nth-of-type(2) > section#next-section:nth-of-type(2),
+  #next-section,
+  .next-section,
+  .section-stage.stage-2,
+  section#next-section,
+  .portfolio-animated-section {
+    display: block;
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    background: transparent;
+    pointer-events: none;
+    border: none;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
   }
 
-  .view-buttons { justify-content: flex-start; }
-
-  .scroll-down {
-    left: max(var(--gutter), calc((100vw - var(--largura-maxima)) / 2 + var(--gutter)));
-    transform: none;
-    bottom: 38px;
-    align-items: flex-start;
-    padding-left: 0;
+  /* Sobre a Vilma e Rodapé: Deslizam suavemente sobre a grade fixa */
+  .sobre-section,
+  #sobre,
+  footer {
+    position: relative;
+    z-index: 10;
+    background: var(--preto);
   }
 
-  /* Portfólio em três colunas. */
-  .next-section { padding: 88px 0 96px; }
+  .sobre-section {
+    box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.95);
+    padding-top: clamp(100px, 14vh, 160px) !important;
+  }
+
+  .portfolio-story-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 1340px;
+    margin: 0 auto;
+  }
+
+  .secao-cabeca-portfolio {
+    padding: 0 40px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .secao-cabeca-portfolio .title-cardapio {
+    color: var(--branco);
+    font-family: var(--fonte-serifa, serif);
+    font-size: 38px;
+    margin-bottom: 6px;
+  }
+
+  .secao-cabeca-portfolio #banner-title {
+    color: var(--texto-sobre-escuro);
+    font-size: 16px;
+    margin: 0;
+  }
+
+  .secao-cabeca-portfolio .secao-link {
+    color: var(--rosa);
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .secao-cabeca-portfolio .secao-link:hover {
+    color: var(--rosa-ouro);
+    transform: translateX(4px);
+  }
+
+  /* Faixa do portfólio dentro da Div 2 */
+  div#mainContent:nth-of-type(2) > section#next-section:nth-of-type(2) > div:nth-of-type(2),
+  section#next-section > .faixa,
+  #next-section > .faixa {
+    position: relative;
+    z-index: 2;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease-out;
+    will-change: transform, opacity;
+  }
+
   .secao-cabeca { margin-bottom: 38px; }
   .cardapio-container { grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .cardapio-content { aspect-ratio: 4 / 2.9; border-radius: 12px; }
+  .cardapio-content {
+    aspect-ratio: 4 / 2.9;
+    border-radius: 12px;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+    will-change: transform;
+  }
   .cartao-rodape { padding: 16px 18px; }
   .cartao-nome { font-size: 15px; }
   .cartao-sub { font-size: 11px; }
@@ -895,4 +1825,192 @@ footer p {
 
 @media (min-width: 1400px) {
   .title-name { font-size: 84px; }
+}
+
+/* ==========================================================================
+   VERSÃO MOBILE: GRADE DE PORTFÓLIO VISÍVEL E COMPLETA (< 900px)
+   ========================================================================== */
+@media (max-width: 899px) {
+  /* Section 2 (Portfólio) no mobile tem fluxo natural para comportar todos os cartões com margem antes da section 3 */
+  div#mainContent:nth-of-type(2) > section#next-section:nth-of-type(2),
+  #next-section,
+  .next-section,
+  .section-stage.stage-2,
+  .portfolio-animated-section {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    padding: 72px 14px 100px !important;
+    box-sizing: border-box !important;
+    pointer-events: auto !important;
+    background: var(--preto) !important;
+    z-index: 2 !important;
+  }
+
+  /* Cabeçalho do Portfólio no topo da Section 2 no mobile: fixado na esquerda e sem barra de marcação */
+  .portfolio-header-bar {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    padding: 0 8px 20px 8px !important;
+    box-sizing: border-box !important;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+  }
+
+  .portfolio-header-content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+    justify-content: flex-start !important;
+    gap: 3px !important;
+  }
+
+  .portfolio-header-bar .portfolio-tag {
+    font-size: 11px !important;
+    letter-spacing: 0.16em !important;
+    text-transform: uppercase !important;
+    color: var(--rosa-ouro) !important;
+    display: block !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin-bottom: 2px !important;
+    text-align: left !important;
+  }
+
+  .portfolio-header-bar .title-cardapio {
+    color: var(--branco) !important;
+    font-family: var(--fonte-serifa, serif) !important;
+    font-size: clamp(24px, 6.5vw, 32px) !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+    line-height: 1.15 !important;
+  }
+
+  .portfolio-header-bar .banner-title {
+    color: var(--texto-sobre-escuro, rgba(255, 255, 255, 0.75)) !important;
+    font-size: 13px !important;
+    margin: 0 !important;
+    line-height: 1.4 !important;
+    max-width: 320px !important;
+  }
+
+  /* Grade de portfólio visível no celular com 2 colunas */
+  #hero-pinterest-grid,
+  .hero-pinterest-grid {
+    display: grid !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    pointer-events: auto !important;
+    overflow: visible !important;
+    background: transparent !important;
+  }
+
+  /* Coluna central do hero fica oculta na grade do portfólio no mobile para layout limpo de 2 colunas */
+  #pinterest-col-center {
+    display: none !important;
+  }
+
+  /* Colunas verticais agrupam os cartões com espaçamento uniforme */
+  .pinterest-col {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    animation: none !important;
+    transform: none !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Cartões no celular sem bordas e respeitando o tamanho real da imagem */
+  .pinterest-card {
+    display: block !important;
+    width: 100% !important;
+    aspect-ratio: unset !important;
+    height: auto !important;
+    min-height: 0 !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    overflow: hidden !important;
+    position: relative !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    margin: 0 !important;
+  }
+
+  .pinterest-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(to top, rgba(10, 10, 12, 0.78) 0%, rgba(10, 10, 12, 0.22) 35%, transparent 65%);
+    border-radius: inherit;
+    z-index: 1;
+  }
+
+  .pinterest-card img,
+  .pinterest-card video {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    display: block !important;
+    border-radius: 8px !important;
+    max-width: 100% !important;
+  }
+
+  /* Nome de cada galeria posicionado no canto inferior esquerdo sem card ou caixa */
+  .pinterest-badge {
+    opacity: 1 !important;
+    transform: none !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    position: absolute !important;
+    bottom: 10px !important;
+    left: 10px !important;
+    right: auto !important;
+    text-align: left !important;
+    z-index: 2 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
+    color: #ffffff !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95), 0 1px 3px rgba(0, 0, 0, 1) !important;
+    box-shadow: none !important;
+  }
 }

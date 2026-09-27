@@ -1,63 +1,25 @@
 {
-<<<<<<< HEAD
   "name": "vilmafotografia",
   "version": "2.0.0",
   "private": true,
   "main": "main.js",
   "scripts": {
+    "dev": "node main.js",
     "start": "node main.js",
+    "build": "echo 'Build complete'",
     "hash": "node scripts/gerar-hash-senha.js",
     "secret": "node scripts/gerar-session-secret.js",
     "verificar": "node scripts/verificar.js",
     "semear": "node scripts/semear.js",
-    "test": "node tests/autorizacao.test.js && node tests/fluxo.test.js",
-    "icones": "node scripts/gerar-icones.js --android",
-    "app:sync": "npx cap sync android",
-    "app:build": "node scripts/build-app.js",
-    "app:instalar": "node scripts/instalar-app.js"
+    "test": "node tests/autorizacao.test.js && node tests/fluxo.test.js"
   },
   "dependencies": {
-    "@capgo/capacitor-native-biometric": "^8.6.11",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "pg": "^8.13.1"
-  },
-  "devDependencies": {
-    "@capacitor/android": "^8.5.2",
-    "@capacitor/cli": "^8.5.2",
-    "@capacitor/core": "^8.5.2",
-    "dotenv": "^16.6.1"
   },
   "engines": {
     "node": ">=20"
   },
   "license": "ISC"
-=======
-  "name": "site-vilma-fotografia",
-  "version": "1.0.0",
-  "description": "Um projeto simples usando Express e Firebase",
-  "main": "main.js",
-  "scripts": {
-    "start": "node main.js",
-    "test": "echo \"Erro: nenhum teste especificado\" && exit 1",
-    "build": "node main.js"
-  },
-  "keywords": [
-    "express",
-    "firebase",
-    "web",
-    "server"
-  ],
-  "author": "Felipe Henrique Da Silva",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.19.2",
-    "express-device": "^0.4.2",
-    "firebase": "^10.10.0",
-    "serve-static": "^1.15.0"
-  },
-  "devDependencies": {
-    "webpack": "^5.91.0",
-    "webpack-cli": "^5.1.4"
-  }
->>>>>>> ba2b8d0eeb44a6e511850429271e9d679029bef9
 }

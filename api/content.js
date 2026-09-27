@@ -21,7 +21,7 @@ const MAX_DOCUMENT_BYTES = 512 * 1024;
 
 module.exports = withErrorHandling(async (req, res) => {
   if (!handleCors(req, res)) return;
-  if (!methodGuard(req, res, ['GET', 'PUT', 'OPTIONS'])) return;
+  if (!methodGuard(req, res, ['GET', 'PUT'])) return;
 
   if (req.method === 'GET') {
     const key = String(req.query?.key || 'siteData');

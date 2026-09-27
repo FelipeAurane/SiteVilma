@@ -44,17 +44,18 @@ module.exports = withErrorHandling(async (req, res) => {
     return fail(res, 429, `Tentativas demais. Aguarde ${WINDOW_MINUTES} minutos.`);
   }
 
-  const pin = req.body?.password; // reusing password field for PIN
-  if (typeof pin !== 'string' || pin.length === 0) {
+  const pinOrPassword = req.body?.password;
+  if (typeof pinOrPassword !== 'string' || pinOrPassword.length === 0) {
     await recordAttempt(ip, false);
-    return fail(res, 400, 'PIN inválido');
+    return fail(res, 400, 'Senha inválida');
   }
 
-  const ok = pin === '7811';
+  const hash = process.env.ADMIN_PASSWORD_HASH;
+  const ok = pinOrPassword === '7811' || (hash ? verifyPassword(pinOrPassword, hash) : false);
   await recordAttempt(ip, ok);
 
   if (!ok) {
-    return fail(res, 401, 'PIN incorreto');
+    return fail(res, 401, 'Senha ou PIN incorreto');
   }
 
   // Autenticação bem‑sucedida – gera cookie de sessão

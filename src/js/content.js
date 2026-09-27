@@ -46,15 +46,15 @@ const defaultData = {
     titleScreen: 'Portfólio'
   },
   categories: [
-    { name: 'Confeitaria', subtitle: 'Doces e sobremesas', image: '', gallery: [] },
-    { name: 'Gastronomia', subtitle: 'Pratos e menus', image: '', gallery: [] },
-    { name: 'Hambúrgueres', subtitle: 'Lanches e artesanais', image: '', gallery: [] },
-    { name: 'Pizzas', subtitle: 'Fornos e massas', image: '', gallery: [] },
-    { name: 'Bebidas', subtitle: 'Drinks e cafés', image: '', gallery: [] },
-    { name: 'Restaurantes', subtitle: 'Ambiente e equipe', image: '', gallery: [] },
-    { name: 'Produtos', subtitle: 'Embalagens e rótulos', image: '', gallery: [] },
-    { name: 'Doces', subtitle: 'Bombons e trufas', image: '', gallery: [] },
-    { name: 'Outros trabalhos', subtitle: 'Projetos diversos', image: '', gallery: [] }
+    { name: 'Confeitaria', subtitle: 'Doces e sobremesas', image: './img/p-2.JPG', gallery: [] },
+    { name: 'Gastronomia', subtitle: 'Pratos e menus', image: './img/p-6.JPG', gallery: [] },
+    { name: 'Hambúrgueres', subtitle: 'Lanches e artesanais', image: './img/p-4.JPG', gallery: [] },
+    { name: 'Pizzas', subtitle: 'Fornos e massas', image: './img/p-5.jpg', gallery: [] },
+    { name: 'Bebidas', subtitle: 'Drinks e cafés', image: './img/p-7.jpg', gallery: [] },
+    { name: 'Restaurantes', subtitle: 'Ambiente e equipe', image: './img/p-3.JPG', gallery: [] },
+    { name: 'Produtos', subtitle: 'Embalagens e rótulos', image: './img/img1.jpg', gallery: [] },
+    { name: 'Doces', subtitle: 'Bombons e trufas', image: './img/p-2.JPG', gallery: [] },
+    { name: 'Outros trabalhos', subtitle: 'Projetos diversos', image: './img/vilma.jpg', gallery: [] }
   ],
   services: [],
   lastUpdated: 0,
@@ -341,8 +341,9 @@ class UIManager {
     if (container.dataset.fonte === alvo) return;
     container.dataset.fonte = alvo;
 
-    // Tira só a mídia antiga; o véu é recolocado no fim.
-    for (const antigo of container.querySelectorAll('img, video')) antigo.remove();
+    // Tira só a mídia anterior principal (#hero-image ou video direto); mantém a grade Pinterest do desktop.
+    const antigoHero = container.querySelector(':scope > #hero-image, :scope > video');
+    if (antigoHero) antigoHero.remove();
 
     let elemento;
 
@@ -367,7 +368,70 @@ class UIManager {
 
     elemento.id = 'hero-image';
     container.prepend(elemento);
-    if (veu) container.appendChild(veu);
+
+    // Atualiza cartão central da grade do hero com a foto ou vídeo exibido no hero
+    const centerCard = document.getElementById('hero-featured-card') || container.querySelector('#hero-featured-card');
+    if (centerCard) {
+      const centerImg = centerCard.querySelector('#hero-center-img');
+      let centerVid = centerCard.querySelector('#hero-center-video');
+
+      if (video) {
+        if (!centerVid) {
+          centerVid = document.createElement('video');
+          centerVid.id = 'hero-center-video';
+          centerVid.className = 'hero-center-media';
+          centerCard.prepend(centerVid);
+        }
+        centerVid.autoplay = true;
+        centerVid.loop = true;
+        centerVid.playsInline = true;
+        centerVid.muted = true;
+        centerVid.preload = 'auto';
+        centerVid.setAttribute('muted', '');
+        centerVid.setAttribute('playsinline', '');
+        centerVid.setAttribute('webkit-playsinline', '');
+        centerVid.setAttribute('autoplay', '');
+        centerVid.setAttribute('loop', '');
+        centerVid.setAttribute('preload', 'auto');
+        if (poster) centerVid.poster = poster;
+        if (centerVid.src !== video) {
+          centerVid.src = video;
+          centerVid.load();
+        }
+        centerVid.style.display = 'block';
+        if (centerImg) centerImg.style.display = 'none';
+
+        const iniciarExecucao = () => {
+          centerVid.muted = true;
+          const promessa = centerVid.play();
+          if (promessa !== undefined) {
+            promessa.catch(() => {
+              const aoInteragir = () => {
+                centerVid.play().catch(() => {});
+                ['click', 'touchstart', 'scroll', 'pointerdown'].forEach(ev => window.removeEventListener(ev, aoInteragir));
+              };
+              ['click', 'touchstart', 'scroll', 'pointerdown'].forEach(ev => window.addEventListener(ev, aoInteragir, { once: true, passive: true }));
+            });
+          }
+        };
+
+        if (centerVid.readyState >= 2) {
+          iniciarExecucao();
+        } else {
+          centerVid.addEventListener('canplay', iniciarExecucao, { once: true });
+        }
+      } else {
+        if (centerVid) centerVid.style.display = 'none';
+        if (centerImg) {
+          centerImg.style.display = 'block';
+          if (poster) centerImg.src = poster;
+        }
+      }
+    }
+
+    if (veu && veu.parentElement === container) {
+      container.appendChild(veu);
+    }
   }
 
   /**
