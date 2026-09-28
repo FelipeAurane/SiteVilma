@@ -536,29 +536,46 @@
             }
 
             try {
+                const fallbackImages = [
+                    '../img/p-burger.jpg',
+                    '../img/p-pizza.jpg',
+                    '../img/p-massa.jpg',
+                    '../img/p-steak.jpg',
+                    '../img/p-drink.jpg',
+                    '../img/p-sobremesa.jpg',
+                    '../img/p-cafe.jpg',
+                    '../img/p-2.JPG',
+                    '../img/p-3.JPG',
+                    '../img/p-4.JPG',
+                    '../img/p-5.jpg',
+                    '../img/p-6.JPG',
+                    '../img/p-7.jpg',
+                    '../img/img1.jpg'
+                ];
+
                 const savedCategoryData = localStorage.getItem('current_gallery_data');
-                
-                if (!savedCategoryData) {
-                    console.warn('⚠️ Dados não encontrados no localStorage');
-                    showGalleryError('Dados da galeria não encontrados.');
-                    return;
+                let parsedData = null;
+
+                if (savedCategoryData) {
+                    try {
+                        const parsed = JSON.parse(savedCategoryData);
+                        if (parsed.name && parsed.name.toLowerCase() === categoryName.toLowerCase()) {
+                            parsedData = parsed;
+                        }
+                    } catch (e) {}
                 }
 
-                const parsedData = JSON.parse(savedCategoryData);
-                
-                // Verifica se os dados são válidos
-                const isValidData = parsedData.name === categoryName && 
-                                  (Date.now() - parsedData.timestamp) < 300000; // 5 minutos
-                
-                if (!isValidData) {
-                    console.warn('⚠️ Dados inválidos ou antigos');
-                    localStorage.removeItem('current_gallery_data');
-                    showGalleryError('Dados da galeria expirados. Volte e tente novamente.');
-                    return;
+                if (!parsedData) {
+                    parsedData = {
+                        name: categoryName,
+                        subtitle: 'Galeria Gastronômica',
+                        gallery: fallbackImages,
+                        timestamp: Date.now()
+                    };
                 }
 
                 currentCategoryData = parsedData;
-                galleryImages = parsedData.gallery || [];
+                galleryImages = (parsedData.gallery && parsedData.gallery.length > 0) ? parsedData.gallery : fallbackImages;
                 console.log('✅ Dados carregados:', parsedData);
                 
                 // Mostra informações da categoria
@@ -568,8 +585,7 @@
                 renderPinterestGallery(galleryImages);
                 
             } catch (error) {
-                console.error('❌ Erro ao carregar dados do localStorage:', error);
-                localStorage.removeItem('current_gallery_data');
+                console.error('❌ Erro ao carregar galeria:', error);
                 showGalleryError('Erro ao carregar a galeria.');
             }
         }

@@ -197,6 +197,69 @@
 
     var ticking = false;
 
+    // Pool de imagens profissionais de fotografia gastronômica para a grade estilo Pinterest
+    var PINTEREST_POOL = [
+      { src: './img/p-burger.jpg', badge: 'Hambúrgueres', category: 'Hambúrgueres', alt: 'Hambúrguer gourmet artesanal com queijo derretido e bacon' },
+      { src: './img/p-pizza.jpg', badge: 'Pizzas Artesanais', category: 'Pizzas', alt: 'Pizza napolitana artesanal com manjericão e mozzarella' },
+      { src: './img/p-drink.jpg', badge: 'Drinks & Coquetéis', category: 'Bebidas', alt: 'Coquetel artesanal sofisticado com gelo esculpido e laranja' },
+      { src: './img/p-massa.jpg', badge: 'Massas & Molhos', category: 'Gastronomia', alt: 'Fettuccine artesanal com molho de trufas e parmesão' },
+      { src: './img/p-sobremesa.jpg', badge: 'Doces Finos', category: 'Confeitaria', alt: 'Entremet de chocolate fino com framboesa e ouro comestível' },
+      { src: './img/p-cafe.jpg', badge: 'Cafeteria & Brunch', category: 'Bebidas', alt: 'Café cappuccino com latte art e croissant folhado dourado' },
+      { src: './img/p-steak.jpg', badge: 'Carnes Nobres', category: 'Restaurantes', alt: 'Corte nobre de picanha grelhada suculenta com sal grosso' },
+      { src: './img/p-2.JPG', badge: 'Confeitaria', category: 'Confeitaria', alt: 'Doces artesanais e sobremesas especiais' },
+      { src: './img/p-3.JPG', badge: 'Restaurantes', category: 'Restaurantes', alt: 'Empratamento e ambientação de restaurante' },
+      { src: './img/p-4.JPG', badge: 'Produção Culinária', category: 'Gastronomia', alt: 'Produção gastronômica profissional para estabelecimentos' },
+      { src: './img/p-5.jpg', badge: 'Alta Gastronomia', category: 'Alta Gastronomia', alt: 'Alta gastronomia e pratos autorais sofisticados' },
+      { src: './img/p-6.JPG', badge: 'Textura & Sabor', category: 'Confeitaria', alt: 'Texturas marcantes da culinária autoral' },
+      { src: './img/p-7.jpg', badge: 'Bebidas Especiais', category: 'Bebidas', alt: 'Bebidas refrescantes e drinks especiais' },
+      { src: './img/img1.jpg', badge: 'Cardápios', category: 'Cardápios', alt: 'Fotografia gastronômica comercial para cardápios' },
+      { src: './img/vilma.jpg', badge: 'Vilma Silva', category: 'Vilma Silva', alt: 'Vilma Silva - Fotógrafa gastronômica profissional' },
+      { src: './img/capa.jpg', badge: 'Editorial', category: 'Gastronomia', alt: 'Editorial de gastronomia em estúdio profissional' }
+    ];
+
+    function embaralharArray(arr) {
+      var copia = arr.slice();
+      for (var i = copia.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = copia[i];
+        copia[i] = copia[j];
+        copia[j] = temp;
+      }
+      return copia;
+    }
+
+    // Embaralha dinamicamente as fotos e posições de todos os cartões da grade a cada recarregamento da tela
+    function randomizarGradePinterest() {
+      var cards = pinterestGrid.querySelectorAll('.pinterest-card:not(#hero-featured-card):not(.card-main-hero)');
+      if (!cards || cards.length === 0) return;
+
+      var shuffled1 = embaralharArray(PINTEREST_POOL);
+      var shuffled2 = embaralharArray(PINTEREST_POOL);
+      var shuffledPool = shuffled1.concat(shuffled2);
+
+      cards.forEach(function(card, idx) {
+        var item = shuffledPool[idx % shuffledPool.length];
+        if (!item) return;
+
+        var img = card.querySelector('img');
+        if (img) {
+          img.src = item.src;
+          img.alt = item.alt;
+        }
+
+        var badge = card.querySelector('.pinterest-badge');
+        if (badge) {
+          badge.textContent = item.badge;
+        }
+
+        card.setAttribute('data-category', item.category);
+        card.setAttribute('aria-label', 'Ver galeria de ' + item.category);
+      });
+    }
+
+    // Executa a randomização inicial imediatamente para mudar a posição das fotos a cada carregamento/recarregamento
+    randomizarGradePinterest();
+
     // Na Section 1 as imagens e cartões são puramente visuais e não clicáveis no desktop; na Section 2 tornam-se interativos
     var pinterestCards = pinterestGrid.querySelectorAll('.pinterest-card, .story-card');
     pinterestCards.forEach(function(card) {
@@ -207,11 +270,56 @@
           return;
         }
         var cat = card.getAttribute('data-category');
+        var badge = card.querySelector('.pinterest-badge');
+        var badgeText = badge ? badge.textContent.trim() : (cat || '');
+
         if (cat === 'Vilma Silva') {
           window.location.href = './pages/sobremim.html';
-        } else if (cat === 'Cardápios') {
+          return;
+        }
+        if (cat === 'Cardápios') {
           window.location.href = './pages/servicos.html';
-        } else if (cat) {
+          return;
+        }
+        if (cat) {
+          try {
+            var galeriaFotos = [
+              './img/p-burger.jpg',
+              './img/p-pizza.jpg',
+              './img/p-massa.jpg',
+              './img/p-steak.jpg',
+              './img/p-drink.jpg',
+              './img/p-sobremesa.jpg',
+              './img/p-cafe.jpg',
+              './img/p-2.JPG',
+              './img/p-3.JPG',
+              './img/p-4.JPG',
+              './img/p-5.jpg',
+              './img/p-6.JPG',
+              './img/p-7.jpg',
+              './img/img1.jpg'
+            ];
+            var cached = localStorage.getItem('vilma_fotografia_data');
+            var fotosCat = [];
+            if (cached) {
+              var parsed = JSON.parse(cached);
+              var encontrada = (parsed.categories || []).find(function(c) {
+                return c.name && c.name.toLowerCase() === cat.toLowerCase();
+              });
+              if (encontrada && encontrada.gallery && encontrada.gallery.length > 0) {
+                fotosCat = encontrada.gallery;
+              }
+            }
+            if (fotosCat.length === 0) {
+              fotosCat = embaralharArray(galeriaFotos);
+            }
+            localStorage.setItem('current_gallery_data', JSON.stringify({
+              name: cat,
+              subtitle: badgeText,
+              gallery: fotosCat,
+              timestamp: Date.now()
+            }));
+          } catch (err) {}
           window.location.href = './pages/galeria.html?category=' + encodeURIComponent(cat);
         }
       });

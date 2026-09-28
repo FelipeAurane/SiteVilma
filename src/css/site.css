@@ -987,8 +987,8 @@ footer p {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    height: 100%;
-    justify-content: center;
+    height: auto;
+    justify-content: flex-start;
     will-change: transform;
     transition: opacity 0.4s ease, transform 0.55s cubic-bezier(0.25, 1, 0.5, 1), gap 0.55s ease, margin 0.55s ease;
   }
@@ -1188,10 +1188,14 @@ footer p {
   }
 
   .hero-pinterest-grid.section-2-active .pinterest-card.card-tall,
+  .hero-pinterest-grid.section-2-active .pinterest-card.card-portrait,
   .hero-pinterest-grid.section-2-active .pinterest-card.card-standard,
+  .hero-pinterest-grid.section-2-active .pinterest-card.card-landscape,
   .hero-pinterest-grid.section-2-active .pinterest-card.card-square,
   body.section-2-active .hero-pinterest-grid .pinterest-card.card-tall,
+  body.section-2-active .hero-pinterest-grid .pinterest-card.card-portrait,
   body.section-2-active .hero-pinterest-grid .pinterest-card.card-standard,
+  body.section-2-active .hero-pinterest-grid .pinterest-card.card-landscape,
   body.section-2-active .hero-pinterest-grid .pinterest-card.card-square {
     height: auto !important;
     min-height: unset !important;
@@ -1465,8 +1469,10 @@ footer p {
 
   /* Variações de altura pequenas e sutis para preservar a fidelidade e enquadramento das imagens */
   .pinterest-card.card-tall { height: 230px; }
-  .pinterest-card.card-standard { height: 190px; }
-  .pinterest-card.card-square { height: 160px; }
+  .pinterest-card.card-portrait { height: 240px; }
+  .pinterest-card.card-standard { height: 195px; }
+  .pinterest-card.card-landscape { height: 180px; }
+  .pinterest-card.card-square { height: 165px; }
 
   /* Elemento de imagem acima do vídeo no topo da coluna central */
   .pinterest-card.card-center-top,
@@ -1540,7 +1546,9 @@ footer p {
       margin-top: -50px !important;
     }
     .pinterest-card.card-tall { height: 250px; }
+    .pinterest-card.card-portrait { height: 260px; }
     .pinterest-card.card-standard { height: 210px; }
+    .pinterest-card.card-landscape { height: 195px; }
     .pinterest-card.card-square { height: 175px; }
     .pinterest-card.card-center-top,
     #pinterest-card-top {
