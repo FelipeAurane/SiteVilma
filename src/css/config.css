@@ -1,42 +1,130 @@
 /**
  * Painel de configuração (/config).
  *
- * Usa as mesmas cores e a mesma fonte do site público (site.css), para o
- * painel parecer parte do mesmo projeto em vez de um app colado por cima.
- * Tudo que a página precisa está aqui: não há <style> no config.html.
+ * Dois temas no mesmo arquivo: o escuro é o padrão e o claro é o
+ * [data-tema="claro"] no <html>. Tudo que muda de cor é uma variável de
+ * :root — nenhum componente escreve uma cor por conta própria, senão o tema
+ * claro vira um emaranhado de !important.
+ *
+ * Mesma fonte do site público (Montserrat). Não há <style> no config.html.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&display=swap');
-
-/* ------------------------------------------------------------- tokens */
+/* ============================================================== tokens */
 
 :root {
-  --preto: #0e0e10;
-  --preto-suave: #17171a;
-  --preto-alto: #1f1f24;
+  color-scheme: dark;
 
-  --creme: #f6f3ee;
-  --creme-fundo: #efeae1;
+  --acento: #422cf2;
+  --acento-claro: #5842f2;
+  --acento-vivo: #6f5cff;
+  --acento-veu: rgba(66, 44, 242, .2);
+  --acento-borda: rgba(111, 92, 255, .42);
+  --acento-gradiente: linear-gradient(140deg, #6f5cff, #422cf2);
 
-  --texto: rgba(255, 255, 255, .92);
-  --texto-suave: rgba(255, 255, 255, .66);
-  --texto-fraco: rgba(255, 255, 255, .44);
-
-  --borda: rgba(255, 255, 255, .1);
-  --borda-forte: rgba(255, 255, 255, .18);
-
-  --lateral: 264px;
-  --largura-maxima: 1180px;
-  --raio: 14px;
-  --raio-p: 9px;
-  --transicao: .3s cubic-bezier(.22, .61, .36, 1);
-
-  --verde: #4ec98a;
+  --verde: #3ddc97;
   --ambar: #e6a95c;
-  --vermelho: #e2695f;
+  --vermelho: #f0776d;
+
+  --largura-maxima: 1160px;
+  --trilho-largura: 64px;
+  --raio: 16px;
+  --raio-p: 10px;
+  --transicao: .25s cubic-bezier(.22, .61, .36, 1);
 }
 
-/* -------------------------------------------------------------- reset */
+/* ------------------------------------------------------------- escuro */
+
+:root,
+:root[data-tema='escuro'] {
+  --fundo: #08080c;
+  --fundo-brilho: radial-gradient(1100px 520px at 12% -8%, rgba(66, 44, 242, .16), transparent 62%),
+    radial-gradient(760px 420px at 96% 0%, rgba(88, 66, 242, .1), transparent 58%);
+
+  --superficie: #121220;
+  --superficie-alta: #191930;
+  --trilho-fundo: #0b0b12;
+
+  --texto: rgba(255, 255, 255, .94);
+  --texto-suave: rgba(255, 255, 255, .66);
+  --texto-fraco: rgba(255, 255, 255, .44);
+  --texto-invertido: #0a0a12;
+
+  --borda: rgba(255, 255, 255, .09);
+  --borda-forte: rgba(255, 255, 255, .16);
+
+  /* Véus: fundo de item, hover, campo. */
+  --veu: rgba(255, 255, 255, .03);
+  --veu-medio: rgba(255, 255, 255, .06);
+  --veu-forte: rgba(255, 255, 255, .12);
+  --veu-campo: rgba(0, 0, 0, .34);
+  --veu-campo-foco: rgba(0, 0, 0, .5);
+
+  --sombra-cartao: none;
+  --sombra-flutuante: 0 18px 48px rgba(0, 0, 0, .6);
+  --vidro: rgba(8, 8, 12, .8);
+
+  --botao-primario-fundo: #fff;
+  --botao-primario-texto: #0a0a12;
+  --botao-primario-hover: #e8e8ff;
+
+  --item-ativo-fundo: var(--acento-veu);
+  --item-ativo-texto: #fff;
+
+  --erro-texto: #ffd9d5;
+}
+
+/* -------------------------------------------------------------- claro */
+
+:root[data-tema='claro'] {
+  color-scheme: light;
+
+  --fundo: #f6f6f8;
+  --fundo-brilho: radial-gradient(900px 420px at 8% -10%, rgba(91, 91, 240, .1), transparent 60%);
+
+  --superficie: #fff;
+  --superficie-alta: #fff;
+  --trilho-fundo: #fff;
+
+  --texto: #14141c;
+  --texto-suave: #55555f;
+  --texto-fraco: #8b8b96;
+  --texto-invertido: #fff;
+
+  --borda: rgba(18, 18, 32, .08);
+  --borda-forte: rgba(18, 18, 32, .14);
+
+  --veu: rgba(18, 18, 32, .028);
+  --veu-medio: rgba(18, 18, 32, .05);
+  --veu-forte: rgba(18, 18, 32, .09);
+  --veu-campo: #f1f1f4;
+  --veu-campo-foco: #fff;
+
+  --sombra-cartao: 0 1px 2px rgba(18, 18, 32, .04), 0 8px 24px rgba(18, 18, 32, .06);
+  --sombra-flutuante: 0 18px 44px rgba(18, 18, 32, .16);
+  --vidro: rgba(246, 246, 248, .82);
+
+  --acento: #5151e8;
+  --acento-veu: rgba(81, 81, 232, .1);
+  /* As cores de estado são texto, não preenchimento: no claro elas
+     escurecem, senão o verde e o âmbar ficam ilegíveis sobre branco. */
+  --acento-vivo: #4f46e5;
+  --verde: #0e9f6e;
+  --ambar: #b26a12;
+  --vermelho: #d13b30;
+
+  /* Na referência o botão que age é o escuro, não o claro. */
+  --botao-primario-fundo: #14141c;
+  --botao-primario-texto: #fff;
+  --botao-primario-hover: #26263a;
+
+  /* E o ícone da seção ativa é um círculo escuro. */
+  --item-ativo-fundo: #14141c;
+  --item-ativo-texto: #fff;
+
+  --erro-texto: #a33a30;
+}
+
+/* =============================================================== reset */
 
 *,
 *::before,
@@ -46,11 +134,16 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
   font-size: 15px;
   line-height: 1.55;
-  background: var(--preto);
+  background: var(--fundo-brilho), var(--fundo);
+  background-attachment: fixed;
   color: var(--texto);
   -webkit-font-smoothing: antialiased;
   padding-left: env(safe-area-inset-left);
@@ -71,12 +164,16 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--creme);
+  outline: 2px solid var(--acento-vivo);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
-/* -------------------------------------------------------------- ícones */
+[hidden] {
+  display: none !important;
+}
+
+/* ============================================================== ícones */
 
 .icone {
   width: 18px;
@@ -89,6 +186,11 @@ a {
   stroke-linejoin: round;
 }
 
+.icone--p {
+  width: 15px;
+  height: 15px;
+}
+
 .sprite {
   position: absolute;
   width: 0;
@@ -96,7 +198,7 @@ a {
   overflow: hidden;
 }
 
-/* ------------------------------------------------------------ estrutura */
+/* ============================================================ estrutura */
 
 .app {
   display: flex;
@@ -106,132 +208,161 @@ a {
 .principal {
   flex: 1;
   min-width: 0;
-  margin-left: var(--lateral);
+  margin-left: var(--trilho-largura);
+  display: flex;
+  flex-direction: column;
 }
 
-/* ------------------------------------------------------- barra lateral */
+/* ------------------------------------------ menu lateral (só ícones) */
 
 .lateral {
   position: fixed;
   inset: 0 auto 0 0;
-  width: var(--lateral);
-  padding: 26px 18px;
-  background: var(--preto-suave);
+  z-index: 40;
+  width: var(--trilho-largura);
+  padding: 18px 0 calc(18px + env(safe-area-inset-bottom));
+  padding-left: env(safe-area-inset-left);
+  background: var(--trilho-fundo);
   border-right: 1px solid var(--borda);
   display: flex;
   flex-direction: column;
-  gap: 26px;
-  overflow-y: auto;
-  z-index: 40;
+  align-items: center;
+  gap: 18px;
 }
 
 .marca {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 8px 22px;
-  border-bottom: 1px solid var(--borda);
+  width: 42px;
+  height: 42px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
 }
 
 .marca-selo {
-  width: 38px;
-  height: 38px;
-  flex: none;
-  border-radius: 11px;
+  width: 100%;
+  height: 100%;
   display: grid;
   place-items: center;
-  background: var(--creme);
-  color: var(--preto);
+  border-radius: 13px;
+  background: var(--acento-gradiente);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(66, 44, 242, .38);
 }
 
-.marca-nome {
-  display: block;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: .01em;
-}
-
-.marca-tipo {
-  display: block;
-  font-size: 11px;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--texto-fraco);
-}
-
-.nav {
+/* Nove seções não cabem na altura de um celular: a lista rola sozinha,
+   sem barra visível, e o rodapé fica preso embaixo. */
+.trilho {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  padding: 2px 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-}
-
-.nav-titulo {
-  padding: 0 10px 8px;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: var(--texto-fraco);
-}
-
-.nav-item {
-  display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 9px 10px;
+  gap: 4px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.trilho::-webkit-scrollbar {
+  display: none;
+}
+
+.trilho-item {
+  position: relative;
+  flex: none;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
   border: 0;
-  width: 100%;
-  border-radius: var(--raio-p);
+  border-radius: 12px;
   background: none;
-  color: var(--texto-suave);
-  font-size: 14px;
-  text-align: left;
+  color: var(--texto-fraco);
   cursor: pointer;
   transition: background var(--transicao), color var(--transicao);
 }
 
-.nav-item:hover {
-  background: rgba(255, 255, 255, .05);
+.trilho-item:hover {
+  background: var(--veu-medio);
   color: var(--texto);
 }
 
-.nav-item[aria-current='true'] {
-  background: rgba(255, 255, 255, .08);
-  color: var(--creme);
+.trilho-item[aria-current='true'] {
+  background: var(--item-ativo-fundo);
+  color: var(--item-ativo-texto);
+}
+
+.trilho-item[aria-current='true']::before {
+  content: '';
+  position: absolute;
+  left: -11px;
+  top: 50%;
+  width: 3px;
+  height: 20px;
+  border-radius: 0 3px 3px 0;
+  background: var(--acento-vivo);
+  transform: translateY(-50%);
+}
+
+/* O nome só aparece no mouse ou no teclado: o trilho é de ícones, mas
+   ninguém precisa adivinhar o que cada um faz. */
+.trilho-rotulo {
+  position: absolute;
+  left: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 6px 12px;
+  border: 1px solid var(--borda-forte);
+  border-radius: 9px;
+  background: var(--superficie-alta);
+  box-shadow: var(--sombra-flutuante);
+  color: var(--texto);
+  font-size: 12.5px;
   font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transicao);
+  z-index: 50;
+}
+
+.trilho-item:hover .trilho-rotulo,
+.trilho-item:focus-visible .trilho-rotulo {
+  opacity: 1;
 }
 
 .lateral-rodape {
-  margin-top: auto;
-  padding: 16px 10px 0;
-  border-top: 1px solid var(--borda);
+  flex: none;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 9px;
-  font-size: 12px;
-  color: var(--texto-fraco);
+  gap: 6px;
 }
 
-.ponto {
-  width: 7px;
-  height: 7px;
-  flex: none;
+.trilho-ponto {
+  width: 8px;
+  height: 8px;
+  margin-bottom: 4px;
   border-radius: 50%;
   background: var(--texto-fraco);
   transition: background var(--transicao);
 }
 
-.ponto[data-estado='salvo'] {
+.trilho-ponto[data-estado='salvo'] {
   background: var(--verde);
+  box-shadow: 0 0 0 3px rgba(61, 220, 151, .16);
 }
 
-.ponto[data-estado='salvando'] {
+.trilho-ponto[data-estado='salvando'] {
   background: var(--ambar);
   animation: pulsa 1.1s ease-in-out infinite;
 }
 
-.ponto[data-estado='erro'] {
+.trilho-ponto[data-estado='erro'] {
   background: var(--vermelho);
+  box-shadow: 0 0 0 3px rgba(240, 119, 109, .18);
 }
 
 @keyframes pulsa {
@@ -240,7 +371,7 @@ a {
   }
 }
 
-/* ---------------------------------------------------------- cabeçalho */
+/* ============================================== cabeçalho e estado */
 
 .topo {
   position: sticky;
@@ -249,57 +380,56 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  padding: 22px 34px;
-  background: rgba(14, 14, 16, .82);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  gap: 18px;
+  padding: 18px 30px;
+  padding-top: calc(18px + env(safe-area-inset-top));
+  background: var(--vidro);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--borda);
 }
 
 .topo h1 {
-  font-size: 21px;
+  font-size: 19px;
   font-weight: 600;
   letter-spacing: -.01em;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.topo p {
-  margin-top: 2px;
-  font-size: 13px;
-  color: var(--texto-fraco);
-}
-
-.topo-acoes {
-  display: flex;
+.topo-estado {
+  display: inline-flex;
   align-items: center;
   gap: 10px;
   flex: none;
+  padding: 9px 16px;
+  border: 1px solid var(--borda-forte);
+  border-radius: 999px;
+  background: var(--veu);
+  font-size: 12.5px;
+  color: var(--texto-suave);
+  white-space: nowrap;
 }
 
-.botao-menu {
-  display: none;
-  width: 42px;
-  height: 42px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--borda);
-  border-radius: var(--raio-p);
-  background: rgba(255, 255, 255, .04);
-  cursor: pointer;
+.topo-estado #estado {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* ------------------------------------------------------------ botões */
+/* ============================================================== botões */
 
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 40px;
-  padding: 0 16px;
+  min-height: 42px;
+  padding: 0 17px;
   border: 1px solid transparent;
   border-radius: var(--raio-p);
-  background: rgba(255, 255, 255, .06);
+  background: var(--veu-medio);
   color: var(--texto);
   font-size: 13.5px;
   font-weight: 500;
@@ -309,7 +439,7 @@ a {
 }
 
 .btn:hover {
-  background: rgba(255, 255, 255, .1);
+  background: var(--veu-forte);
 }
 
 .btn:active {
@@ -323,104 +453,212 @@ a {
 }
 
 .btn-primario {
-  background: var(--creme);
-  color: var(--preto);
+  background: var(--botao-primario-fundo);
+  color: var(--botao-primario-texto);
   font-weight: 600;
 }
 
 .btn-primario:hover {
-  background: #fff;
+  background: var(--botao-primario-hover);
 }
 
 .btn-contorno {
   border-color: var(--borda-forte);
-  background: none;
+  background: var(--veu);
 }
 
 .btn-contorno:hover {
-  background: rgba(255, 255, 255, .06);
-}
-
-.btn-perigo {
-  border-color: rgba(226, 105, 95, .4);
-  background: none;
-  color: var(--vermelho);
-}
-
-.btn-perigo:hover {
-  background: rgba(226, 105, 95, .12);
+  background: var(--veu-medio);
 }
 
 .btn-pequeno {
-  min-height: 34px;
-  padding: 0 12px;
+  min-height: 36px;
+  padding: 0 14px;
   font-size: 12.5px;
 }
 
-/* ---------------------------------------------------------- conteúdo */
+.btn-icone {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-p);
+  background: none;
+  color: var(--texto-suave);
+  cursor: pointer;
+  transition: background var(--transicao), color var(--transicao), border-color var(--transicao);
+}
+
+.btn-icone:hover {
+  background: var(--veu-medio);
+  color: var(--texto);
+}
+
+.btn-icone--perigo:hover {
+  background: rgba(240, 119, 109, .16);
+  color: var(--vermelho);
+  border-color: rgba(240, 119, 109, .4);
+}
+
+/* =========================================================== conteúdo */
 
 .conteudo {
+  flex: 1;
+  width: 100%;
   max-width: var(--largura-maxima);
-  padding: 34px;
+  margin: 0 auto;
+  padding: 30px 34px 90px;
   display: flex;
   flex-direction: column;
-  gap: 34px;
+  gap: 18px;
 }
 
-.secao {
-  scroll-margin-top: 96px;
+.painel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: entra .28s ease both;
 }
 
-.secao-topo {
+@keyframes entra {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .painel {
+    animation: none;
+  }
+}
+
+.painel:focus {
+  outline: none;
+}
+
+.painel-topo {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 20px;
+  gap: 18px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
 }
 
-.secao-titulo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 12px;
+.painel-titulo {
+  font-size: 25px;
   font-weight: 600;
-  letter-spacing: .15em;
-  text-transform: uppercase;
-  color: var(--texto-fraco);
+  letter-spacing: -.02em;
+  line-height: 1.2;
 }
 
-.secao-desc {
-  margin-top: 6px;
+.painel-desc {
+  margin-top: 5px;
   font-size: 13.5px;
   color: var(--texto-suave);
-  max-width: 62ch;
+  max-width: 66ch;
 }
 
-.secao-acoes {
+.painel-acoes {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-/* ----------------------------------------------------- números do topo */
+/* ============================================ 1. tela de entrada */
+
+.boas-vindas {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 26px 28px;
+  border: 1px solid var(--borda);
+  border-radius: calc(var(--raio) + 4px);
+  background:
+    linear-gradient(120deg, var(--acento-veu), transparent 52%),
+    var(--superficie);
+  box-shadow: var(--sombra-cartao);
+}
+
+.boas-vindas::after {
+  content: '';
+  position: absolute;
+  right: -60px;
+  top: -70px;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--acento-veu), transparent 66%);
+  pointer-events: none;
+}
+
+.boas-vindas > * {
+  position: relative;
+  z-index: 1;
+}
+
+.boas-vindas-rotulo {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--acento-vivo);
+}
+
+.boas-vindas .painel-titulo {
+  margin-top: 6px;
+  font-size: 30px;
+}
 
 .grade-estat {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
 }
 
 .cartao-estat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   padding: 18px 20px;
-  background: var(--preto-suave);
+  background: var(--superficie);
   border: 1px solid var(--borda);
   border-radius: var(--raio);
+  box-shadow: var(--sombra-cartao);
+}
+
+.estat-icone {
+  width: 34px;
+  height: 34px;
+  margin-bottom: 4px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--acento-veu);
+  color: var(--acento-vivo);
+}
+
+.estat-icone[data-tom='verde'] {
+  background: rgba(61, 220, 151, .14);
+  color: var(--verde);
+}
+
+.estat-icone[data-tom='ambar'] {
+  background: rgba(230, 169, 92, .14);
+  color: var(--ambar);
 }
 
 .estat-valor {
-  font-size: 30px;
+  font-size: 31px;
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -.02em;
@@ -436,22 +674,165 @@ a {
 }
 
 .estat-valor--texto {
-  font-size: 17px;
-  padding: 6px 0 5px;
+  font-size: 18px;
+  padding: 8px 0 7px;
 }
 
 .estat-rotulo {
-  margin-top: 4px;
   font-size: 12px;
   color: var(--texto-fraco);
 }
 
-/* ------------------------------------------------------------ cartões */
+.dois-quadros {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+/* =================================================== resumo do site */
+
+.resumo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.resumo-linha {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--borda);
+}
+
+.resumo-linha:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.resumo-linha dt {
+  flex: none;
+  font-size: 12.5px;
+  color: var(--texto-fraco);
+}
+
+.resumo-linha dd {
+  min-width: 0;
+  font-size: 13.5px;
+  font-weight: 500;
+  text-align: right;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.etiqueta {
+  display: inline-block;
+  padding: 3px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--borda-forte);
+  font-size: 11.5px;
+  font-weight: 600;
+  -webkit-line-clamp: unset;
+}
+
+.etiqueta[data-estado='publicado'] {
+  border-color: rgba(61, 220, 151, .4);
+  background: rgba(61, 220, 151, .12);
+  color: var(--verde);
+}
+
+.etiqueta[data-estado='oculto'] {
+  border-color: rgba(240, 119, 109, .4);
+  background: rgba(240, 119, 109, .12);
+  color: var(--vermelho);
+}
+
+/* ============================================================ atalhos */
+
+.atalhos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.atalho {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-p);
+  background: var(--veu);
+  color: var(--texto);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transicao), border-color var(--transicao), transform var(--transicao);
+}
+
+.atalho:hover {
+  background: var(--acento-veu);
+  border-color: var(--acento-borda);
+  transform: translateX(3px);
+}
+
+.atalho-icone {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--acento-veu);
+  color: var(--acento-vivo);
+}
+
+.atalho-textos {
+  flex: 1;
+  min-width: 0;
+}
+
+.atalho-nome {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.atalho-desc {
+  display: block;
+  font-size: 11.5px;
+  color: var(--texto-fraco);
+}
+
+.atalho > .icone--p {
+  color: var(--texto-fraco);
+}
+
+.link-suave {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--acento-vivo);
+}
+
+.link-suave:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================= cartões */
 
 .cartao {
-  background: var(--preto-suave);
+  background: var(--superficie);
   border: 1px solid var(--borda);
   border-radius: var(--raio);
+  box-shadow: var(--sombra-cartao);
   overflow: hidden;
 }
 
@@ -477,13 +858,13 @@ a {
 }
 
 .cartao-corpo {
-  padding: 22px;
+  padding: 20px 22px;
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
-/* ------------------------------------------------------------ campos */
+/* ============================================================== campos */
 
 .grade-campos {
   display: grid;
@@ -511,23 +892,24 @@ a {
 .campo-dica {
   font-size: 11.5px;
   color: var(--texto-fraco);
+  overflow-wrap: anywhere;
 }
 
 .entrada,
 .area {
   width: 100%;
-  min-height: 42px;
-  padding: 10px 13px;
-  border: 1px solid var(--borda);
+  min-height: 44px;
+  padding: 11px 14px;
+  border: 1px solid transparent;
   border-radius: var(--raio-p);
-  background: rgba(0, 0, 0, .28);
+  background: var(--veu-campo);
   color: var(--texto);
   font-size: 14px;
-  transition: border-color var(--transicao), background var(--transicao);
+  transition: border-color var(--transicao), background var(--transicao), box-shadow var(--transicao);
 }
 
 .area {
-  min-height: 92px;
+  min-height: 96px;
   resize: vertical;
   line-height: 1.5;
 }
@@ -540,12 +922,13 @@ a {
 .entrada:focus,
 .area:focus {
   outline: none;
-  border-color: var(--creme);
-  background: rgba(0, 0, 0, .45);
+  border-color: var(--acento-vivo);
+  background: var(--veu-campo-foco);
+  box-shadow: 0 0 0 3px var(--acento-veu);
 }
 
 .entrada[type='file'] {
-  padding: 9px 13px;
+  padding: 10px 14px;
   font-size: 12.5px;
   color: var(--texto-suave);
   cursor: pointer;
@@ -553,17 +936,23 @@ a {
 
 .entrada[type='file']::file-selector-button {
   margin-right: 12px;
-  padding: 7px 13px;
-  border: 1px solid var(--borda-forte);
-  border-radius: 7px;
-  background: rgba(255, 255, 255, .07);
+  padding: 8px 14px;
+  border: 1px solid var(--acento-borda);
+  border-radius: 8px;
+  background: var(--acento-veu);
   color: var(--texto);
   font: inherit;
   font-size: 12.5px;
+  font-weight: 500;
   cursor: pointer;
+  transition: background var(--transicao);
 }
 
-/* ------------------------------------------------------- miniaturas */
+.entrada[type='file']::file-selector-button:hover {
+  background: var(--acento-veu);
+}
+
+/* ========================================================== miniaturas */
 
 .miniatura {
   display: flex;
@@ -572,13 +961,13 @@ a {
 }
 
 .miniatura img {
-  width: 76px;
-  height: 76px;
+  width: 80px;
+  height: 80px;
   flex: none;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 11px;
   border: 1px solid var(--borda);
-  background: rgba(0, 0, 0, .4);
+  background: var(--veu-medio);
 }
 
 .miniatura-vazia {
@@ -593,7 +982,220 @@ a {
   overflow-wrap: anywhere;
 }
 
-/* ---------------------------------------------------------- categorias */
+/* Prévia da capa: imagem ou vídeo, os dois no mesmo retângulo. O vídeo fica
+   sem som e em loop, como vai aparecer no site. */
+.capa-video {
+  width: 80px;
+  height: 80px;
+  flex: none;
+  object-fit: cover;
+  border-radius: 11px;
+  border: 1px solid var(--borda);
+  background: rgba(0, 0, 0, .4);
+}
+
+/* ==================================================== grupo de upload */
+
+/* Separa o upload do meio dos campos de texto abaixo: é outra escolha
+   (foto OU vídeo), com regra própria, e não mais um rótulo solto. */
+.grupo-arquivo {
+  padding: 16px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-p);
+  background: var(--veu);
+}
+
+.grupo-arquivo-titulo {
+  margin: 0 0 4px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.grupo-arquivo-dica {
+  margin: 0 0 12px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--texto-fraco);
+}
+
+/* ========================================================== serviços */
+
+.lista-servicos {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Cinco colunas na primeira linha: miniatura, três campos e o botão de
+   remover. Os dois grupos de baixo (descrição e imagem) têm campo--largo e
+   ocupam a linha inteira sozinhos. */
+.servico {
+  display: grid;
+  grid-template-columns: 96px repeat(3, minmax(0, 1fr)) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid var(--borda);
+  border-radius: 14px;
+  background: var(--superficie);
+  box-shadow: var(--sombra-cartao);
+}
+
+.servico:focus-within {
+  border-color: var(--acento-borda);
+}
+
+.servico-miniatura {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  text-align: center;
+}
+
+.servico-miniatura img,
+.servico-miniatura .miniatura-vazia {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  height: auto;
+  object-fit: cover;
+  border-radius: 11px;
+  border: 1px solid var(--borda);
+}
+
+.servico-miniatura .miniatura-vazia {
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--borda-forte);
+  color: var(--texto-fraco);
+}
+
+.servico-miniatura figcaption {
+  width: 100%;
+  font-size: 11px;
+  color: var(--texto-fraco);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.servico-acoes {
+  display: flex;
+  gap: 6px;
+}
+
+/* =========================================================== dúvidas */
+
+.lista-duvidas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.duvida {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--borda);
+  border-radius: 14px;
+  background: var(--superficie);
+  box-shadow: var(--sombra-cartao);
+}
+
+.duvida:focus-within {
+  border-color: var(--acento-borda);
+}
+
+.duvida-topo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.duvida-topo .campo {
+  flex: 1;
+}
+
+.duvida-ordem {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  margin-top: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--acento-veu);
+  color: var(--acento-vivo);
+  font-size: 11.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================ agenda */
+
+.agenda-caixa {
+  min-width: 0;
+}
+
+.agenda {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.agenda-cabecalho {
+  padding-bottom: 6px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--texto-fraco);
+}
+
+.agenda-dia {
+  aspect-ratio: 1;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  background: var(--veu);
+  color: var(--texto);
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background var(--transicao), border-color var(--transicao), color var(--transicao);
+}
+
+.agenda-dia:hover:not([disabled]) {
+  background: var(--acento-veu);
+  border-color: var(--acento-borda);
+}
+
+.agenda-dia[aria-pressed='true'] {
+  background: var(--acento-vivo);
+  border-color: var(--acento-vivo);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Fora do mês, e os dias que já passaram sem marcação, não são clicáveis:
+   o calendário do site também não os oferece. */
+.agenda-dia[disabled] {
+  opacity: .32;
+  cursor: not-allowed;
+}
+
+.agenda-dia[data-fora='true'] {
+  opacity: .2;
+  cursor: default;
+}
+
+/* ========================================================== categorias */
 
 .lista-categorias {
   display: flex;
@@ -603,17 +1205,23 @@ a {
 
 .categoria {
   display: grid;
-  grid-template-columns: 76px 1fr 1fr auto;
+  grid-template-columns: 80px 1fr 1fr auto;
   align-items: center;
   gap: 14px;
   padding: 14px;
   border: 1px solid var(--borda);
-  border-radius: 12px;
-  background: rgba(0, 0, 0, .16);
+  border-radius: 14px;
+  background: var(--superficie);
+  box-shadow: var(--sombra-cartao);
+  transition: border-color var(--transicao);
+}
+
+.categoria:focus-within {
+  border-color: var(--acento-borda);
 }
 
 /* No cartão de categoria a miniatura fica acima da legenda, não ao lado —
-   a coluna tem só 76px e a legenda ao lado sairia espremida. */
+   a coluna tem só 80px e a legenda ao lado sairia espremida. */
 .miniatura--cartao {
   flex-direction: column;
   align-items: center;
@@ -633,7 +1241,7 @@ a {
   display: grid;
   place-items: center;
   border: 1px dashed var(--borda-forte);
-  border-radius: 10px;
+  border-radius: 11px;
   color: var(--texto-fraco);
 }
 
@@ -642,45 +1250,22 @@ a {
   gap: 6px;
 }
 
-.btn-icone {
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--borda);
-  border-radius: var(--raio-p);
-  background: none;
-  color: var(--texto-suave);
-  cursor: pointer;
-  transition: background var(--transicao), color var(--transicao);
-}
-
-.btn-icone:hover {
-  background: rgba(255, 255, 255, .08);
-  color: var(--texto);
-}
-
-.btn-icone--perigo:hover {
-  background: rgba(226, 105, 95, .14);
-  color: var(--vermelho);
-  border-color: rgba(226, 105, 95, .35);
-}
-
 .vazio {
-  padding: 34px 20px;
+  padding: 38px 20px;
   text-align: center;
   font-size: 13.5px;
   color: var(--texto-fraco);
   border: 1px dashed var(--borda-forte);
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
-/* -------------------------------------------------------- visibilidade */
+/* ======================================================= visibilidade */
 
 .grade-vis {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 14px;
+  align-items: start;
 }
 
 .item-vis {
@@ -691,12 +1276,12 @@ a {
   padding: 12px 16px;
   border: 1px solid transparent;
   border-radius: var(--raio-p);
-  background: rgba(255, 255, 255, .03);
+  background: var(--veu);
   transition: background var(--transicao), border-color var(--transicao);
 }
 
 .item-vis:hover {
-  background: rgba(255, 255, 255, .06);
+  background: var(--veu-medio);
   border-color: var(--borda);
 }
 
@@ -714,13 +1299,13 @@ a {
   font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
 }
 
-/* --------------------------------------------------- chave (switch) */
+/* ===================================================== chave (switch) */
 
 .chave {
   position: relative;
   flex: none;
-  width: 44px;
-  height: 25px;
+  width: 46px;
+  height: 26px;
   cursor: pointer;
 }
 
@@ -736,7 +1321,7 @@ a {
   position: absolute;
   inset: 0;
   border-radius: 999px;
-  background: rgba(255, 255, 255, .16);
+  background: var(--veu-forte);
   transition: background var(--transicao);
   pointer-events: none;
 }
@@ -746,32 +1331,33 @@ a {
   position: absolute;
   top: 3px;
   left: 3px;
-  width: 19px;
-  height: 19px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .28);
   transition: transform var(--transicao);
 }
 
 .chave input:checked + .chave-trilho {
-  background: var(--verde);
+  background: var(--acento-vivo);
 }
 
 .chave input:checked + .chave-trilho::after {
-  transform: translateX(19px);
+  transform: translateX(20px);
 }
 
 .chave input:focus-visible + .chave-trilho {
-  outline: 2px solid var(--creme);
+  outline: 2px solid var(--acento-vivo);
   outline-offset: 2px;
 }
 
-/* ------------------------------------------------------------ filtros */
+/* ============================================================ filtros */
 
 .filtros {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
   flex-wrap: wrap;
   font-size: 13px;
   color: var(--texto-suave);
@@ -780,33 +1366,33 @@ a {
 .filtro {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   cursor: pointer;
 }
 
 .filtro input {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--verde);
+  width: 17px;
+  height: 17px;
+  accent-color: var(--acento-vivo);
   cursor: pointer;
 }
 
-/* ------------------------------------------------------------- avisos */
+/* ============================================================== avisos */
 
 .toast {
   position: fixed;
   left: 50%;
-  bottom: 26px;
+  bottom: calc(26px + env(safe-area-inset-bottom));
   z-index: 60;
   display: flex;
   align-items: center;
   gap: 10px;
   max-width: min(92vw, 460px);
-  padding: 13px 18px;
+  padding: 13px 20px;
   border: 1px solid var(--borda-forte);
   border-radius: 999px;
-  background: var(--preto-alto);
-  box-shadow: 0 16px 44px rgba(0, 0, 0, .55);
+  background: var(--superficie-alta);
+  box-shadow: var(--sombra-flutuante);
   font-size: 13.5px;
   transform: translate(-50%, 22px);
   opacity: 0;
@@ -820,18 +1406,11 @@ a {
 }
 
 .toast[data-tipo='erro'] {
-  border-color: rgba(226, 105, 95, .5);
+  border-color: rgba(240, 119, 109, .5);
+  color: var(--erro-texto);
 }
 
-.toast[data-tipo='erro'] .icone {
-  color: var(--vermelho);
-}
-
-.toast[data-tipo='ok'] .icone {
-  color: var(--verde);
-}
-
-/* ------------------------------------------------------------- saídas */
+/* ==================================================== tela do PIN */
 
 #admin-gate {
   position: fixed;
@@ -840,7 +1419,9 @@ a {
   display: grid;
   place-items: center;
   padding: 24px;
-  background: var(--preto);
+  background:
+    radial-gradient(700px 420px at 50% 0%, var(--acento-veu), transparent 66%),
+    var(--fundo);
 }
 
 #admin-gate[hidden] {
@@ -849,13 +1430,13 @@ a {
 
 #admin-gate .caixa {
   width: 100%;
-  max-width: 350px;
-  padding: 32px 28px;
-  background: var(--preto-suave);
+  max-width: 356px;
+  padding: 34px 28px;
+  background: var(--superficie);
   border: 1px solid var(--borda);
-  border-radius: 18px;
+  border-radius: 20px;
   text-align: center;
-  box-shadow: 0 24px 70px rgba(0, 0, 0, .55);
+  box-shadow: var(--sombra-flutuante);
 }
 
 #admin-gate h1 {
@@ -872,9 +1453,9 @@ a {
 #admin-gate label {
   display: block;
   margin-bottom: 7px;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: .12em;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--texto-fraco);
   text-align: left;
@@ -882,34 +1463,40 @@ a {
 
 #admin-gate input {
   width: 100%;
-  padding: 12px 12px 12px 24px;
+  padding: 14px 12px 14px 26px;
   margin-bottom: 14px;
-  border: 1px solid var(--borda-forte);
+  border: 1px solid transparent;
   border-radius: var(--raio-p);
-  background: rgba(0, 0, 0, .3);
+  background: var(--veu-campo);
   color: var(--texto);
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 600;
   text-align: center;
-  letter-spacing: 14px;
+  letter-spacing: 15px;
   font-variant-numeric: tabular-nums;
 }
 
 #admin-gate input:focus {
   outline: none;
-  border-color: var(--creme);
+  border-color: var(--acento-vivo);
+  box-shadow: 0 0 0 3px var(--acento-veu);
 }
 
 #admin-gate button {
   width: 100%;
-  min-height: 44px;
+  min-height: 46px;
   border: 0;
   border-radius: var(--raio-p);
-  background: var(--creme);
-  color: var(--preto);
+  background: var(--botao-primario-fundo);
+  color: var(--botao-primario-texto);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
+  transition: background var(--transicao);
+}
+
+#admin-gate button:hover {
+  background: var(--botao-primario-hover);
 }
 
 #admin-gate button[disabled] {
@@ -924,86 +1511,209 @@ a {
   color: var(--vermelho);
 }
 
+/* ====================================================== botão Sair */
+
+/* No trilho, o Sair é mais um ícone: o nome vem no balão, como nos outros. */
 #admin-logout {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
-  z-index: 50;
-  min-height: 40px;
-  padding: 0 16px;
-  border: 1px solid var(--borda-forte);
-  border-radius: 999px;
-  background: var(--preto-alto);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
-  font-size: 13px;
-  font-weight: 500;
+  position: relative;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: var(--texto-fraco);
   cursor: pointer;
+  transition: background var(--transicao), color var(--transicao);
 }
 
-/* --------------------------------------------------------- responsivo */
+#admin-logout span {
+  position: absolute;
+  left: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 6px 12px;
+  border: 1px solid var(--borda-forte);
+  border-radius: 9px;
+  background: var(--superficie-alta);
+  box-shadow: var(--sombra-flutuante);
+  color: var(--texto);
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transicao);
+  z-index: 50;
+}
+
+#admin-logout:hover {
+  background: var(--veu-medio);
+  color: var(--texto);
+}
+
+#admin-logout:hover span,
+#admin-logout:focus-visible span {
+  opacity: 1;
+}
+
+#admin-logout[disabled] {
+  opacity: .5;
+  cursor: progress;
+}
+
+/* Se a página não tiver o trilho, ele vera flutuante com o nome visível. */
+#admin-logout[data-flutuante='true'] {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 50;
+  width: auto;
+  height: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 16px;
+  min-height: 42px;
+  border: 1px solid var(--borda-forte);
+  background: var(--superficie-alta);
+  box-shadow: var(--sombra-flutuante);
+  color: var(--texto-suave);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+#admin-logout[data-flutuante='true'] span {
+  position: static;
+  transform: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  opacity: 1;
+}
+
+/* ========================================================== responsivo */
+
+@media (max-width: 1080px) {
+  .dois-quadros {
+    grid-template-columns: 1fr;
+  }
+}
 
 @media (max-width: 1024px) {
-  .principal {
-    margin-left: 0;
-  }
-
-  .lateral {
-    transform: translateX(-100%);
-    transition: transform var(--transicao);
-    box-shadow: none;
-    width: min(82vw, 290px);
-    padding-top: calc(26px + env(safe-area-inset-top));
-  }
-
-  .lateral[data-aberta='true'] {
-    transform: none;
-    box-shadow: 0 0 0 100vmax rgba(0, 0, 0, .55);
-  }
-
-  .botao-menu {
-    display: inline-flex;
-  }
-
   .topo {
     padding: calc(16px + env(safe-area-inset-top)) 20px 16px;
-    gap: 14px;
-  }
-
-  .topo h1 {
-    font-size: 17px;
-  }
-
-  .topo p {
-    display: none;
   }
 
   .conteudo {
-    padding: 22px 20px 96px;
+    padding: 22px 20px 80px;
   }
 
+  .servico,
   .categoria {
-    grid-template-columns: 64px 1fr;
+    grid-template-columns: 72px 1fr;
   }
 
   /* Em telas estreitas os campos descem para a coluna do lado da miniatura,
-     em vez de ficarem espremidos na coluna de 64px. */
+     em vez de ficarem espremidos numa coluna de 72px. */
+  .servico > .campo:not(.campo--largo),
   .categoria > .campo:not(.campo--largo) {
     grid-column: 2 / -1;
   }
 
+  .servico-acoes,
   .categoria-acoes {
     grid-column: 1 / -1;
     justify-content: flex-end;
   }
 }
 
-@media (max-width: 560px) {
-  .topo-acoes .btn span {
-    display: none;
+@media (max-width: 720px) {
+  :root {
+    /* O trilho encolhe para sobrar largura para o conteúdo: num celular de
+       360px, 64px de menu são 18% da tela. */
+    --trilho-largura: 58px;
   }
 
-  .topo-acoes .btn {
-    padding: 0 12px;
+  .lateral {
+    padding-top: calc(12px + env(safe-area-inset-top));
+    gap: 12px;
+  }
+
+  /* 44px é o alvo mínimo confortável para o dedo; abaixo disso o erro de
+     toque acerta o item vizinho. */
+  .trilho-item,
+  .marca,
+  #admin-logout {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Nada de seleção de texto ao segurar no menu, e nada de flash azul ao
+     tocar: o menu é só navegação. */
+  .trilho-item,
+  .marca,
+  .lateral {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Abaixo de 16px o iOS dá zoom ao focar o campo, e não volta sozinho.
+     No campo de arquivo o zoom não incomoda, então ele fica menor. */
+  .entrada:not([type='file']),
+  .area {
+    font-size: 16px;
+  }
+
+  .painel-titulo {
+    font-size: 21px;
+  }
+
+  .boas-vindas {
+    padding: 22px 20px;
+  }
+
+  .boas-vindas .painel-titulo {
+    font-size: 25px;
+  }
+
+  .grade-estat {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cartao-estat {
+    padding: 15px 16px;
+  }
+
+  .estat-valor {
+    font-size: 26px;
+  }
+
+  .estat-valor--texto {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 560px) {
+  .topo {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .topo h1 {
+    font-size: 17px;
+  }
+
+  .painel-topo {
+    align-items: stretch;
+  }
+
+  .painel-acoes .btn {
+    flex: 1;
+    min-height: 44px;
   }
 
   .cartao-topo,
@@ -1012,24 +1722,98 @@ a {
     padding-right: 16px;
   }
 
-  .estat-valor {
-    font-size: 25px;
+  .cartao-topo {
+    flex-wrap: wrap;
+  }
+
+  .resumo-linha {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+
+  .resumo-linha dd {
+    text-align: left;
+  }
+
+  /* Os dois selos lado a lado ficavam espremidos; a linha inteira para cada. */
+  .resumo-linha dd {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* Um calendário de 7 colunas não cabe com o padding do cartão. O cartão
+     da agenda sangra até a borda para o dia não ficar com 28px de largura. */
+  .agenda-caixa {
+    margin: 0 -16px;
+    padding: 16px 8px;
+  }
+
+  .agenda {
+    gap: 3px;
+  }
+
+  .agenda-dia {
+    min-height: 42px;
+    border-radius: 9px;
+    font-size: 13px;
+  }
+
+  .agenda-cabecalho {
+    font-size: 10px;
+  }
+
+  /* No celular o serviço vira cartão: miniatura e nome dividem a primeira
+     linha, preço e duração dividem a segunda. Sem isto os campos curtos caem
+     na regra de tablet (que os joga na coluna 2) e o cartão passa de 950px. */
+  .servico {
+    grid-template-columns: 96px 1fr;
+    align-items: start;
+  }
+
+  .servico > .campo:not(.campo--largo):not(.campo--curto) {
+    grid-column: 2 / -1;
+  }
+
+  /* Mesma especificidade da regra de tablet, mas depois: vence o empurrão
+     para a coluna 2 e deixa os dois campos curtos lado a lado. */
+  .servico > .campo.campo--curto {
+    grid-column: auto;
+  }
+
+  .servico > .campo.campo--largo,
+  .servico > .servico-acoes {
+    grid-column: 1 / -1;
+  }
+
+  .servico-acoes {
+    justify-content: flex-end;
+  }
+
+  /* O aviso ocupa a largura da tela, acima da barra do sistema. */
+  .toast {
+    left: 12px;
+    right: 12px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    max-width: none;
+    transform: translateY(22px);
+  }
+
+  .toast[data-visivel='true'] {
+    transform: translateY(0);
   }
 
   #admin-gate input {
     /* Abaixo de 16px o iOS dá zoom ao focar o campo. */
-    font-size: 26px;
-  }
-
-  #admin-logout {
-    right: 14px;
-    bottom: calc(14px + env(safe-area-inset-bottom));
+    font-size: 28px;
   }
 }
 
 /* Em modo standalone (PWA ou APK) não existe barra do navegador. */
 @media (display-mode: standalone) {
   .conteudo {
-    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
   }
 }

@@ -209,6 +209,19 @@
                             <video id="hero-center-video" class="hero-center-media" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="./img/capa.jpg" style="display: none;"></video>
                             <img id="hero-center-img" class="hero-center-media" src="./img/capa.jpg" alt="Vilma Silva na produção fotográfica" fetchpriority="high">
                             <div class="pinterest-center-overlay" id="hero-center-overlay"></div>
+                            <!--
+                                Som do vídeo. Só aparece quando a mídia do centro
+                                é vídeo, e é irmão do <video>, não filho: assim o
+                                clique não cai no card (que abre a galeria) e o botão
+                                não some junto com a mídia quando o JS a troca.
+                            -->
+                            <button type="button" class="hero-center-som" id="hero-center-som" aria-pressed="true" aria-label="Ativar o som do vídeo" title="Ativar o som" hidden>
+                                <svg class="hero-center-som-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path class="som-quando-ligado" d="M4 9.5v5h3.2L12 18.6V5.4L7.2 9.5H4zm11.4-.9v1.9a3 3 0 0 1 0 5v1.9a4.9 4.9 0 0 0 0-8.8z" />
+                                    <path class="som-quando-desligado" d="M4 9.5v5h3.2L12 18.6V5.4L7.2 9.5H4z" />
+                                    <path class="som-quando-desligado" d="M16.2 9.3l1.4-1.4 1.8 1.8 1.8-1.8 1.4 1.4-1.8 1.8 1.8 1.8-1.4 1.4-1.8-1.8-1.8 1.8-1.4-1.4 1.8-1.8-1.8-1.8z" />
+                                </svg>
+                            </button>
                             <span class="pinterest-badge">Vilma Silva</span>
                             <span class="card-ver-mais" aria-hidden="true">Ver galeria</span>
                         </div>

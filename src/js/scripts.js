@@ -173,6 +173,7 @@
     // tratada em bloco, pois encolhe junto com a própria coluna).
     var padFinalPx = null;
     var galeriaMaxH = null;
+    var headerInsetPx = null;
     var verMaisButtons = pinterestGrid.querySelectorAll('.card-ver-mais');
     var colCards = [];
     [col1, col2, col4, col5].forEach(function(col) {
@@ -219,6 +220,22 @@
       return max;
     }
 
+    // Altura da faixa reservada ao cabeçalho "Portfólio", medida uma única
+    // vez por layout. É o `bottom` do título em coordenadas de viewport,
+    // que é também a borda superior da região onde a galeria pode desenhar.
+    // O transform do cabeçalho é neutralizado durante a medição (ele é dirigido
+    // pelo scroll e muda a cada frame), senão a leitura herdaria o deslocamento
+    // da revelação em curso.
+    function medirHeaderInset() {
+      if (!portfolioHeaderBar) return 0;
+      var savedTransform = portfolioHeaderBar.style.transform;
+      portfolioHeaderBar.style.transform = 'none';
+      var bottom = portfolioHeaderBar.getBoundingClientRect().bottom;
+      portfolioHeaderBar.style.transform = savedTransform;
+      if (!bottom || isNaN(bottom) || bottom <= 0) return 0;
+      return bottom;
+    }
+
     // Sincroniza a localização da grade:
     // No mobile (<900px), a grade e o título fluem naturalmente dentro da Section 2 (#next-section);
     // No desktop (>=900px), residem em #hero-midia com animação fixa contínua.
@@ -248,8 +265,9 @@
 
     var ticking = false;
 
-    // Pool de imagens profissionais de fotografia gastronômica para a grade estilo Pinterest
-    var PINTEREST_POOL = [
+    // Pool de reserva: as fotos que já estão no deploy. Só entra quando não há
+    // categoria nenhuma cadastrada no painel, para a home nunca abrir vazia.
+    var PINTEREST_POOL_PADRAO = [
       { src: './img/p-burger.jpg', badge: 'Hambúrgueres', category: 'Hambúrgueres', alt: 'Hambúrguer gourmet artesanal com queijo derretido e bacon' },
       { src: './img/p-pizza.jpg', badge: 'Pizzas Artesanais', category: 'Pizzas', alt: 'Pizza napolitana artesanal com manjericão e mozzarella' },
       { src: './img/p-drink.jpg', badge: 'Drinks & Coquetéis', category: 'Bebidas', alt: 'Coquetel artesanal sofisticado com gelo esculpido e laranja' },
@@ -279,13 +297,74 @@
       return copia;
     }
 
+    // Uma entrada da grade por foto de galeria, com a categoria dona da foto.
+    // O painel é a fonte da verdade: trocar a categoria lá troca a foto aqui.
+    // Devolve também o índice categoria -> fotos, usado no clique do cartão.
+    function montarPool(categories) {
+      var pool = [];
+      var porCategoria = {};
+
+      if (!Array.isArray(categories)) return { pool: pool, porCategoria: porCategoria };
+
+      for (var i = 0; i < categories.length; i++) {
+        var categoria = categories[i];
+        if (!categoria || typeof categoria !== 'object') continue;
+
+        var nome = typeof categoria.name === 'string' ? categoria.name.trim() : '';
+        if (!nome) continue;
+
+        var fotos = [];
+        if (Array.isArray(categoria.gallery)) {
+          for (var g = 0; g < categoria.gallery.length; g++) {
+            var foto = categoria.gallery[g];
+            if (typeof foto === 'string' && foto.trim()) fotos.push(foto.trim());
+          }
+        }
+        // Categoria sem galeria ainda mostra a capa, senão o cartão fica vazio.
+        if (!fotos.length && typeof categoria.image === 'string' && categoria.image.trim()) {
+          fotos.push(categoria.image.trim());
+        }
+        if (!fotos.length) continue;
+
+        var legenda = typeof categoria.subtitle === 'string' ? categoria.subtitle.trim() : '';
+        for (var f = 0; f < fotos.length; f++) {
+          pool.push({
+            src: fotos[f],
+            badge: legenda || nome,
+            category: nome,
+            alt: 'Fotografia de ' + nome
+          });
+        }
+        porCategoria[nome] = fotos;
+      }
+
+      return { pool: pool, porCategoria: porCategoria };
+    }
+
+    // Enquanto a API não responde, a cópia em localStorage (escrita pelo
+    // content.js) já deixa a primeira visita com as fotos certas.
+    function categoriasDoCache() {
+      try {
+        var bruto = localStorage.getItem('vilma_fotografia_data');
+        if (!bruto) return null;
+        var dados = JSON.parse(bruto);
+        return dados && Array.isArray(dados.categories) ? dados.categories : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    var montagemInicial = montarPool(categoriasDoCache());
+    var poolGrade = montagemInicial.pool.length ? montagemInicial.pool : PINTEREST_POOL_PADRAO;
+    var fotosPorCategoria = montagemInicial.porCategoria;
+
     // Embaralha dinamicamente as fotos e posições de todos os cartões da grade a cada recarregamento da tela
     function randomizarGradePinterest() {
       var cards = pinterestGrid.querySelectorAll('.pinterest-card:not(#hero-featured-card):not(.card-main-hero)');
       if (!cards || cards.length === 0) return;
 
-      var shuffled1 = embaralharArray(PINTEREST_POOL);
-      var shuffled2 = embaralharArray(PINTEREST_POOL);
+      var shuffled1 = embaralharArray(poolGrade);
+      var shuffled2 = embaralharArray(poolGrade);
       var shuffledPool = shuffled1.concat(shuffled2);
 
       cards.forEach(function(card, idx) {
@@ -310,6 +389,23 @@
 
     // Executa a randomização inicial imediatamente para mudar a posição das fotos a cada carregamento/recarregamento
     randomizarGradePinterest();
+
+    // O content.js avisa quando o conteúdo chega do servidor. Na primeira visita
+    // sem cache a grade começa na reserva e é refeita aqui com as categorias do
+    // painel; nas seguintes o cache já acerta e nada muda.
+    document.addEventListener('vilma:conteudo', function (evento) {
+      var detalhe = evento && evento.detail ? evento.detail : null;
+      var montagem = montarPool(detalhe ? detalhe.categories : null);
+      // Pool vazio = servidor sem categorias, aí a reserva continua valendo.
+      if (!montagem.pool.length) return;
+
+      poolGrade = montagem.pool;
+      fotosPorCategoria = montagem.porCategoria;
+      randomizarGradePinterest();
+      // Na Section 2 a altura do cartão segue a proporção real da foto, então a
+      // medição em cache mediu as imagens antigas e precisa ser refeita.
+      galeriaMaxH = null;
+    });
 
     // Na Section 1 as imagens e cartões são puramente visuais e não clicáveis no desktop; na Section 2 tornam-se interativos
     var pinterestCards = pinterestGrid.querySelectorAll('.pinterest-card, .story-card');
@@ -350,15 +446,20 @@
               './img/p-7.jpg',
               './img/img1.jpg'
             ];
-            var cached = localStorage.getItem('vilma_fotografia_data');
-            var fotosCat = [];
-            if (cached) {
-              var parsed = JSON.parse(cached);
-              var encontrada = (parsed.categories || []).find(function(c) {
-                return c.name && c.name.toLowerCase() === cat.toLowerCase();
-              });
-              if (encontrada && encontrada.gallery && encontrada.gallery.length > 0) {
-                fotosCat = encontrada.gallery;
+            // Primeiro o índice que o painel montou, que já é o que está na tela.
+            // O localStorage é só a rede de segurança para categorias que ainda
+            // não chegaram neste carregamento.
+            var fotosCat = fotosPorCategoria[cat] || [];
+            if (fotosCat.length === 0) {
+              var cached = localStorage.getItem('vilma_fotografia_data');
+              if (cached) {
+                var parsed = JSON.parse(cached);
+                var encontrada = (parsed.categories || []).find(function(c) {
+                  return c.name && c.name.toLowerCase() === cat.toLowerCase();
+                });
+                if (encontrada && encontrada.gallery && encontrada.gallery.length > 0) {
+                  fotosCat = encontrada.gallery;
+                }
               }
             }
             if (fotosCat.length === 0) {
@@ -407,11 +508,13 @@
     function limparEstilos() {
       padFinalPx = null;
       galeriaMaxH = null;
+      headerInsetPx = null;
       if (pinterestGrid) {
         pinterestGrid.style.gridTemplateColumns = '';
         pinterestGrid.style.paddingTop = '';
         pinterestGrid.style.pointerEvents = '';
         pinterestGrid.style.transform = '';
+        pinterestGrid.style.clipPath = '';
       }
       if (heroConteudo) {
         heroConteudo.style.opacity = '';
@@ -599,6 +702,19 @@
       }
       pinterestGrid.style.paddingTop = (ease * padFinalPx).toFixed(1) + 'px';
 
+      // 5.9 Recorte da faixa do cabeçalho.
+      // O título "Portfólio" é `position: fixed` e a galeria é transladada
+      // para cima (bloco 6): sem recorte, os cards passam por baixo do texto.
+      // `clip-path` corta a grade exatamente na borda inferior do cabeçalho,
+      // então os cards desaparecem sob o título em vez de se sobrepor a ele.
+      // Função pura de `ease` (0 -> headerInsetPx), logo reversível por
+      // construção; em ease = 0 volta a `''`, o estado original sem recorte.
+      if (headerInsetPx === null) headerInsetPx = medirHeaderInset();
+      var clipPx = ease * headerInsetPx;
+      pinterestGrid.style.clipPath = ease > 0.0005
+        ? 'inset(' + clipPx.toFixed(1) + 'px 0px 0px 0px)'
+        : '';
+
       // 5.5 Revelação do cabeçalho "Portfólio".
       var headerProg = Math.min(Math.max((ease - 0.15) / 0.5, 0), 1);
       var headerEase = headerProg * headerProg * (3 - 2 * headerProg);
@@ -671,6 +787,13 @@
             // Section 3 entrando na tela: empurra suavemente o final já visível da galeria
             var pushUp = sobreRect.top - vh;
             pinterestGrid.style.transform = 'translate3d(0, ' + (-translateY + pushUp).toFixed(1) + 'px, 0)';
+            // O recorte acompanha o título, que também sobe: mantém a borda
+            // de recorte colada na base do cabeçalho em vez de deixar uma
+            // faixa vazia no topo.
+            if (clipPx > 0) {
+              pinterestGrid.style.clipPath =
+                'inset(' + Math.max(clipPx + pushUp, 0).toFixed(1) + 'px 0px 0px 0px)';
+            }
             if (heroVeu) heroVeu.style.transform = 'translate3d(0, ' + pushUp.toFixed(1) + 'px, 0)';
             if (portfolioHeaderBar) portfolioHeaderBar.style.transform = 'translate3d(0, ' + pushUp.toFixed(1) + 'px, 0)';
           } else {
@@ -708,10 +831,11 @@
 
     window.addEventListener('scroll', aoRolar, { passive: true });
     window.addEventListener('resize', function () {
-      // --grid-pad-final e a altura da galeria dependem do viewport/layout:
-      // revalida ambos no resize.
+      // --grid-pad-final, a faixa do cabeçalho e a altura da galeria dependem
+      // do viewport/layout: revalida todas as três no resize.
       padFinalPx = null;
       galeriaMaxH = null;
+      headerInsetPx = null;
       aoRolar();
     }, { passive: true });
     atualizar();
@@ -722,14 +846,23 @@
     var video = document.getElementById('hero-center-video');
     if (!video) return;
 
-    video.muted = true;
+    // O som é decisão de quem assiste, não deste arquivo. `data-som` é o que
+    // o botão de som grava: enquanto a visitante não mandar ligar, o vídeo
+    // entra mudo — que é a única forma de o autoplay ser concedido.
+    function aplicarMudoPadrao() {
+      if (video.dataset.som === 'ligado') return;
+      video.muted = true;
+      video.setAttribute('muted', '');
+    }
+
     video.playsInline = true;
     video.autoplay = true;
     video.loop = true;
+    aplicarMudoPadrao();
 
     function tentarTocar() {
       if (!video.src || video.style.display === 'none') return;
-      video.muted = true;
+      aplicarMudoPadrao();
       var p = video.play();
       if (p !== undefined) {
         p.catch(function () {
