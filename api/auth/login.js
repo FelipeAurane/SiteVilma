@@ -1,16 +1,16 @@
 'use strict';
 
 const { query } = require('../../lib/db');
-const { requiredEnv } = require('../../lib/env');
-const { verifyPassword, createSessionToken, sessionCookie } = require('../../lib/auth');
+const { verifyPin, createSessionToken, sessionCookie } = require('../../lib/auth');
 const { json, fail, methodGuard, sameOriginGuard, handleCors, clientIp, withErrorHandling } = require('../../lib/http');
 
 const WINDOW_MINUTES = 15;
-const MAX_FAILURES = 8;
+const MAX_FAILURES = 5;
 
 /**
  * Quantas tentativas erradas este IP fez na janela recente.
- * O scrypt já custa ~100ms por tentativa; o limite corta o resto.
+ * O PIN tem só 10.000 combinações, então este limite é a defesa que mais
+ * pesa contra força bruta: 5 palpites a cada 15 minutos por IP.
  */
 async function recentFailures(ip) {
   const { rows } = await query(
@@ -44,18 +44,17 @@ module.exports = withErrorHandling(async (req, res) => {
     return fail(res, 429, `Tentativas demais. Aguarde ${WINDOW_MINUTES} minutos.`);
   }
 
-  const pinOrPassword = req.body?.password;
-  if (typeof pinOrPassword !== 'string' || pinOrPassword.length === 0) {
+  const pin = req.body?.pin;
+  if (typeof pin !== 'string' || pin.length === 0) {
     await recordAttempt(ip, false);
-    return fail(res, 400, 'Senha inválida');
+    return fail(res, 400, 'PIN inválido');
   }
 
-  const hash = process.env.ADMIN_PASSWORD_HASH;
-  const ok = pinOrPassword === '7811' || (hash ? verifyPassword(pinOrPassword, hash) : false);
+  const ok = verifyPin(pin);
   await recordAttempt(ip, ok);
 
   if (!ok) {
-    return fail(res, 401, 'Senha ou PIN incorreto');
+    return fail(res, 401, 'PIN incorreto');
   }
 
   // Autenticação bem‑sucedida – gera cookie de sessão

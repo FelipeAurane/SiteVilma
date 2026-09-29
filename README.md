@@ -18,13 +18,13 @@ api/                 nosso servidor (funções da Vercel)
   content.js           GET público / PUT só admin — conteúdo do site
   media.js             POST só admin — upload de imagem
   media/[id].js        GET público — serve a imagem
-  auth/login.js        POST — troca senha por cookie de sessão
+  auth/login.js        POST — troca o PIN por cookie de sessão
   auth/logout.js       POST — encerra a sessão
   auth/session.js      GET — "estou logado?"
 
 lib/                 biblioteca compartilhada pelas funções
   db.js                Postgres + criação das tabelas
-  auth.js              hash de senha (scrypt) e cookie assinado (HMAC)
+  auth.js              conferência do PIN e cookie assinado (HMAC)
   http.js              respostas, 405, CSRF, exigir admin
   env.js               variáveis de ambiente
 
@@ -32,7 +32,7 @@ src/js/              frontend
   api.js               único ponto que fala com o servidor
   content.js           carrega e pinta o conteúdo do site
   visibility.js        mostra/esconde blocos por data-tag
-  admin-auth.js        tela de login do painel
+  admin-auth.js        tela de PIN do painel
   admin-panel.js       controles do painel
 
 scripts/             ferramentas de linha de comando
@@ -58,16 +58,12 @@ gratuito de cada um antes de decidir, elas mudam.
 O que importa é ser um Postgres com `sslmode=require`. Trocar de provedor
 depois é trocar uma variável.
 
-### 2. Gerar as credenciais
+### 2. Gerar o segredo de sessão
 
 ```bash
 npm install
 npm run secret
-npm run hash
 ```
-
-`npm run hash` pede a senha do painel sem mostrar na tela e devolve só o
-hash. A senha em si não é gravada em lugar nenhum.
 
 ### 3. Preencher o .env
 
@@ -75,7 +71,8 @@ hash. A senha em si não é gravada em lugar nenhum.
 cp .env.example .env
 ```
 
-Cole os três valores. Depois confira:
+`ADMIN_PIN` é o PIN de 4 dígitos do painel — só isso, sem hash para gerar.
+Cole o `SESSION_SECRET` e escreva o PIN. Depois confira:
 
 ```bash
 npm run verificar
@@ -115,14 +112,16 @@ primeira requisição.
 
 ## Segurança
 
-**O painel `/config` exige senha.** Antes não exigia nada: qualquer pessoa
-que abrisse a URL editava o site.
+**O painel `/config` exige PIN de 4 dígitos.** Antes não exigia nada: qualquer
+pessoa que abrisse a URL editava o site.
 
-- A senha nunca é guardada — só o hash scrypt.
+- O PIN fica na variável `ADMIN_PIN`, fora do código-fonte, e a comparação é
+  em tempo constante. Sem `ADMIN_PIN` configurado, ninguém entra.
+- Cinco PINs errados do mesmo IP em 15 minutos bloqueiam novas tentativas —
+  é o que segura a força bruta, já que 4 dígitos são só 10.000 combinações.
 - A sessão é um cookie `HttpOnly` + `Secure` + `SameSite=Strict`, assinado
   com HMAC. JavaScript da página não consegue ler o cookie, então um XSS
   não rouba a sessão.
-- Oito senhas erradas do mesmo IP em 15 minutos bloqueiam novas tentativas.
 - Toda escrita confere a origem da requisição (anti-CSRF).
 
 **O navegador não recebe chave de banco.** Leitura de conteúdo é pública
@@ -145,8 +144,8 @@ npm test
 ```
 
 Cobre: escrita sem sessão, cookie forjado, sessão vencida, requisição de
-outra origem, upload disfarçado, limite de tentativas de login, e o fluxo
-completo de login até gravar e ler.
+outra origem, upload disfarçado, PIN errado, PIN com tamanho errado, limite
+de tentativas de login, e o fluxo completo de login até gravar e ler.
 
 ---
 
@@ -189,8 +188,7 @@ celular, "Adicionar à tela inicial" usa `manifest-admin.json`.
 
 ## Manutenção
 
-**Trocar a senha do painel**: `npm run hash`, atualize `ADMIN_PASSWORD_HASH`
-na Vercel, redeploy.
+**Trocar o PIN do painel**: edite `ADMIN_PIN` no `.env` e na Vercel, redeploy.
 
 **Deslogar de tudo**: `npm run secret`, atualize `SESSION_SECRET`. Todas as
 sessões abertas morrem na hora.

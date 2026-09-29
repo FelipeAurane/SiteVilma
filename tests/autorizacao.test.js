@@ -6,7 +6,7 @@
  */
 
 process.env.SESSION_SECRET = require('crypto').randomBytes(32).toString('base64url');
-process.env.ADMIN_PASSWORD_HASH = 'scrypt$16384$8$1$AAAAAAAAAAAAAAAAAAAAAA==$AAAA';
+process.env.ADMIN_PIN = '7811';
 
 const path = require('path');
 const RAIZ = require('path').join(__dirname, '..');
@@ -196,7 +196,29 @@ teste('Sessão expirada é recusada', async () => {
   assert(res.statusCode === 401, `sessão vencida deveria dar 401, veio ${res.statusCode}`);
 });
 
-// --------------------------------------------------------------- execução
+// ------------------------------------------------------------------ PIN
+
+teste('verifyPin aceita o PIN configurado e recusa o resto', () => {
+  assert(auth.verifyPin('7811') === true, 'o PIN configurado deveria passar');
+  assert(auth.verifyPin('7812') === false, 'vizinho do PIN passou');
+  assert(auth.verifyPin('781') === false, 'PIN curto passou');
+  assert(auth.verifyPin('78110') === false, 'PIN longo passou');
+  assert(auth.verifyPin('') === false, 'PIN vazio passou');
+  assert(auth.verifyPin(null) === false, 'PIN nulo passou');
+  assert(auth.verifyPin(7811) === false, 'número em vez de texto passou');
+});
+
+teste('sem ADMIN_PIN configurado, verifyPin recusa tudo', () => {
+  const antes = process.env.ADMIN_PIN;
+  delete process.env.ADMIN_PIN;
+  try {
+    assert(auth.verifyPin('7811') === false, 'entrou sem PIN configurado');
+  } finally {
+    process.env.ADMIN_PIN = antes;
+  }
+});
+
+// ------------------------------------------------------------- execução
 
 (async () => {
   let falhas = 0;

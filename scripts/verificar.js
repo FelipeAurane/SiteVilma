@@ -12,7 +12,7 @@
 
 require('dotenv').config();
 
-const { verifyPassword } = require('../lib/auth');
+const { verifyPin, PIN_LENGTH } = require('../lib/auth');
 
 const resultados = [];
 
@@ -29,13 +29,16 @@ async function principal() {
     url ? 'presente' : 'ausente — pegue a connection string no painel do banco'
   );
 
-  const hash = process.env.ADMIN_PASSWORD_HASH;
-  const hashValido =
-    Boolean(hash) && hash.startsWith('scrypt$') && hash.split('$').length === 6;
+  const pin = process.env.ADMIN_PIN;
+  const pinValido = typeof pin === 'string' && pin.trim().length === PIN_LENGTH;
   checar(
-    'ADMIN_PASSWORD_HASH',
-    hashValido,
-    hash ? (hashValido ? 'formato válido' : 'formato inesperado') : 'ausente — rode: npm run hash'
+    'ADMIN_PIN',
+    pinValido,
+    pin
+      ? pinValido
+        ? `${PIN_LENGTH} caracteres`
+        : `tem que ter ${PIN_LENGTH} caracteres`
+      : `ausente — configure ADMIN_PIN com ${PIN_LENGTH} caracteres`
   );
 
   const segredo = process.env.SESSION_SECRET;
@@ -49,10 +52,13 @@ async function principal() {
       : 'ausente — rode: npm run secret'
   );
 
-  // O hash tem que rejeitar senha errada; se aceitar, algo está corrompido.
-  if (hashValido) {
-    const falsoPositivo = verifyPassword('senha-obviamente-errada-' + Date.now(), hash);
-    checar('Hash rejeita senha errada', !falsoPositivo, falsoPositivo ? 'ACEITOU — regere o hash' : 'ok');
+  // O PIN configurado tem que abrir o painel e rejeitar os vizinhos.
+  if (pinValido) {
+    // Mesmo tamanho, primeiro dígito virado: tem que recusar.
+    const certo = pin.trim();
+    const errado = (certo[0] === '0' ? '1' : '0') + certo.slice(1);
+    const falsoPositivo = verifyPin(errado);
+    checar('PIN rejeita valor errado', !falsoPositivo, falsoPositivo ? 'ACEITOU — corrija ADMIN_PIN' : 'ok');
   }
 
   // -------------------------------------------------------------- banco

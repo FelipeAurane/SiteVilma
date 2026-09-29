@@ -5,101 +5,15 @@
  * Isto é conforto, não a segurança em si: quem seguraria a fechadura é o
  * servidor, que recusa qualquer escrita sem o cookie de sessão. Mesmo que
  * alguém force a tela a aparecer pelo devtools, nenhum botão grava nada.
+ *
+ * O visual da tela vem de css/config.css (#admin-gate).
  */
 
 import { login, logout, getSession } from './api.js';
 
-const ESTILO = `
-  #admin-gate {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    background: #1b1b1f;
-    font-family: Arial, Helvetica, sans-serif;
-  }
-  #admin-gate[hidden] { display: none; }
-  #admin-gate .caixa {
-    width: 100%;
-    max-width: 360px;
-    background: #fff;
-    border-radius: 12px;
-    padding: 32px 28px;
-    box-shadow: 0 18px 50px rgba(0, 0, 0, .35);
-  }
-  #admin-gate h1 {
-    margin: 0 0 6px;
-    font-size: 20px;
-    color: #1b1b1f;
-  }
-  #admin-gate p.ajuda {
-    margin: 0 0 20px;
-    font-size: 13px;
-    color: #6b6b73;
-  }
-  #admin-gate label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: #3a3a42;
-    margin-bottom: 6px;
-  }
-  #admin-gate input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 11px 12px;
-    font-size: 15px;
-    border: 1px solid #d3d3da;
-    border-radius: 8px;
-    margin-bottom: 14px;
-  }
-  #admin-gate input:focus {
-    outline: 2px solid #7c5cff;
-    outline-offset: 1px;
-    border-color: transparent;
-  }
-  #admin-gate button {
-    width: 100%;
-    padding: 11px 12px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #fff;
-    background: #7c5cff;
-    border: 0;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  #admin-gate button[disabled] { opacity: .6; cursor: progress; }
-  #admin-gate .erro {
-    margin: 14px 0 0;
-    font-size: 13px;
-    color: #b3261e;
-    min-height: 18px;
-  }
-  #admin-logout {
-    position: fixed;
-    right: 16px;
-    bottom: 16px;
-    z-index: 9998;
-    padding: 9px 16px;
-    font: 600 13px Arial, Helvetica, sans-serif;
-    color: #3a3a42;
-    background: #fff;
-    border: 1px solid #d3d3da;
-    border-radius: 999px;
-    cursor: pointer;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, .12);
-  }
-`;
+const TAMANHO_PIN = 4;
 
 function montarGate() {
-  const style = document.createElement('style');
-  style.textContent = ESTILO;
-  document.head.appendChild(style);
-
   const gate = document.createElement('div');
   gate.id = 'admin-gate';
 
@@ -112,22 +26,26 @@ function montarGate() {
 
   const ajuda = document.createElement('p');
   ajuda.className = 'ajuda';
-  ajuda.textContent = 'Entre com a senha do painel para continuar.';
+  ajuda.textContent = `Digite o PIN de ${TAMANHO_PIN} dígitos do painel para continuar.`;
   caixa.appendChild(ajuda);
 
   const form = document.createElement('form');
-  form.autocomplete = 'on';
+  form.autocomplete = 'off';
 
   const label = document.createElement('label');
-  label.textContent = 'Senha';
-  label.htmlFor = 'admin-senha';
+  label.textContent = 'PIN';
+  label.htmlFor = 'admin-pin';
   form.appendChild(label);
 
   const input = document.createElement('input');
   input.type = 'password';
-  input.id = 'admin-senha';
-  input.name = 'password';
-  input.autocomplete = 'current-password';
+  input.id = 'admin-pin';
+  input.name = 'pin';
+  input.inputMode = 'numeric';
+  input.pattern = '[0-9]*';
+  input.maxLength = TAMANHO_PIN;
+  input.autocomplete = 'one-time-code';
+  input.placeholder = '•'.repeat(TAMANHO_PIN);
   input.required = true;
   form.appendChild(input);
 
@@ -182,12 +100,13 @@ export function exigirLogin() {
       return;
     }
 
-    // 2. Tenta biometria / senha do dispositivo (apenas no celular)
+    // 2. Tenta a biometria do aparelho (só no app Android), que já guardou o PIN
     if (window.Capacitor && window.Capacitor.isNativePlatform() && window.Capacitor.Plugins.NativeBiometric) {
       try {
         const { NativeBiometric } = window.Capacitor.Plugins;
         const result = await NativeBiometric.isAvailable();
         if (result.isAvailable) {
+          // O plugin chama o campo guardado de "password"; aqui é o PIN.
           const creds = await NativeBiometric.getCredentials({ server: 'vilma.app' });
           if (creds && creds.password) {
             await login(creds.password);
@@ -203,6 +122,14 @@ export function exigirLogin() {
     // 3. Cai no formulário manual se não houver sessão nem biometria válida
     const { gate, form, input, botao, erro } = montarGate();
 
+    // Só dígitos, no máximo 4 — e entra sozinho assim que o PIN fecha.
+    input.addEventListener('input', () => {
+      const digitos = input.value.replace(/\D/g, '').slice(0, TAMANHO_PIN);
+      if (digitos !== input.value) input.value = digitos;
+      erro.textContent = '';
+      if (digitos.length === TAMANHO_PIN) form.requestSubmit();
+    });
+
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       erro.textContent = '';
@@ -211,7 +138,7 @@ export function exigirLogin() {
       try {
         await login(input.value);
 
-        // Salva a credencial para os próximos acessos no celular
+        // Salva o PIN para os próximos acessos no celular (a biometria destrava).
         if (window.Capacitor && window.Capacitor.isNativePlatform() && window.Capacitor.Plugins.NativeBiometric) {
           try {
             const { NativeBiometric } = window.Capacitor.Plugins;
@@ -236,9 +163,10 @@ export function exigirLogin() {
           err.status === 429
             ? 'Tentativas demais. Espere alguns minutos.'
             : err.status === 401
-              ? 'Senha incorreta.'
+              ? 'PIN incorreto.'
               : `Não foi possível entrar: ${err.message}`;
-        input.select();
+        input.value = '';
+        input.focus();
       } finally {
         botao.disabled = false;
       }

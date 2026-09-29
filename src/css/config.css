@@ -1,0 +1,1035 @@
+/**
+ * Painel de configuração (/config).
+ *
+ * Usa as mesmas cores e a mesma fonte do site público (site.css), para o
+ * painel parecer parte do mesmo projeto em vez de um app colado por cima.
+ * Tudo que a página precisa está aqui: não há <style> no config.html.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&display=swap');
+
+/* ------------------------------------------------------------- tokens */
+
+:root {
+  --preto: #0e0e10;
+  --preto-suave: #17171a;
+  --preto-alto: #1f1f24;
+
+  --creme: #f6f3ee;
+  --creme-fundo: #efeae1;
+
+  --texto: rgba(255, 255, 255, .92);
+  --texto-suave: rgba(255, 255, 255, .66);
+  --texto-fraco: rgba(255, 255, 255, .44);
+
+  --borda: rgba(255, 255, 255, .1);
+  --borda-forte: rgba(255, 255, 255, .18);
+
+  --lateral: 264px;
+  --largura-maxima: 1180px;
+  --raio: 14px;
+  --raio-p: 9px;
+  --transicao: .3s cubic-bezier(.22, .61, .36, 1);
+
+  --verde: #4ec98a;
+  --ambar: #e6a95c;
+  --vermelho: #e2695f;
+}
+
+/* -------------------------------------------------------------- reset */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  background: var(--preto);
+  color: var(--texto);
+  -webkit-font-smoothing: antialiased;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--creme);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* -------------------------------------------------------------- ícones */
+
+.icone {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------ estrutura */
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.principal {
+  flex: 1;
+  min-width: 0;
+  margin-left: var(--lateral);
+}
+
+/* ------------------------------------------------------- barra lateral */
+
+.lateral {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--lateral);
+  padding: 26px 18px;
+  background: var(--preto-suave);
+  border-right: 1px solid var(--borda);
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  overflow-y: auto;
+  z-index: 40;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px 22px;
+  border-bottom: 1px solid var(--borda);
+}
+
+.marca-selo {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  background: var(--creme);
+  color: var(--preto);
+}
+
+.marca-nome {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: .01em;
+}
+
+.marca-tipo {
+  display: block;
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--texto-fraco);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-titulo {
+  padding: 0 10px 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--texto-fraco);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 10px;
+  border: 0;
+  width: 100%;
+  border-radius: var(--raio-p);
+  background: none;
+  color: var(--texto-suave);
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transicao), color var(--transicao);
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, .05);
+  color: var(--texto);
+}
+
+.nav-item[aria-current='true'] {
+  background: rgba(255, 255, 255, .08);
+  color: var(--creme);
+  font-weight: 500;
+}
+
+.lateral-rodape {
+  margin-top: auto;
+  padding: 16px 10px 0;
+  border-top: 1px solid var(--borda);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  color: var(--texto-fraco);
+}
+
+.ponto {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--texto-fraco);
+  transition: background var(--transicao);
+}
+
+.ponto[data-estado='salvo'] {
+  background: var(--verde);
+}
+
+.ponto[data-estado='salvando'] {
+  background: var(--ambar);
+  animation: pulsa 1.1s ease-in-out infinite;
+}
+
+.ponto[data-estado='erro'] {
+  background: var(--vermelho);
+}
+
+@keyframes pulsa {
+  50% {
+    opacity: .3;
+  }
+}
+
+/* ---------------------------------------------------------- cabeçalho */
+
+.topo {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px 34px;
+  background: rgba(14, 14, 16, .82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--borda);
+}
+
+.topo h1 {
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+
+.topo p {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--texto-fraco);
+}
+
+.topo-acoes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+
+.botao-menu {
+  display: none;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-p);
+  background: rgba(255, 255, 255, .04);
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------ botões */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: var(--raio-p);
+  background: rgba(255, 255, 255, .06);
+  color: var(--texto);
+  font-size: 13.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--transicao), border-color var(--transicao), transform var(--transicao);
+}
+
+.btn:hover {
+  background: rgba(255, 255, 255, .1);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn[disabled] {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primario {
+  background: var(--creme);
+  color: var(--preto);
+  font-weight: 600;
+}
+
+.btn-primario:hover {
+  background: #fff;
+}
+
+.btn-contorno {
+  border-color: var(--borda-forte);
+  background: none;
+}
+
+.btn-contorno:hover {
+  background: rgba(255, 255, 255, .06);
+}
+
+.btn-perigo {
+  border-color: rgba(226, 105, 95, .4);
+  background: none;
+  color: var(--vermelho);
+}
+
+.btn-perigo:hover {
+  background: rgba(226, 105, 95, .12);
+}
+
+.btn-pequeno {
+  min-height: 34px;
+  padding: 0 12px;
+  font-size: 12.5px;
+}
+
+/* ---------------------------------------------------------- conteúdo */
+
+.conteudo {
+  max-width: var(--largura-maxima);
+  padding: 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
+
+.secao {
+  scroll-margin-top: 96px;
+}
+
+.secao-topo {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.secao-titulo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--texto-fraco);
+}
+
+.secao-desc {
+  margin-top: 6px;
+  font-size: 13.5px;
+  color: var(--texto-suave);
+  max-width: 62ch;
+}
+
+.secao-acoes {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ----------------------------------------------------- números do topo */
+
+.grade-estat {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.cartao-estat {
+  padding: 18px 20px;
+  background: var(--preto-suave);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+}
+
+.estat-valor {
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.estat-valor[data-tom='verde'] {
+  color: var(--verde);
+}
+
+.estat-valor[data-tom='ambar'] {
+  color: var(--ambar);
+}
+
+.estat-valor--texto {
+  font-size: 17px;
+  padding: 6px 0 5px;
+}
+
+.estat-rotulo {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--texto-fraco);
+}
+
+/* ------------------------------------------------------------ cartões */
+
+.cartao {
+  background: var(--preto-suave);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  overflow: hidden;
+}
+
+.cartao + .cartao {
+  margin-top: 14px;
+}
+
+.cartao-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--borda);
+}
+
+.cartao-titulo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.cartao-corpo {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ------------------------------------------------------------ campos */
+
+.grade-campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.campo--largo {
+  grid-column: 1 / -1;
+}
+
+.campo-rotulo {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--texto-suave);
+}
+
+.campo-dica {
+  font-size: 11.5px;
+  color: var(--texto-fraco);
+}
+
+.entrada,
+.area {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 13px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-p);
+  background: rgba(0, 0, 0, .28);
+  color: var(--texto);
+  font-size: 14px;
+  transition: border-color var(--transicao), background var(--transicao);
+}
+
+.area {
+  min-height: 92px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.entrada::placeholder,
+.area::placeholder {
+  color: var(--texto-fraco);
+}
+
+.entrada:focus,
+.area:focus {
+  outline: none;
+  border-color: var(--creme);
+  background: rgba(0, 0, 0, .45);
+}
+
+.entrada[type='file'] {
+  padding: 9px 13px;
+  font-size: 12.5px;
+  color: var(--texto-suave);
+  cursor: pointer;
+}
+
+.entrada[type='file']::file-selector-button {
+  margin-right: 12px;
+  padding: 7px 13px;
+  border: 1px solid var(--borda-forte);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, .07);
+  color: var(--texto);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------- miniaturas */
+
+.miniatura {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.miniatura img {
+  width: 76px;
+  height: 76px;
+  flex: none;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--borda);
+  background: rgba(0, 0, 0, .4);
+}
+
+.miniatura-vazia {
+  display: grid;
+  place-items: center;
+  color: var(--texto-fraco);
+}
+
+.miniatura figcaption {
+  font-size: 11.5px;
+  color: var(--texto-fraco);
+  overflow-wrap: anywhere;
+}
+
+/* ---------------------------------------------------------- categorias */
+
+.lista-categorias {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.categoria {
+  display: grid;
+  grid-template-columns: 76px 1fr 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, .16);
+}
+
+/* No cartão de categoria a miniatura fica acima da legenda, não ao lado —
+   a coluna tem só 76px e a legenda ao lado sairia espremida. */
+.miniatura--cartao {
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  text-align: center;
+}
+
+.miniatura--cartao img,
+.miniatura--cartao .miniatura-vazia {
+  width: 100%;
+  aspect-ratio: 1;
+  height: auto;
+}
+
+.miniatura--cartao .miniatura-vazia {
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--borda-forte);
+  border-radius: 10px;
+  color: var(--texto-fraco);
+}
+
+.categoria-acoes {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-icone {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-p);
+  background: none;
+  color: var(--texto-suave);
+  cursor: pointer;
+  transition: background var(--transicao), color var(--transicao);
+}
+
+.btn-icone:hover {
+  background: rgba(255, 255, 255, .08);
+  color: var(--texto);
+}
+
+.btn-icone--perigo:hover {
+  background: rgba(226, 105, 95, .14);
+  color: var(--vermelho);
+  border-color: rgba(226, 105, 95, .35);
+}
+
+.vazio {
+  padding: 34px 20px;
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--texto-fraco);
+  border: 1px dashed var(--borda-forte);
+  border-radius: 12px;
+}
+
+/* -------------------------------------------------------- visibilidade */
+
+.grade-vis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.item-vis {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--raio-p);
+  background: rgba(255, 255, 255, .03);
+  transition: background var(--transicao), border-color var(--transicao);
+}
+
+.item-vis:hover {
+  background: rgba(255, 255, 255, .06);
+  border-color: var(--borda);
+}
+
+.item-vis-nome {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.item-vis-tag {
+  display: block;
+  margin-top: 1px;
+  font-size: 11px;
+  color: var(--texto-fraco);
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+}
+
+/* --------------------------------------------------- chave (switch) */
+
+.chave {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.chave input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.chave-trilho {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .16);
+  transition: background var(--transicao);
+  pointer-events: none;
+}
+
+.chave-trilho::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform var(--transicao);
+}
+
+.chave input:checked + .chave-trilho {
+  background: var(--verde);
+}
+
+.chave input:checked + .chave-trilho::after {
+  transform: translateX(19px);
+}
+
+.chave input:focus-visible + .chave-trilho {
+  outline: 2px solid var(--creme);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------ filtros */
+
+.filtros {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--texto-suave);
+}
+
+.filtro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.filtro input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--verde);
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------- avisos */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(92vw, 460px);
+  padding: 13px 18px;
+  border: 1px solid var(--borda-forte);
+  border-radius: 999px;
+  background: var(--preto-alto);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, .55);
+  font-size: 13.5px;
+  transform: translate(-50%, 22px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform var(--transicao), opacity var(--transicao);
+}
+
+.toast[data-visivel='true'] {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+
+.toast[data-tipo='erro'] {
+  border-color: rgba(226, 105, 95, .5);
+}
+
+.toast[data-tipo='erro'] .icone {
+  color: var(--vermelho);
+}
+
+.toast[data-tipo='ok'] .icone {
+  color: var(--verde);
+}
+
+/* ------------------------------------------------------------- saídas */
+
+#admin-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--preto);
+}
+
+#admin-gate[hidden] {
+  display: none;
+}
+
+#admin-gate .caixa {
+  width: 100%;
+  max-width: 350px;
+  padding: 32px 28px;
+  background: var(--preto-suave);
+  border: 1px solid var(--borda);
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .55);
+}
+
+#admin-gate h1 {
+  font-size: 19px;
+  font-weight: 600;
+}
+
+#admin-gate p.ajuda {
+  margin: 7px 0 24px;
+  font-size: 13px;
+  color: var(--texto-fraco);
+}
+
+#admin-gate label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--texto-fraco);
+  text-align: left;
+}
+
+#admin-gate input {
+  width: 100%;
+  padding: 12px 12px 12px 24px;
+  margin-bottom: 14px;
+  border: 1px solid var(--borda-forte);
+  border-radius: var(--raio-p);
+  background: rgba(0, 0, 0, .3);
+  color: var(--texto);
+  font-size: 30px;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+#admin-gate input:focus {
+  outline: none;
+  border-color: var(--creme);
+}
+
+#admin-gate button {
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  border-radius: var(--raio-p);
+  background: var(--creme);
+  color: var(--preto);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#admin-gate button[disabled] {
+  opacity: .6;
+  cursor: progress;
+}
+
+#admin-gate .erro {
+  margin: 15px 0 0;
+  min-height: 19px;
+  font-size: 13px;
+  color: var(--vermelho);
+}
+
+#admin-logout {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 50;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--borda-forte);
+  border-radius: 999px;
+  background: var(--preto-alto);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------- responsivo */
+
+@media (max-width: 1024px) {
+  .principal {
+    margin-left: 0;
+  }
+
+  .lateral {
+    transform: translateX(-100%);
+    transition: transform var(--transicao);
+    box-shadow: none;
+    width: min(82vw, 290px);
+    padding-top: calc(26px + env(safe-area-inset-top));
+  }
+
+  .lateral[data-aberta='true'] {
+    transform: none;
+    box-shadow: 0 0 0 100vmax rgba(0, 0, 0, .55);
+  }
+
+  .botao-menu {
+    display: inline-flex;
+  }
+
+  .topo {
+    padding: calc(16px + env(safe-area-inset-top)) 20px 16px;
+    gap: 14px;
+  }
+
+  .topo h1 {
+    font-size: 17px;
+  }
+
+  .topo p {
+    display: none;
+  }
+
+  .conteudo {
+    padding: 22px 20px 96px;
+  }
+
+  .categoria {
+    grid-template-columns: 64px 1fr;
+  }
+
+  /* Em telas estreitas os campos descem para a coluna do lado da miniatura,
+     em vez de ficarem espremidos na coluna de 64px. */
+  .categoria > .campo:not(.campo--largo) {
+    grid-column: 2 / -1;
+  }
+
+  .categoria-acoes {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 560px) {
+  .topo-acoes .btn span {
+    display: none;
+  }
+
+  .topo-acoes .btn {
+    padding: 0 12px;
+  }
+
+  .cartao-topo,
+  .cartao-corpo {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .estat-valor {
+    font-size: 25px;
+  }
+
+  #admin-gate input {
+    /* Abaixo de 16px o iOS dá zoom ao focar o campo. */
+    font-size: 26px;
+  }
+
+  #admin-logout {
+    right: 14px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+}
+
+/* Em modo standalone (PWA ou APK) não existe barra do navegador. */
+@media (display-mode: standalone) {
+  .conteudo {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+}

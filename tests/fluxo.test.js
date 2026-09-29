@@ -10,11 +10,11 @@ const crypto = require('crypto');
 const path = require('path');
 
 const RAIZ = path.join(__dirname, '..');
-const SENHA = 'senha-de-teste-bem-longa-123';
+const PIN = '7811';
 
 process.env.SESSION_SECRET = crypto.randomBytes(32).toString('base64url');
 process.env.DATABASE_URL = 'postgresql://fake:fake@localhost/fake';
-process.env.ADMIN_PASSWORD_HASH = require(path.join(RAIZ, 'lib/auth')).hashPassword(SENHA);
+process.env.ADMIN_PIN = PIN;
 
 // ------------------------------------------------- Postgres em memória
 
@@ -121,16 +121,31 @@ function assert(c, m) { if (!c) throw new Error(m); }
 
 let cookie = null;
 
-passo('login com senha errada -> 401', async () => {
+passo('login com PIN errado -> 401', async () => {
   const res = mockRes();
-  await login(mockReq({ method: 'POST', body: { password: 'errada' } }), res);
+  await login(mockReq({ method: 'POST', body: { pin: '1234' } }), res);
   assert(res.statusCode === 401, `veio ${res.statusCode} ${res.body}`);
   assert(!res.headers['set-cookie'], 'não podia emitir cookie');
 });
 
-passo('login com senha certa -> cookie HttpOnly', async () => {
+passo('login com PIN de tamanho errado -> recusado', async () => {
+  // Vazio é requisição malformada (400); tamanho errado é PIN errado (401).
+  // Cada caso usa um IP próprio para não encostar no limite de tentativas.
+  const vazio = mockRes();
+  await login(mockReq({ method: 'POST', body: { pin: '' }, ip: '198.51.100.11' }), vazio);
+  assert(vazio.statusCode === 400, `pin vazio deveria dar 400, veio ${vazio.statusCode}`);
+
+  const pins = ['781', '78111', 'abcd', ' 7811 ', '781.'];
+  for (const [i, pin] of pins.entries()) {
+    const res = mockRes();
+    await login(mockReq({ method: 'POST', body: { pin }, ip: `198.51.100.2${i}` }), res);
+    assert(res.statusCode === 401, `pin "${pin}" deveria dar 401, veio ${res.statusCode}`);
+  }
+});
+
+passo('login com PIN certo -> cookie HttpOnly', async () => {
   const res = mockRes();
-  await login(mockReq({ method: 'POST', body: { password: SENHA } }), res);
+  await login(mockReq({ method: 'POST', body: { pin: PIN } }), res);
   assert(res.statusCode === 200, `veio ${res.statusCode} ${res.body}`);
 
   const set = res.headers['set-cookie'];
@@ -141,12 +156,12 @@ passo('login com senha certa -> cookie HttpOnly', async () => {
   cookie = set.split(';')[0];
 });
 
-passo('9 senhas erradas seguidas -> bloqueia com 429', async () => {
-  for (let i = 0; i < 9; i++) {
+passo('6 PINs errados seguidos -> bloqueia com 429', async () => {
+  for (let i = 0; i < 6; i++) {
     const res = mockRes();
-    await login(mockReq({ method: 'POST', body: { password: 'errada' }, ip: '198.51.100.7' }), res);
-    if (i === 8) {
-      assert(res.statusCode === 429, `na 9ª tentativa esperava 429, veio ${res.statusCode}`);
+    await login(mockReq({ method: 'POST', body: { pin: '0000' }, ip: '198.51.100.7' }), res);
+    if (i === 5) {
+      assert(res.statusCode === 429, `na 6ª tentativa esperava 429, veio ${res.statusCode}`);
     }
   }
 });

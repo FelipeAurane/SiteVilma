@@ -21,6 +21,12 @@ async function request(path, { method = 'GET', body, signal } = {}) {
   const response = await fetch(`${BASE}${path}`, {
     method,
     signal,
+    // A resposta do servidor é pública e vem com s-maxage, para a borda
+    // servir rápido. No navegador, porém, esse cache só atrasa a vida de
+    // quem edita: com stale-while-revalidate o navegador entrega o valor
+    // velho na primeira visita depois de uma mudança. A página já pinta
+    // na hora pelo localStorage, então aqui lemos sempre fresco.
+    cache: method === 'GET' ? 'no-store' : 'default',
     // Manda o cookie de sessão nas escritas.
     credentials: 'include',
     headers: body === undefined ? {} : { 'Content-Type': 'application/json' },
@@ -160,8 +166,8 @@ export async function uploadMedia(file) {
 
 // -------------------------------------------------------------- sessão
 
-export async function login(password) {
-  return request('/auth/login', { method: 'POST', body: { password } });
+export async function login(pin) {
+  return request('/auth/login', { method: 'POST', body: { pin } });
 }
 
 export async function logout() {

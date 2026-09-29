@@ -52,8 +52,10 @@ module.exports = withErrorHandling(async (req, res) => {
       },
       {
         // Cache curto na borda da Vercel: o painel publica e o site reflete
-        // em segundos, sem bater no banco a cada visita.
-        'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=300'
+        // em segundos, sem bater no banco a cada visita. O stale-while-revalidate
+        // fica curto de propósito: se ficar longo, a CDN entrega a versão
+        // anterior depois de uma edição, que é justamente o que não pode.
+        'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=30'
       }
     );
   }
