@@ -957,8 +957,9 @@ footer p {
     margin: 0 !important;
     overflow: visible !important;
     will-change: transform, max-width, padding;
+    /* Sem transition em `padding`: o padding-top é interpolado por frame
+       pelo scroll (JS) e uma transition aqui o faria "escorregar". */
     transition: max-width 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-                padding 0.45s cubic-bezier(0.16, 1, 0.3, 1),
                 gap 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
@@ -990,7 +991,9 @@ footer p {
     height: auto;
     justify-content: flex-start;
     will-change: transform;
-    transition: opacity 0.4s ease, transform 0.55s cubic-bezier(0.25, 1, 0.5, 1), gap 0.55s ease, margin 0.55s ease;
+    /* transform e opacity das colunas são dirigidos 1:1 pelo scroll (JS)
+       (bloco 5.3 e 5.2 do scripts.js) — sem transition para não atrasar. */
+    transition: gap 0.55s ease, margin 0.55s ease;
   }
 
   /* Fileira central onde fica o vídeo / imagem principal: FIXA no topo sem espaço vazio acima */
@@ -1062,7 +1065,8 @@ footer p {
     pointer-events: none;
     opacity: 0;
     transform: translateY(-12px);
-    transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Sem transition: opacidade/transform são dirigidos 1:1 pelo scroll (JS),
+       uma transition CSS aqui causaria atraso e "borrão" ao rolar. */
     display: flex !important;
     flex-direction: column !important;
     align-items: flex-start !important;
@@ -1070,15 +1074,15 @@ footer p {
     text-align: left !important;
   }
 
+  /* Opacidade/transform do cabeçalho ficam sob controle do JS (revelação
+     contínua e reversível) — sem !important aqui para não travar a animação. */
   body.section-2-active div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#portfolio-header-bar:nth-of-type(1),
   body.section-2-active div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#portfolio-header-bar:nth-of-type(2),
   body.section-2-active #portfolio-header-bar,
   body.section-2-active .portfolio-header-bar,
   #portfolio-header-bar.section-2-active,
   .portfolio-header-bar.section-2-active {
-    opacity: 1 !important;
     pointer-events: auto !important;
-    transform: translateY(0) !important;
     visibility: visible !important;
   }
 
@@ -1130,15 +1134,34 @@ footer p {
     pointer-events: none !important;
   }
 
-  /* Na Section 2, a grade se torna interativa e organiza-se estritamente em 4 colunas uniformes sem espaço no meio */
+  /* Padding-top final da grade na galeria.
+     O JS interpola de 0 até este valor conforme o scroll (reversível),
+     em vez de aplicar um salto ao ativar .section-2-active. */
+  .hero-pinterest-grid,
+  #hero-pinterest-grid {
+    --grid-pad-final: 200px;
+  }
+  @media (max-height: 750px) {
+    .hero-pinterest-grid,
+    #hero-pinterest-grid {
+      --grid-pad-final: clamp(148px, 19.5vh, 168px);
+    }
+  }
+  @media (min-height: 850px) {
+    .hero-pinterest-grid,
+    #hero-pinterest-grid {
+      --grid-pad-final: clamp(195px, 22.5vh, 225px);
+    }
+  }
+
+  /* Na Section 2, a grade se torna interativa.
+     NOTA: grid-template-columns, gap e paddings NÃO usam !important de
+     propósito — eles são animados continuamente pelo JS (scroll) para que a
+     reorganização da grade em 4 colunas seja gradual e reversível. */
   .hero-pinterest-grid.section-2-active,
   body.section-2-active .hero-pinterest-grid {
     pointer-events: auto !important;
     z-index: 5 !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: clamp(14px, 1.6vw, 20px) !important;
-    padding-left: clamp(16px, 2.5vw, 36px) !important;
-    padding-right: clamp(16px, 2.5vw, 36px) !important;
     align-items: start !important;
   }
 
@@ -1147,15 +1170,12 @@ footer p {
     pointer-events: auto !important;
   }
 
-  /* Coluna central do hero fica 100% oculta e sem margem na Section 2 */
+  /* Coluna central do hero: opacidade/transform são animados pelo JS.
+     Sem display:none para não interromper a transição. */
   .hero-pinterest-grid.section-2-active #pinterest-col-center,
   body.section-2-active #pinterest-col-center {
-    display: none !important;
     margin: 0 !important;
     padding: 0 !important;
-    width: 0 !important;
-    height: 0 !important;
-    overflow: hidden !important;
   }
 
   /* Na grade do portfólio, as colunas desativam a animação ociosa flutuante para foco na navegação */
@@ -1184,7 +1204,6 @@ footer p {
     margin: 0 !important;
     padding: 0 !important;
     cursor: pointer !important;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease !important;
   }
 
   .hero-pinterest-grid.section-2-active .pinterest-card.card-tall,
@@ -1305,7 +1324,12 @@ footer p {
     -webkit-backdrop-filter: blur(8px) !important;
     cursor: pointer !important;
     pointer-events: auto !important;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    /* Sem `all` (que incluiria opacity): a opacidade do botão é revelada por
+       frame pelo scroll (JS, bloco 5.6). */
+    transition: color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                text-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
     text-decoration: none !important;
     line-height: 1.2 !important;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55) !important;
@@ -1349,7 +1373,6 @@ footer p {
     .hero-pinterest-grid.section-2-active,
     body.section-2-active .hero-pinterest-grid {
       gap: 10px !important;
-      padding-top: clamp(148px, 19.5vh, 168px) !important;
       padding-bottom: 12px !important;
     }
     .hero-pinterest-grid.section-2-active .pinterest-col,
@@ -1372,7 +1395,6 @@ footer p {
     .hero-pinterest-grid.section-2-active,
     body.section-2-active .hero-pinterest-grid {
       gap: 16px !important;
-      padding-top: clamp(195px, 22.5vh, 225px) !important;
       padding-bottom: 20px !important;
     }
     .hero-pinterest-grid.section-2-active .pinterest-col,
@@ -1419,7 +1441,10 @@ footer p {
     animation: floatOppositeColDown 18s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
   }
 
-  /* Interrupção da animação ao rolar a página ou no hover dos elementos */
+  /* Interrupção da animação ociosa ao rolar a página ou no hover.
+     IMPORTANTE: remove a animação (não apenas pausa). Uma animação CSS
+     pausada continua grampeando o `transform` e sobrepõe o valor inline
+     definido pelo JS, quebrando a transição reversível. */
   div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#hero-pinterest-grid:nth-of-type(1).scroll-interrupted .pinterest-col,
   div#mainContent:nth-of-type(2) > section#hero:nth-of-type(1) > div#hero-midia:nth-of-type(1) > div#hero-pinterest-grid:nth-of-type(1).is-scrolling .pinterest-col,
   .hero-pinterest-grid.scroll-interrupted .pinterest-col,
@@ -1427,7 +1452,7 @@ footer p {
   body.is-scrolled .hero-pinterest-grid .pinterest-col,
   body.is-scrolling .hero-pinterest-grid .pinterest-col,
   .pinterest-col:hover {
-    animation-play-state: paused !important;
+    animation: none !important;
   }
 
   /* Cartões estilo Pinterest na primeira section - Não clicáveis na Section 1 */
@@ -1442,8 +1467,9 @@ footer p {
     pointer-events: none !important;
     cursor: default !important;
     user-select: none !important;
+    /* Sem transition em `transform`: o transform do card é interpolado por
+       frame pelo scroll (JS, bloco 5.8) e uma transition o faria "escorregar". */
     transition: height 0.65s cubic-bezier(0.25, 1, 0.5, 1),
-                transform 0.4s ease,
                 border-radius 0.5s ease,
                 box-shadow 0.4s ease,
                 border-color 0.4s ease;
@@ -1833,6 +1859,21 @@ footer p {
 
 @media (min-width: 1400px) {
   .title-name { font-size: 84px; }
+}
+
+/* ==========================================================================
+   TRANSIÇÃO SUAVE ENTRE SECTION 1 (GRADE PINTEREST) E SECTION 2 (GALERIA)
+   ==========================================================================
+   ATENÇÃO: transform/opacity da grade, das colunas, dos cards, do cabeçalho
+   e da Section 2 são dirigidos 1:1 pelo scroll (ver src/js/scripts.js).
+   Por isso NENHUM deles deve ter `transition` CSS aqui — uma transition faz
+   cada valor novo "escorregar" atrás do scroll, quebrando a reversibilidade.
+   Apenas will-change, para promover as camadas. */
+
+#hero-pinterest-grid,
+.pinterest-card,
+#next-section {
+  will-change: transform, opacity;
 }
 
 /* ==========================================================================

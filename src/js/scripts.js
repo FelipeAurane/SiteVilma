@@ -168,6 +168,57 @@
 
     if (!hero || !pinterestGrid) return;
 
+    // Listas em cache: evita querySelectorAll a cada frame de scroll.
+    // colCards guarda os cards das 4 colunas LATERAIS (a coluna central é
+    // tratada em bloco, pois encolhe junto com a própria coluna).
+    var padFinalPx = null;
+    var galeriaMaxH = null;
+    var verMaisButtons = pinterestGrid.querySelectorAll('.card-ver-mais');
+    var colCards = [];
+    [col1, col2, col4, col5].forEach(function(col) {
+      if (!col) return;
+      Array.prototype.forEach.call(col.querySelectorAll('.pinterest-card'), function(card, row) {
+        colCards.push({ el: card, row: row });
+      });
+    });
+
+    // Altura real da galeria, medida no layout FINAL (4 colunas, sem
+    // transforms). Medir no estado atual criaria um laço de realimentação:
+    // scrollHeight inclui o overflow dos transforms, que dependem do ease,
+    // que mudaria a altura da Section 2, que mudaria a altura do documento,
+    // que por sua vez altera o scroll. Medindo só no layout final e
+    // cacheando, a altura da Section 2 vira função pura do layout — o que
+    // torna a transição reversível.
+    function medirAlturaGaleria() {
+      var cols = [col1, col2, col4, col5];
+      var savedGridCols = pinterestGrid.style.gridTemplateColumns;
+      var savedColTfs = [];
+      var savedCardTfs = [];
+
+      for (var ci = 0; ci < cols.length; ci++) {
+        if (cols[ci]) { savedColTfs.push([cols[ci], cols[ci].style.transform]); cols[ci].style.transform = ''; }
+      }
+      for (var cj = 0; cj < colCards.length; cj++) {
+        savedCardTfs.push(colCards[cj].el.style.transform);
+        colCards[cj].el.style.transform = '';
+      }
+      // Força o layout final da galeria (coluna central em 0).
+      pinterestGrid.style.gridTemplateColumns =
+        'minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0fr) minmax(0, 1fr) minmax(0, 1fr)';
+
+      var max = 0;
+      for (var ck = 0; ck < cols.length; ck++) {
+        if (cols[ck]) max = Math.max(max, cols[ck].scrollHeight);
+      }
+
+      // Restaura exatamente o estado anterior.
+      pinterestGrid.style.gridTemplateColumns = savedGridCols;
+      for (var ti = 0; ti < savedColTfs.length; ti++) savedColTfs[ti][0].style.transform = savedColTfs[ti][1];
+      for (var tj = 0; tj < savedCardTfs.length; tj++) colCards[tj].el.style.transform = savedCardTfs[tj];
+
+      return max;
+    }
+
     // Sincroniza a localização da grade:
     // No mobile (<900px), a grade e o título fluem naturalmente dentro da Section 2 (#next-section);
     // No desktop (>=900px), residem em #hero-midia com animação fixa contínua.
@@ -354,6 +405,8 @@
     var heroVeu = document.querySelector('.hero-veu');
 
     function limparEstilos() {
+      padFinalPx = null;
+      galeriaMaxH = null;
       if (pinterestGrid) {
         pinterestGrid.style.gridTemplateColumns = '';
         pinterestGrid.style.paddingTop = '';
@@ -396,6 +449,24 @@
       if (col2) col2.style.transform = '';
       if (col4) col4.style.transform = '';
       if (col5) col5.style.transform = '';
+      // Cards individuais (bloco 5.8) e a altura da Section 2 (bloco 6)
+      // também precisam ser limpos, senão um resize no meio da transição
+      // deixa transform/opacity/height obsoletos no mobile.
+      for (var ci = 0; ci < colCards.length; ci++) {
+        colCards[ci].el.style.transform = '';
+        colCards[ci].el.style.opacity = '';
+      }
+      if (nextSection) nextSection.style.height = '';
+      if (verMaisButtons.length) {
+        for (var vm2 = 0; vm2 < verMaisButtons.length; vm2++) {
+          verMaisButtons[vm2].style.opacity = '';
+          verMaisButtons[vm2].style.pointerEvents = '';
+        }
+      }
+      if (portfolioHeaderBar) {
+        portfolioHeaderBar.style.opacity = '';
+        portfolioHeaderBar.style.pointerEvents = '';
+      }
     }
 
     var scrollTimer = null;
@@ -426,7 +497,8 @@
       document.body.classList.toggle('is-scrolled', estaRolado);
 
       // Transição contínua orgânica 1:1 governada pelo scroll (Section 1 -> Section 2)
-      var transDist = vh * 0.85;
+      // A transição agora é mais longa (2.5vh) para permitir um fluxo suave dos elementos
+      var transDist = vh * 2.5;
       var transProg = Math.min(Math.max(scrollY / transDist, 0), 1);
       // Smoothstep: derivada zero nas duas pontas (sem aceleração repentina nem solavanco)
       var ease = transProg * transProg * (3 - 2 * transProg);
@@ -471,49 +543,64 @@
         }
       }
 
-      // 5. Reposicionamento orgânico contínuo da coluna central e expansão das 4 colunas laterais:
-      // A coluna central encolhe continuamente de 1.45fr a 0fr.
-      // Quando a coluna central some (ease >= 0.8), o grid reorganiza-se estritamente em 4 colunas uniformes (repeat(4, minmax(0, 1fr))),
-      // eliminando completamente o espaço duplo/margem no meio.
-      if (ease >= 0.8) {
-        pinterestGrid.style.gridTemplateColumns = 'repeat(4, minmax(0, 1fr))';
-        if (colCenter) {
-          colCenter.style.display = 'none';
-          colCenter.style.margin = '0';
-          colCenter.style.padding = '0';
-          colCenter.style.width = '0';
-          colCenter.style.height = '0';
-        }
+      // ============================================================
+      // 5. TRANSIÇÃO CONTÍNUA E REVERSÍVEL (Section 1 -> Section 2)
+      // ============================================================
+      // Regra de ouro: TODOS os valores abaixo são função pura de `ease`
+      // (0 no topo, 1 na galeria). Nenhum elemento é movido no DOM,
+      // nenhum estilo é condicional a um threshold. Isso garante que
+      // rolar para cima reproduza EXATAMENTE o estado original.
+      // ============================================================
+
+      // 5.1 Grade: a coluna central encolhe de 1.45fr -> 0fr de forma
+      // contínua; ao chegar em 0 o grid fica com 4 colunas uniformes.
+      var centerFr = Math.max(1.45 * (1 - ease), 0);
+      pinterestGrid.style.gridTemplateColumns =
+        'minmax(0, 1fr) minmax(0, 1fr) minmax(0, ' + centerFr.toFixed(4) + 'fr) minmax(0, 1fr) minmax(0, 1fr)';
+
+      // 5.2 Coluna central: encolhe, sobe e some gradualmente junto com a
+      // coluna que a hospeda (sem display:none, sem salto).
+      if (colCenter) {
+        colCenter.style.opacity = Math.max(1 - ease * 1.6, 0).toFixed(3);
+        colCenter.style.transform =
+          'translate3d(0, ' + (-ease * 70).toFixed(1) + 'px, 0) scale(' + (1 - ease * 0.35).toFixed(3) + ')';
+        colCenter.style.pointerEvents = 'none';
+        colCenter.style.display = '';
+        colCenter.style.width = '';
+        colCenter.style.height = '';
+        colCenter.style.overflow = '';
+      }
+      if (centerOverlay) centerOverlay.style.opacity = Math.max(1 - ease * 1.6, 0).toFixed(3);
+
+      // 5.3 Alinhamento vertical das 4 colunas laterais:
+      // no repouso (Section 1) têm o escalonamento estilo Pinterest
+      // (+36, -26, +26, -36) e vão para 0 conforme o scroll avança.
+      // Em ease = 0 o transform inline é removido para devolver o controle
+      // às animações ociosas de flutuação (evita "pulo" ao voltar ao topo).
+      if (ease > 0.0005) {
+        if (col1) col1.style.transform = 'translate3d(0, ' + ((1 - ease) * 36).toFixed(1) + 'px, 0)';
+        if (col2) col2.style.transform = 'translate3d(0, ' + ((1 - ease) * -26).toFixed(1) + 'px, 0)';
+        if (col4) col4.style.transform = 'translate3d(0, ' + ((1 - ease) * 26).toFixed(1) + 'px, 0)';
+        if (col5) col5.style.transform = 'translate3d(0, ' + ((1 - ease) * -36).toFixed(1) + 'px, 0)';
       } else {
-        var centerFr = Math.max(1.45 * (1 - ease / 0.8), 0);
-        pinterestGrid.style.gridTemplateColumns = 'minmax(0, 1fr) minmax(0, 1fr) minmax(0, ' + centerFr.toFixed(4) + 'fr) minmax(0, 1fr) minmax(0, 1fr)';
-        if (colCenter) {
-          colCenter.style.display = '';
-          colCenter.style.opacity = Math.max(1 - ease * 1.5, 0).toFixed(3);
-          colCenter.style.transform = 'translate3d(0, -' + (ease * 60).toFixed(1) + 'px, 0) scale(' + (1 - ease * 0.25).toFixed(3) + ')';
-          colCenter.style.pointerEvents = 'none';
-        }
+        if (col1) col1.style.transform = '';
+        if (col2) col2.style.transform = '';
+        if (col4) col4.style.transform = '';
+        if (col5) col5.style.transform = '';
       }
 
-      // 6. Alinhamento vertical físico contínuo das 4 colunas de fotos:
-      // No repouso (Section 1) elas têm o escalonamento estilo Pinterest (+36px, -26px, +26px, -36px).
-      // Conforme o scroll avança, elas deslizam suavemente em direções opostas até alinharem-se perfeitamente em 0px.
-      var col1Y = (1 - ease) * 36;
-      var col2Y = (1 - ease) * -26;
-      var col4Y = (1 - ease) * 26;
-      var col5Y = (1 - ease) * -36;
+      // 5.4 Desce a grade para abrir espaço ao cabeçalho "Portfólio".
+      // O destino vem de --grid-pad-final (responsivo no CSS) e é
+      // interpolado de 0 -> final, ficando contínuo e reversível.
+      if (padFinalPx === null) {
+        var rawPad = getComputedStyle(pinterestGrid).getPropertyValue('--grid-pad-final');
+        padFinalPx = parseFloat(rawPad);
+        if (!padFinalPx || isNaN(padFinalPx)) padFinalPx = 200;
+      }
+      pinterestGrid.style.paddingTop = (ease * padFinalPx).toFixed(1) + 'px';
 
-      if (col1) col1.style.transform = 'translate3d(0, ' + col1Y.toFixed(1) + 'px, 0)';
-      if (col2) col2.style.transform = 'translate3d(0, ' + col2Y.toFixed(1) + 'px, 0)';
-      if (col4) col4.style.transform = 'translate3d(0, ' + col4Y.toFixed(1) + 'px, 0)';
-      if (col5) col5.style.transform = 'translate3d(0, ' + col5Y.toFixed(1) + 'px, 0)';
-
-      // 7. Descida contínua da grade para abrir espaço ao cabeçalho "Portfólio"
-      var padTop = (ease * 140).toFixed(1);
-      pinterestGrid.style.paddingTop = padTop + 'px';
-
-      // 8. Revelação suave do cabeçalho "Portfólio" que desce deslizando suavemente
-      var headerProg = Math.min(Math.max((transProg - 0.25) / 0.6, 0), 1);
+      // 5.5 Revelação do cabeçalho "Portfólio".
+      var headerProg = Math.min(Math.max((ease - 0.15) / 0.5, 0), 1);
       var headerEase = headerProg * headerProg * (3 - 2 * headerProg);
       if (portfolioHeaderBar) {
         portfolioHeaderBar.style.opacity = headerEase.toFixed(3);
@@ -521,25 +608,41 @@
         portfolioHeaderBar.style.pointerEvents = headerProg >= 0.85 ? 'auto' : 'none';
       }
 
-      // 9. Opção "Ver mais" em cada card surge suavemente sem salto
-      var verMaisProg = Math.min(Math.max((transProg - 0.45) / 0.45, 0), 1);
-      var verMaisButtons = pinterestGrid.querySelectorAll('.card-ver-mais');
-      verMaisButtons.forEach(function(btn) {
-        btn.style.opacity = verMaisProg.toFixed(3);
-        btn.style.pointerEvents = verMaisProg >= 0.8 ? 'auto' : 'none';
-      });
+      // 5.6 Botões "Ver mais" surgem suavemente.
+      var verMaisProg = Math.min(Math.max((ease - 0.35) / 0.4, 0), 1);
+      for (var vm = 0; vm < verMaisButtons.length; vm++) {
+        verMaisButtons[vm].style.opacity = verMaisProg.toFixed(3);
+        verMaisButtons[vm].style.pointerEvents = verMaisProg >= 0.8 ? 'auto' : 'none';
+      }
 
-      // 10. Interatividade dos cartões ativada quando em Section 2
-      pinterestGrid.style.pointerEvents = transProg >= 0.75 ? 'auto' : 'none';
+      // 5.7 Interatividade dos cartões apenas na galeria.
+      pinterestGrid.style.pointerEvents = ease >= 0.65 ? 'auto' : 'none';
 
-      // 11. Rolagem contínua de todo o portfólio (Section 2) até o último item,
-      // com margem de respiro antes da Section 3 (#sobre):
-      // Mede dinamicamente a altura real de todas as colunas da galeria
-      var col1H = col1 ? col1.scrollHeight : 0;
-      var col2H = col2 ? col2.scrollHeight : 0;
-      var col4H = col4 ? col4.scrollHeight : 0;
-      var col5H = col5 ? col5.scrollHeight : 0;
-      var maxColH = Math.max(col1H, col2H, col4H, col5H);
+      // 5.8 FLUXO SUAVE dos cards das 4 colunas laterais.
+      // Cada card recebe um atraso (cascata) calculado a partir da sua
+      // posição original na coluna. Como o atraso é determinístico e fixo,
+      // o movimento é exatamente reversível ao rolar para cima.
+      for (var ci = 0; ci < colCards.length; ci++) {
+        var entry = colCards[ci];
+        var delay = entry.row * 0.02;
+        var cardProg = Math.min(Math.max((ease - delay) / Math.max(1 - delay, 0.001), 0), 1);
+        var cardEase = cardProg * cardProg * (3 - 2 * cardProg);
+
+        var dx = 0;
+        var dy = cardEase * (18 + (entry.row % 3) * 6);
+        var sc = 1 - cardEase * 0.04;
+        var op = 1 - cardEase * 0.12;
+
+        entry.el.style.transform = 'translate3d(' + dx.toFixed(1) + 'px, ' + dy.toFixed(1) + 'px, 0) scale(' + sc.toFixed(3) + ')';
+        entry.el.style.opacity = op.toFixed(3);
+      }
+
+      // 6. Rolagem contínua de todo o portfólio (Section 2) até o último item,
+      // com margem de respiro antes da Section 3 (#sobre).
+      // A altura da galeria é medida uma única vez por layout (ver
+      // medirAlturaGaleria) para não depender do progresso do scroll.
+      if (galeriaMaxH === null) galeriaMaxH = medirAlturaGaleria();
+      var maxColH = galeriaMaxH;
 
       var topPaddingGrid = 140;
       var margemFinalSecaoDois = 100; // Margem generosa de afastamento antes da Section 3
@@ -604,7 +707,13 @@
     }
 
     window.addEventListener('scroll', aoRolar, { passive: true });
-    window.addEventListener('resize', aoRolar, { passive: true });
+    window.addEventListener('resize', function () {
+      // --grid-pad-final e a altura da galeria dependem do viewport/layout:
+      // revalida ambos no resize.
+      padFinalPx = null;
+      galeriaMaxH = null;
+      aoRolar();
+    }, { passive: true });
     atualizar();
   }
 
