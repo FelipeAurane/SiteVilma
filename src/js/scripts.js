@@ -196,26 +196,39 @@
       var savedColTfs = [];
       var savedCardTfs = [];
 
-      for (var ci = 0; ci < cols.length; ci++) {
-        if (cols[ci]) { savedColTfs.push([cols[ci], cols[ci].style.transform]); cols[ci].style.transform = ''; }
-      }
-      for (var cj = 0; cj < colCards.length; cj++) {
-        savedCardTfs.push(colCards[cj].el.style.transform);
-        colCards[cj].el.style.transform = '';
-      }
-      // Força o layout final da galeria (coluna central em 0).
-      pinterestGrid.style.gridTemplateColumns =
-        'minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0fr) minmax(0, 1fr) minmax(0, 1fr)';
+      // Mede com a classe .section-2-active aplicada: é nela que os cards
+      // ficam com height:auto (proporção da foto) — no estado do hero eles
+      // têm altura fixa e a medição sairia ~2x menor, fazendo a rolagem
+      // terminar longe do último card.
+      var gridJaAtivo = pinterestGrid.classList.contains('section-2-active');
+      var bodyJaAtivo = document.body.classList.contains('section-2-active');
+      pinterestGrid.classList.add('section-2-active');
+      document.body.classList.add('section-2-active');
 
-      var max = 0;
-      for (var ck = 0; ck < cols.length; ck++) {
-        if (cols[ck]) max = Math.max(max, cols[ck].scrollHeight);
-      }
+      try {
+        for (var ci = 0; ci < cols.length; ci++) {
+          if (cols[ci]) { savedColTfs.push([cols[ci], cols[ci].style.transform]); cols[ci].style.transform = ''; }
+        }
+        for (var cj = 0; cj < colCards.length; cj++) {
+          savedCardTfs.push(colCards[cj].el.style.transform);
+          colCards[cj].el.style.transform = '';
+        }
+        // Força o layout final da galeria (coluna central em 0).
+        pinterestGrid.style.gridTemplateColumns =
+          'minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0fr) minmax(0, 1fr) minmax(0, 1fr)';
 
-      // Restaura exatamente o estado anterior.
-      pinterestGrid.style.gridTemplateColumns = savedGridCols;
-      for (var ti = 0; ti < savedColTfs.length; ti++) savedColTfs[ti][0].style.transform = savedColTfs[ti][1];
-      for (var tj = 0; tj < savedCardTfs.length; tj++) colCards[tj].el.style.transform = savedCardTfs[tj];
+        var max = 0;
+        for (var ck = 0; ck < cols.length; ck++) {
+          if (cols[ck]) max = Math.max(max, cols[ck].scrollHeight);
+        }
+      } finally {
+        // Restaura exatamente o estado anterior.
+        if (!gridJaAtivo) pinterestGrid.classList.remove('section-2-active');
+        if (!bodyJaAtivo) document.body.classList.remove('section-2-active');
+        pinterestGrid.style.gridTemplateColumns = savedGridCols;
+        for (var ti = 0; ti < savedColTfs.length; ti++) savedColTfs[ti][0].style.transform = savedColTfs[ti][1];
+        for (var tj = 0; tj < savedCardTfs.length; tj++) colCards[tj].el.style.transform = savedCardTfs[tj];
+      }
 
       return max;
     }
@@ -485,8 +498,12 @@
       });
 
       var cardImg = card.querySelector('img');
-      if (cardImg && !cardImg.complete) {
+      if (cardImg) {
+        // A altura da coluna muda quando a foto chega (lazy) e quando o painel
+        // troca o src. Sem descartar o cache de galeriaMaxH aqui, a rolagem
+        // esgota antes do último card — a galeria fica "cortada".
         cardImg.addEventListener('load', function() {
+          galeriaMaxH = null;
           if (!ticking) {
             ticking = true;
             window.requestAnimationFrame(atualizar);
@@ -496,6 +513,9 @@
     });
 
     window.addEventListener('load', function() {
+      // Todas as imagens terminaram: a medida feita no primeiro layout pode
+      // ter ficado para trás (lazy loading).
+      galeriaMaxH = null;
       if (!ticking) {
         ticking = true;
         window.requestAnimationFrame(atualizar);
@@ -755,19 +775,27 @@
 
       // 6. Rolagem contínua de todo o portfólio (Section 2) até o último item,
       // com margem de respiro antes da Section 3 (#sobre).
-      // A altura da galeria é medida uma única vez por layout (ver
-      // medirAlturaGaleria) para não depender do progresso do scroll.
+      // A altura da galeria é medida por layout (ver medirAlturaGaleria) e o
+      // cache é descartado quando as imagens lazy chegam (ver listener de
+      // load), senão a rolagem termina antes do último card.
       if (galeriaMaxH === null) galeriaMaxH = medirAlturaGaleria();
       var maxColH = galeriaMaxH;
 
-      var topPaddingGrid = 140;
-      var margemFinalSecaoDois = 100; // Margem generosa de afastamento antes da Section 3
-      var totalGalleryH = maxColH + topPaddingGrid + margemFinalSecaoDois;
-      var scrollableGalleryDistance = Math.max(totalGalleryH - vh, 0);
+      // Respiro visível entre o último card e o fim da viewport quando a
+      // galeria chega ao fim. Duas coisas empurram o último card para baixo
+      // e por isso a margem não pode ser "o que sobrar": a cascata dos cards
+      // (bloco 5.8, até ~30px) e o padding-top final da grade (bloco 5.4).
+      // Com esta fórmula a margem visível resultante fica sempre em
+      // MARGEM_FIM_GALERIA - cascata, seja qual for a altura da tela.
+      var MARGEM_FIM_GALERIA = 120;
+      var paddingFinal = padFinalPx || 0;
+      var scrollableGalleryDistance =
+        Math.max(maxColH + paddingFinal + MARGEM_FIM_GALERIA - vh, 0);
 
-      // Atualiza a altura do contêiner da Section 2 para garantir que o scroll cubra
-      // todas as imagens até a última e preserve a margem antes da Section 3
-      var targetNextH = Math.round(transDist + scrollableGalleryDistance + margemFinalSecaoDois);
+      // Folga de rolagem com a galeria já no fim: mantém o último card
+      // afastado enquanto a Section 3 (#sobre) começa a entrar na tela.
+      var folgaAntesDoSobre = 100;
+      var targetNextH = Math.round(transDist + scrollableGalleryDistance + folgaAntesDoSobre);
       if (nextSection && targetNextH > 0) {
         nextSection.style.height = targetNextH + 'px';
       }
