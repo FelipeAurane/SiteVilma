@@ -33,6 +33,13 @@ const defaultData = {
     subtitle: '',
     titleScreen: 'Portfólio'
   },
+  // Mídia do destaque central do hero. É o mesmo campo para foto e vídeo:
+  // `tipo` diz qual dos dois é, porque a URL do /api/media é um id e não
+  // tem extensão de onde deduzir.
+  center: {
+    media: '',
+    tipo: ''
+  },
   categories: [
     { name: 'Confeitaria', subtitle: 'Doces e sobremesas', image: './img/p-2.JPG', gallery: [] },
     { name: 'Gastronomia', subtitle: 'Pratos e menus', image: './img/p-6.JPG', gallery: [] },
@@ -62,6 +69,20 @@ function safeImageSrc(value, fallback = '') {
   return fallback;
 }
 
+/**
+ * Diz se a mídia do destaque central é vídeo. O painel grava o tipo junto
+ * com a URL; quando ele falta (conteúdo antigo, digitado à mão), a
+ * extensão do arquivo é o palpite — mas a URL do /api/media é um id puro,
+ * então esse palpite só vale para caminhos com nome de arquivo.
+ */
+function isVideoMedia(src, tipo) {
+  if (tipo === 'video') return true;
+  if (tipo === 'imagem') return false;
+
+  const caminho = String(src || '').split(/[?#]/)[0].toLowerCase();
+  return /\.(mp4|webm|mov|m4v|ogv)$/.test(caminho);
+}
+
 function safePhone(value) {
   return typeof value === 'string' ? value.replace(/\D/g, '') : '';
 }
@@ -77,6 +98,22 @@ function text(value, fallback = '') {
 }
 
 // --------------------------------------------------------------- dados
+
+// O conteúdo publicado tem duas formas: o servidor guarda version/lastUpdated
+// dentro de `metadata`, e os saves do painel deixavam os dois no topo. Ler só
+// um dos dois fazia o navegador novo concluir 0 contra 0, achar que não havia
+// novidade e ficar mostrando o defaultData para sempre — inclusive as
+// categorias que a dona tinha cadastrado.
+function lerSeloPublicacao(data) {
+  if (!data || typeof data !== 'object') return { version: 0, lastUpdated: 0 };
+
+  const meta = data.metadata && typeof data.metadata === 'object' ? data.metadata : {};
+
+  return {
+    version: Number(data.version || meta.version) || 0,
+    lastUpdated: Number(data.lastUpdated || meta.lastUpdated) || 0
+  };
+}
 
 class DataManager {
   constructor() {
@@ -136,13 +173,26 @@ class DataManager {
     if (!data || typeof data !== 'object') return { ...defaultData };
 
     return {
+      // O que já está publicado e ainda não é conhecido aqui passa intacto.
+      // Sem esta linha, salvar pelo painel apagava contact, settings, metadata
+      // e qualquer chave que o site ganhasse depois deste arquivo.
+      ...data,
       hero: { ...defaultData.hero, ...(data.hero || {}) },
       banner: { ...defaultData.banner, ...(data.banner || {}) },
+      center: { ...defaultData.center, ...(data.center || {}) },
       categories: Array.isArray(data.categories) ? data.categories : defaultData.categories,
       services: Array.isArray(data.services) ? data.services : defaultData.services,
-      lastUpdated: Number(data.lastUpdated) || 0,
-      version: Number(data.version) || 0
+      ...lerSeloPublicacao(data)
     };
+  }
+
+  // Adota como base de edição um objeto que veio do servidor. O painel usa
+  // para partir do mesmo formato normalizado que a página pública usa, senão
+  // o próximo save contaria a versão a partir de zero e o site veria um
+  // conteúdo mais "velho" do que o que já estava publicado.
+  adopt(data) {
+    this.currentData = this.validateData(data);
+    return this.currentData;
   }
 
   async fetchSiteData() {
@@ -224,4 +274,13 @@ class DataManager {
   }
 }
 
-export { DataManager, defaultData, safeImageSrc, whatsappUrl, text, WHATSAPP_PADRAO };
+export {
+  DataManager,
+  defaultData,
+  safeImageSrc,
+  isVideoMedia,
+  whatsappUrl,
+  text,
+  lerSeloPublicacao,
+  WHATSAPP_PADRAO
+};

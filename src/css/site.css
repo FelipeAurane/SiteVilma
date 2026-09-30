@@ -86,7 +86,7 @@ body::-webkit-scrollbar {
 
   html::-webkit-scrollbar-thumb:hover,
   body::-webkit-scrollbar-thumb:hover {
-    background: var(--rosa, #e0abab);
+    background: rgba(255, 255, 255, 0.45);
   }
 }
 
@@ -556,9 +556,9 @@ button {
   transform: translateX(-50%);
   width: 4px;
   height: 7px;
-  background: var(--rosa-ouro, #e0abab);
+  background: rgba(255, 255, 255, 0.6);
   border-radius: 4px;
-  box-shadow: 0 0 8px rgba(224, 171, 171, 0.9);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
   animation: rolarBolinha 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 
@@ -586,8 +586,8 @@ button {
 }
 
 .scroll-down:hover .scroll-barrinha {
-  border-color: var(--rosa, #e0abab);
-  box-shadow: 0 0 16px rgba(224, 171, 171, 0.55);
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.3);
   transform: translateY(2px);
 }
 
@@ -956,7 +956,7 @@ footer p {
     align-items: start;
     margin: 0 !important;
     overflow: visible !important;
-    will-change: transform, max-width, padding;
+    will-change: transform, max-width, padding, clip-path;
     /* Sem transition em `padding`: o padding-top é interpolado por frame
        pelo scroll (JS) e uma transition aqui o faria "escorregar". */
     transition: max-width 0.45s cubic-bezier(0.16, 1, 0.3, 1),
@@ -1096,7 +1096,7 @@ footer p {
     box-shadow: none !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-    color: var(--rosa-ouro) !important;
+    color: var(--branco) !important;
     font-size: 11px !important;
     font-weight: 600 !important;
     letter-spacing: 0.16em !important;
@@ -1157,7 +1157,15 @@ footer p {
   /* Na Section 2, a grade se torna interativa.
      NOTA: grid-template-columns, gap e paddings NÃO usam !important de
      propósito — eles são animados continuamente pelo JS (scroll) para que a
-     reorganização da grade em 4 colunas seja gradual e reversível. */
+     reorganização da grade em 4 colunas seja gradual e reversível.
+
+     Os seletores com `#hero-pinterest-grid` são OBRIGATÓRIOS aqui: as regras
+     que desligam a interação (pointer-events/cursor/user-select) usam o ID e
+     portanto têm especificidade 100, vencendo qualquer seletor baseado em
+     classes (21). Sem repetir o ID, o clique na galeria nunca chegaria ao
+     card, porque o `none !important` do ID continuaria valendo. */
+  #hero-pinterest-grid.section-2-active,
+  body.section-2-active #hero-pinterest-grid,
   .hero-pinterest-grid.section-2-active,
   body.section-2-active .hero-pinterest-grid {
     pointer-events: auto !important;
@@ -1165,9 +1173,13 @@ footer p {
     align-items: start !important;
   }
 
+  #hero-pinterest-grid.section-2-active *,
+  body.section-2-active #hero-pinterest-grid *,
   .hero-pinterest-grid.section-2-active *,
   body.section-2-active .hero-pinterest-grid * {
     pointer-events: auto !important;
+    cursor: auto !important;
+    user-select: auto !important;
   }
 
   /* Coluna central do hero: opacidade/transform são animados pelo JS.
@@ -1297,8 +1309,8 @@ footer p {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    color: var(--rosa, #e0abab) !important;
-    text-shadow: 0 0 14px rgba(224, 171, 171, 0.8), 0 2px 8px rgba(0, 0, 0, 0.95) !important;
+    color: var(--branco) !important;
+    text-shadow: 0 0 14px rgba(255, 255, 255, 0.5), 0 2px 8px rgba(0, 0, 0, 0.95) !important;
     transform: translateX(3px) !important;
   }
 
@@ -1352,10 +1364,10 @@ footer p {
   .hero-pinterest-grid.section-2-active .pinterest-card:hover .card-ver-mais,
   body.section-2-active .hero-pinterest-grid .pinterest-card:hover .card-ver-mais,
   .card-ver-mais:hover {
-    background: var(--rosa, #e0abab) !important;
+    background: var(--branco) !important;
     color: #121216 !important;
-    border-color: var(--rosa, #e0abab) !important;
-    box-shadow: 0 4px 16px rgba(224, 171, 171, 0.55) !important;
+    border-color: var(--branco) !important;
+    box-shadow: 0 4px 16px rgba(255, 255, 255, 0.3) !important;
     transform: translateX(2px) !important;
   }
 
@@ -1619,12 +1631,12 @@ footer p {
     font-weight: 500;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--rosa-ouro);
+    color: var(--branco);
     margin-bottom: 14px;
     background: rgba(14, 14, 16, 0.7);
     padding: 7px 18px;
     border-radius: 999px;
-    border: 1px solid rgba(224, 171, 171, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }
@@ -1742,6 +1754,75 @@ footer p {
     will-change: transform;
   }
 
+  /* Som do vídeo central: canto superior direito, discreto.
+     O seletor leva DOIS ids de propósito — a regra `pointer-events: none`
+     da grade usa um id e um `*`, então só um id e uma classe não
+     venceriam o `!important` dela e o botão ficaria visível mas morto. */
+  #hero-pinterest-grid #hero-center-som,
+  .hero-center-som {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 8;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 999px;
+    background: rgba(14, 14, 16, 0.55);
+    color: var(--branco);
+    /* `cursor` e `pointer-events` precisam do mesmo peso do seletor: a
+       grade os desliga em tudo que está dentro dela com um id + `*`. */
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+    opacity: 0.75;
+    transition: opacity 0.25s ease, background-color 0.25s ease, transform 0.25s ease;
+  }
+
+  /* O `display: grid` do botão vem de um seletor de DOIS ids, que ganha
+     qualquer regra de duas classes — inclusive esta. Sem o !important o
+     atributo hidden vira decoração e o botão fica visível por cima da foto
+     no modo imagem, que é o oposto do desejado. */
+  #hero-pinterest-grid #hero-center-som[hidden],
+  .hero-center-som[hidden] {
+    display: none !important;
+  }
+
+  #hero-pinterest-grid #hero-center-som:hover,
+  #hero-pinterest-grid #hero-center-som:focus-visible,
+  .hero-center-som:hover,
+  .hero-center-som:focus-visible {
+    opacity: 1;
+    background: rgba(14, 14, 16, 0.8);
+    transform: scale(1.06);
+  }
+
+  #hero-pinterest-grid #hero-center-som:focus-visible,
+  .hero-center-som:focus-visible {
+    outline: 2px solid var(--branco);
+    outline-offset: 2px;
+  }
+
+  .hero-center-som-icone {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    pointer-events: none;
+  }
+
+  /* O ícone é o estado: com som, alto-falante simples; sem som, o mesmo
+     alto-falante cortado. O aria-pressed acompanha, então o desenho é
+     só o reforço visual. */
+  .hero-center-som[aria-pressed='true'] .som-quando-ligado,
+  .hero-center-som[aria-pressed='false'] .som-quando-desligado {
+    display: none;
+  }
+
   /* Focus Mode Selector 1: Section 2 vazia para a div da Section 1 ficar fixa sobreposta a ela */
   div#mainContent:nth-of-type(2) > section#next-section:nth-of-type(2),
   #next-section,
@@ -1807,7 +1888,7 @@ footer p {
   }
 
   .secao-cabeca-portfolio .secao-link {
-    color: var(--rosa);
+    color: var(--branco);
     font-weight: 600;
     text-decoration: none;
     font-size: 16px;
@@ -1815,7 +1896,7 @@ footer p {
   }
 
   .secao-cabeca-portfolio .secao-link:hover {
-    color: var(--rosa-ouro);
+    color: var(--creme);
     transform: translateX(4px);
   }
 
@@ -1930,7 +2011,7 @@ footer p {
     font-size: 11px !important;
     letter-spacing: 0.16em !important;
     text-transform: uppercase !important;
-    color: var(--rosa-ouro) !important;
+    color: var(--branco) !important;
     display: block !important;
     background: transparent !important;
     border: none !important;
@@ -2061,5 +2142,64 @@ footer p {
     color: #ffffff !important;
     text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95), 0 1px 3px rgba(0, 0, 0, 1) !important;
     box-shadow: none !important;
+  }
+
+  /* O botão "Ver galeria" não existe no celular (a galeria já é a listagem
+     completa), mas o span continuava no fluxo: mesmo invisível, ele somava
+     ~19px à altura do card, fazendo a foto deixar de ocupar o card e o NOME
+     passar a ser ancorado numa faixa vazia ABAIXO da imagem. Absolute + aria
+     hidden tira o elemento do fluxo — o card volta a ter a altura da foto e o
+     nome volta a ficar sobre a imagem, dentro do card. */
+  .card-ver-mais {
+    position: absolute !important;
+    bottom: 10px !important;
+    right: 10px !important;
+    left: auto !important;
+    display: none !important;
+  }
+
+  /* No celular a grade vira lista e não tem o `pointer-events: none !important`
+     do desktop, mas o botão do som continua no mesmo canto. */
+  .hero-center-som {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 8;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 999px;
+    background: rgba(14, 14, 16, 0.6);
+    color: var(--branco);
+    cursor: pointer;
+    pointer-events: auto !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    opacity: 0.85;
+  }
+
+  /* O `display: grid` do botão vem de um seletor de DOIS ids, que ganha
+     qualquer regra de duas classes — inclusive esta. Sem o !important o
+     atributo hidden vira decoração e o botão fica visível por cima da foto
+     no modo imagem, que é o oposto do desejado. */
+  #hero-pinterest-grid #hero-center-som[hidden],
+  .hero-center-som[hidden] {
+    display: none !important;
+  }
+
+  .hero-center-som-icone {
+    width: 19px;
+    height: 19px;
+    fill: currentColor;
+    pointer-events: none;
+  }
+
+  .hero-center-som[aria-pressed='true'] .som-quando-ligado,
+  .hero-center-som[aria-pressed='false'] .som-quando-desligado {
+    display: none;
   }
 }

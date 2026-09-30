@@ -3,7 +3,7 @@
   "appName": "Painel Vilma",
   "webDir": "src",
   "android": {
-    "allowMixedContent": false
+    "allowMixedContent": true
   },
   "plugins": {
     "CapacitorCookies": {

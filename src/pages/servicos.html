@@ -1,153 +1,130 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <meta name="description" content="Seja a protagonista da sua beleza com Jacy Braz. Cursos, serviços e dicas de maquiagem para você se tornar sua melhor versão.">
-  <meta name="keywords" content="Jacy Makeup, maquiagem, cursos de maquiagem, beleza, agendamento, maquiagem profissional">
-  <meta name="author" content="Jacy Braz">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description"
+    content="Serviços de fotografia gastronômica com a Vilma Silva: cardápios, ensaios e imagens que valorizam o seu produto.">
+  <meta name="keywords"
+    content="Vilma Silva, fotografia gastronômica, fotografia de comida, cardápio digital, ensaio gastronômico, food photography">
+  <meta name="author" content="Vilma Silva">
   <meta name="robots" content="index, follow">
 
-  <!-- Open Graph / Facebook -->
-  <meta property="og:title" content="Jacy Makeup - Seja a protagonista da sua beleza">
-  <meta property="og:description" content="Cursos, serviços e dicas de maquiagem para você se tornar sua melhor versão.">
-  <meta property="og:image" content="./img/capa.jpg">
-  <meta property="og:url" content="https://jacymakeup.vercel.app">
+  <meta name="theme-color" content="#0e0e10">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/png" href="/img/icon-192.png">
+  <link rel="apple-touch-icon" href="/img/icon-192.png">
+
+  <meta property="og:title" content="Serviços — Vilma Silva Fotografia">
+  <meta property="og:description"
+    content="Fotografia gastronômica profissional. Escolha o serviço e solicite o seu orçamento.">
+  <meta property="og:image" content="/img/capa.jpg">
   <meta property="og:type" content="website">
 
-  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Jacy Makeup - Seja a protagonista da sua beleza">
-  <meta name="twitter:description" content="Cursos, serviços e dicas de maquiagem para você se tornar sua melhor versão.">
-  <meta name="twitter:image" content="./img/capa.jpg">
+  <meta name="twitter:title" content="Serviços — Vilma Silva Fotografia">
+  <meta name="twitter:description"
+    content="Fotografia gastronômica profissional. Escolha o serviço e solicite o seu orçamento.">
+  <meta name="twitter:image" content="/img/capa.jpg">
 
-  <title>Jacy Makeup - Transforme sua Beleza</title>
-  <link rel="stylesheet" href="../css/styles-faq.css">
-  <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <style>
-    .next-section {
-      padding: 2rem;
-      max-width: 800px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .service-item:first-child {
-      margin-top: 15%;
-    }
-
-    .service-item {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 600px;
-      text-align: center;
-      transition: transform 0.3s ease;
-      position: relative; /* Establish positioning context for absolute positioning */
-    }
-
-    .service-item:hover {
-      transform: translateY(-5px);
-    }
-
-    .service-image-placeholder {
-      height: 150px;
-      width: 100%; /* Ensure it takes full width of .service-item */
-      background-color: #8B4513;
-      border-radius: 8px 8px 0 0;
-      margin-bottom: 1rem;
-      box-sizing: border-box; /* Include padding and border in width calculation */
-    }
-
-    .service-item h3 {
-      font-size: 1.5rem;
-      margin: 0.5rem 0;
-      color: #333;
-      padding-left: 5%;
-      text-align: left;
-    }
-
-    .service-item, .service-description {
-      font-size: 1rem;
-      margin: 0.5rem 0;
-      color: #666;
-      margin-bottom: 10%;
-      text-align: left;
-    }
-
-    .service-description {
-      padding-left: 5%;
-    }
-
-
-
-.service-price {
-    bottom: 105px; /* Ajuste a posição vertical conforme necessário */
-    right: 5px; /* Ajuste a posição horizontal conforme necessário */
-    position: absolute; /* Posiciona o preço no canto inferior direito */
-    padding: 5px 10px;
-    background-color: rgba(0, 0, 0, 0.7); /* Fundo semi-transparente para legibilidade */
-    color: #fff; /* Cor do texto */
-    font-weight: bold;
-    border-radius: 4px; /* Bordas arredondadas */
-    font-size: 14px; /* Tamanho da fonte */
-}
-
-    .whatsapp-btn {
-      background: #000;
-      color: #fff;
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.3s ease;
-      position: absolute; /* Position absolutely within .service-item */
-      bottom: 0.5rem; /* 0.5rem from the bottom */
-      right: 0.5rem; /* 0.5rem from the right */
-    }
-
-    .whatsapp-btn:hover {
-      background: #333;
-    }
-
-    .service-error {
-      background: #f8d7da;
-      color: #721c24;
-      padding: 1rem;
-      border-radius: 8px;
-      margin: 1rem;
-      text-align: center;
-    }
-
-    @media (max-width: 768px) {
-      .service-item {
-        max-width: 100%;
-      }
-    }
-  </style>
+  <title>Serviços — Vilma Silva Fotografia</title>
+  <link rel="stylesheet" href="../css/pagina.css">
 </head>
+
 <body>
-  <div class="topbar-cabecalho-curso">
-    <a href="../index.html">
-      <img src="../img/seta-esquerda.png" alt="Menu" style="width: 40px; height: 40px;" class="menu-back">
+  <a class="pular-para" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="topo">
+    <a class="topo__voltar" href="../index.html" aria-label="Voltar para o início">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+        stroke-linejoin="round" aria-hidden="true">
+        <path d="M15 5l-7 7 7 7" />
+      </svg>
     </a>
-    <a class="cabecalhoOne1">Serviços</a>
-  </div>
 
-  <!-- Tela Principal -->
-  <section>
-    <section id="next-section" class="next-section">
-      <!-- Os serviços serão renderizados aqui pelo JavaScript -->
+    <a class="topo__marca" href="../index.html">
+      <span class="topo__nome">Vilma Silva</span>
+      <span class="topo__tipo">Fotografia Gastronômica</span>
+    </a>
+
+    <a class="topo__acao" href="https://wa.me/5581998370180?text=Ol%C3%A1!%20Gostaria%20de%20solicitar%20um%20or%C3%A7amento%20de%20fotografia."
+      target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path
+          d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.48 1.34 5L2 22l5.2-1.36a9.9 9.9 0 0 0 4.84 1.24h.01c5.5 0 9.96-4.46 9.96-9.96S17.54 2 12.04 2Zm0 18.2h-.01a8.27 8.27 0 0 1-4.2-1.15l-.3-.18-3.1.81.83-3.02-.2-.31a8.22 8.22 0 0 1-1.26-4.4 8.27 8.27 0 0 1 8.24-8.24 8.27 8.27 0 0 1 0 16.5Zm4.53-12.36c-.25-.12-1.47-.72-1.7-.81-.22-.08-.39-.12-.56.13-.16.25-.64.8-.78.97-.15.16-.29.18-.53.06-.25-.12-1.05-.38-2-1.23a7.5 7.5 0 0 1-1.38-1.72c-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.44.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.44-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.41-.56-.42h-.47c-.16 0-.43.06-.65.31-.22.25-.85.83-.85 2.03 0 1.2.87 2.35.99 2.51.12.17 1.71 2.6 4.14 3.65.58.25 1.03.4 1.38.51.58.19 1.11.16 1.53.1.47-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.22-.16-.47-.28Z" />
+      </svg>
+      Orçamento
+    </a>
+  </header>
+
+  <nav class="subnav" aria-label="Seções do site">
+    <a href="../index.html">Portfólio</a>
+    <a href="./servicos.html" aria-current="page">Serviços</a>
+    <a href="./duvidas.html">Dúvidas</a>
+    <a href="./sobremim.html">Sobre</a>
+  </nav>
+
+  <main class="pagina" id="conteudo">
+    <div class="pagina-intro">
+      <p class="etiqueta">Serviços</p>
+      <h1 class="pagina-titulo">A imagem certa para cada prato</h1>
+      <p class="pagina-lead">
+        Do cardápio digital ao ensaio de lançamento, cada projeto é montado sob medida para o seu
+        produto. Escolha abaixo ou fale comigo direto — a primeira conversa é por minha conta.
+      </p>
+    </div>
+
+    <section aria-labelledby="servicos-titulo">
+      <h2 class="secao__titulo" id="servicos-titulo">O que eu faço</h2>
+      <div class="grade" id="servicos-grade" aria-live="polite"></div>
+
+      <div class="estado-vazio" id="servicos-vazio" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="16" rx="2" />
+          <path d="M3 15l4.5-4.5a2 2 0 0 1 2.8 0L14 14" />
+          <path d="M14 12l1.8-1.8a2 2 0 0 1 2.8 0L21 12.5" />
+          <circle cx="8.5" cy="8.5" r="1.3" />
+        </svg>
+        <strong>A lista está sendo atualizada</strong>
+        <span>
+          Enquanto isso, me conta o que você precisa. Eu respondo com o escopo, o prazo e o valor
+          do seu projeto.
+        </span>
+      </div>
     </section>
-  </section>
 
-  <!-- Scripts -->
-  <script src="../js/scripts.js"></script>
+    <section class="chamada">
+      <h2 class="chamada__titulo">Não encontrou o que procurava?</h2>
+      <p class="chamada__texto">
+        A maioria dos projetos é uma combinação. Descreva o seu cenário e eu monto a proposta
+        certa para ele.
+      </p>
+      <a class="btn btn--cheio"
+        href="https://wa.me/5581998370180?text=Ol%C3%A1!%20Gostaria%20de%20falar%20sobre%20um%20projeto%20de%20fotografia."
+        target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path
+            d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.48 1.34 5L2 22l5.2-1.36a9.9 9.9 0 0 0 4.84 1.24h.01c5.5 0 9.96-4.46 9.96-9.96S17.54 2 12.04 2Zm4.53 7.84c-.25-.12-1.47-.72-1.7-.81-.22-.08-.39-.12-.56.13-.16.25-.64.8-.78.97-.15.16-.29.18-.53.06-.25-.12-1.05-.38-2-1.23a7.5 7.5 0 0 1-1.38-1.72c-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.44.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.44-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.41-.56-.42h-.47c-.16 0-.43.06-.65.31-.22.25-.85.83-.85 2.03 0 1.2.87 2.35.99 2.51.12.17 1.71 2.6 4.14 3.65.58.25 1.03.4 1.38.51.58.19 1.11.16 1.53.1.47-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.22-.16-.47-.28Z" />
+        </svg>
+        Falar no WhatsApp
+      </a>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <div class="rodape__links">
+      <a href="../index.html">Portfólio</a>
+      <a href="./servicos.html">Serviços</a>
+      <a href="./duvidas.html">Dúvidas</a>
+      <a href="./sobremim.html">Sobre</a>
+    </div>
+    <p>© 2025 Vilma Fotografia. Todos os direitos reservados.</p>
+  </footer>
+
   <script type="module" src="../js/content.js"></script>
 </body>
+
 </html>

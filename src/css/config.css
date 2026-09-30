@@ -1,12 +1,8 @@
 /**
  * Painel de configuração (/config).
  *
- * Dois temas no mesmo arquivo: o escuro é o padrão e o claro é o
- * [data-tema="claro"] no <html>. Tudo que muda de cor é uma variável de
- * :root — nenhum componente escreve uma cor por conta própria, senão o tema
- * claro vira um emaranhado de !important.
- *
- * Mesma fonte do site público (Montserrat). Não há <style> no config.html.
+ * Design moderno com tema escuro/claro, tipografia Montserrat,
+ * e layout responsivo com sidebar de ícones.
  */
 
 /* ============================================================== tokens */
@@ -14,63 +10,62 @@
 :root {
   color-scheme: dark;
 
-  --acento: #422cf2;
-  --acento-claro: #5842f2;
-  --acento-vivo: #6f5cff;
-  --acento-veu: rgba(66, 44, 242, .2);
-  --acento-borda: rgba(111, 92, 255, .42);
-  --acento-gradiente: linear-gradient(140deg, #6f5cff, #422cf2);
+  --acento: #6366f1;
+  --acento-claro: #818cf8;
+  --acento-vivo: #818cf8;
+  --acento-veu: rgba(99, 102, 241, .15);
+  --acento-borda: rgba(129, 140, 248, .4);
+  --acento-gradiente: linear-gradient(135deg, #6366f1, #8b5cf6);
 
-  --verde: #3ddc97;
-  --ambar: #e6a95c;
-  --vermelho: #f0776d;
+  --verde: #10b981;
+  --ambar: #f59e0b;
+  --vermelho: #ef4444;
 
-  --largura-maxima: 1160px;
-  --trilho-largura: 64px;
+  --largura-maxima: 1200px;
+  --trilho-largura: 72px;
   --raio: 16px;
-  --raio-p: 10px;
-  --transicao: .25s cubic-bezier(.22, .61, .36, 1);
+  --raio-p: 12px;
+  --transicao: .2s cubic-bezier(.4, 0, .2, 1);
 }
 
 /* ------------------------------------------------------------- escuro */
 
 :root,
 :root[data-tema='escuro'] {
-  --fundo: #08080c;
-  --fundo-brilho: radial-gradient(1100px 520px at 12% -8%, rgba(66, 44, 242, .16), transparent 62%),
-    radial-gradient(760px 420px at 96% 0%, rgba(88, 66, 242, .1), transparent 58%);
+  --fundo: #0a0a0f;
+  --fundo-brilho: radial-gradient(1200px 600px at 10% -10%, rgba(99, 102, 241, .12), transparent 60%),
+    radial-gradient(800px 500px at 100% 0%, rgba(139, 92, 246, .08), transparent 50%);
 
-  --superficie: #121220;
-  --superficie-alta: #191930;
-  --trilho-fundo: #0b0b12;
+  --superficie: #12121a;
+  --superficie-alta: #1a1a25;
+  --trilho-fundo: #0d0d14;
 
-  --texto: rgba(255, 255, 255, .94);
-  --texto-suave: rgba(255, 255, 255, .66);
-  --texto-fraco: rgba(255, 255, 255, .44);
-  --texto-invertido: #0a0a12;
+  --texto: rgba(255, 255, 255, .95);
+  --texto-suave: rgba(255, 255, 255, .65);
+  --texto-fraco: rgba(255, 255, 255, .4);
+  --texto-invertido: #0a0a0f;
 
-  --borda: rgba(255, 255, 255, .09);
-  --borda-forte: rgba(255, 255, 255, .16);
+  --borda: rgba(255, 255, 255, .08);
+  --borda-forte: rgba(255, 255, 255, .15);
 
-  /* Véus: fundo de item, hover, campo. */
   --veu: rgba(255, 255, 255, .03);
   --veu-medio: rgba(255, 255, 255, .06);
-  --veu-forte: rgba(255, 255, 255, .12);
-  --veu-campo: rgba(0, 0, 0, .34);
-  --veu-campo-foco: rgba(0, 0, 0, .5);
+  --veu-forte: rgba(255, 255, 255, .1);
+  --veu-campo: rgba(0, 0, 0, .3);
+  --veu-campo-foco: rgba(0, 0, 0, .45);
 
-  --sombra-cartao: none;
-  --sombra-flutuante: 0 18px 48px rgba(0, 0, 0, .6);
-  --vidro: rgba(8, 8, 12, .8);
+  --sombra-cartao: 0 1px 3px rgba(0, 0, 0, .2), 0 4px 12px rgba(0, 0, 0, .15);
+  --sombra-flutuante: 0 8px 32px rgba(0, 0, 0, .4);
+  --vidro: rgba(10, 10, 15, .85);
 
   --botao-primario-fundo: #fff;
-  --botao-primario-texto: #0a0a12;
-  --botao-primario-hover: #e8e8ff;
+  --botao-primario-texto: #0a0a0f;
+  --botao-primario-hover: #e5e5e5;
 
   --item-ativo-fundo: var(--acento-veu);
   --item-ativo-texto: #fff;
 
-  --erro-texto: #ffd9d5;
+  --erro-texto: #fca5a5;
 }
 
 /* -------------------------------------------------------------- claro */
@@ -78,50 +73,46 @@
 :root[data-tema='claro'] {
   color-scheme: light;
 
-  --fundo: #f6f6f8;
-  --fundo-brilho: radial-gradient(900px 420px at 8% -10%, rgba(91, 91, 240, .1), transparent 60%);
+  --fundo: #f8f9fa;
+  --fundo-brilho: radial-gradient(1000px 500px at 5% -5%, rgba(99, 102, 241, .08), transparent 55%);
 
-  --superficie: #fff;
-  --superficie-alta: #fff;
-  --trilho-fundo: #fff;
+  --superficie: #ffffff;
+  --superficie-alta: #ffffff;
+  --trilho-fundo: #ffffff;
 
-  --texto: #14141c;
-  --texto-suave: #55555f;
-  --texto-fraco: #8b8b96;
-  --texto-invertido: #fff;
+  --texto: #1a1a2e;
+  --texto-suave: #4a4a5a;
+  --texto-fraco: #8a8a9a;
+  --texto-invertido: #ffffff;
 
-  --borda: rgba(18, 18, 32, .08);
-  --borda-forte: rgba(18, 18, 32, .14);
+  --borda: rgba(0, 0, 0, .08);
+  --borda-forte: rgba(0, 0, 0, .15);
 
-  --veu: rgba(18, 18, 32, .028);
-  --veu-medio: rgba(18, 18, 32, .05);
-  --veu-forte: rgba(18, 18, 32, .09);
-  --veu-campo: #f1f1f4;
-  --veu-campo-foco: #fff;
+  --veu: rgba(0, 0, 0, .02);
+  --veu-medio: rgba(0, 0, 0, .05);
+  --veu-forte: rgba(0, 0, 0, .08);
+  --veu-campo: #f1f1f3;
+  --veu-campo-foco: #ffffff;
 
-  --sombra-cartao: 0 1px 2px rgba(18, 18, 32, .04), 0 8px 24px rgba(18, 18, 32, .06);
-  --sombra-flutuante: 0 18px 44px rgba(18, 18, 32, .16);
-  --vidro: rgba(246, 246, 248, .82);
+  --sombra-cartao: 0 1px 2px rgba(0, 0, 0, .04), 0 4px 12px rgba(0, 0, 0, .06);
+  --sombra-flutuante: 0 8px 24px rgba(0, 0, 0, .12);
+  --vidro: rgba(248, 249, 250, .9);
 
-  --acento: #5151e8;
-  --acento-veu: rgba(81, 81, 232, .1);
-  /* As cores de estado são texto, não preenchimento: no claro elas
-     escurecem, senão o verde e o âmbar ficam ilegíveis sobre branco. */
+  --acento: #6366f1;
+  --acento-veu: rgba(99, 102, 241, .1);
   --acento-vivo: #4f46e5;
-  --verde: #0e9f6e;
-  --ambar: #b26a12;
-  --vermelho: #d13b30;
+  --verde: #059669;
+  --ambar: #d97706;
+  --vermelho: #dc2626;
 
-  /* Na referência o botão que age é o escuro, não o claro. */
-  --botao-primario-fundo: #14141c;
-  --botao-primario-texto: #fff;
-  --botao-primario-hover: #26263a;
+  --botao-primario-fundo: #1a1a2e;
+  --botao-primario-texto: #ffffff;
+  --botao-primario-hover: #2a2a3e;
 
-  /* E o ícone da seção ativa é um círculo escuro. */
-  --item-ativo-fundo: #14141c;
-  --item-ativo-texto: #fff;
+  --item-ativo-fundo: #1a1a2e;
+  --item-ativo-texto: #ffffff;
 
-  --erro-texto: #a33a30;
+  --erro-texto: #b91c1c;
 }
 
 /* =============================================================== reset */
@@ -141,7 +132,7 @@ html {
 body {
   font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
   font-size: 15px;
-  line-height: 1.55;
+  line-height: 1.6;
   background: var(--fundo-brilho), var(--fundo);
   background-attachment: fixed;
   color: var(--texto);
@@ -176,19 +167,19 @@ a {
 /* ============================================================== ícones */
 
 .icone {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   flex: none;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.7;
+  stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .icone--p {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
 }
 
 .sprite {
@@ -213,30 +204,30 @@ a {
   flex-direction: column;
 }
 
-/* ------------------------------------------ menu lateral (só ícones) */
+/* ------------------------------------------ menu lateral */
 
 .lateral {
   position: fixed;
   inset: 0 auto 0 0;
   z-index: 40;
   width: var(--trilho-largura);
-  padding: 18px 0 calc(18px + env(safe-area-inset-bottom));
+  padding: 20px 0 calc(20px + env(safe-area-inset-bottom));
   padding-left: env(safe-area-inset-left);
   background: var(--trilho-fundo);
   border-right: 1px solid var(--borda);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 20px;
 }
 
 .marca {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   flex: none;
   display: grid;
   place-items: center;
-  border-radius: 13px;
+  border-radius: 14px;
 }
 
 .marca-selo {
@@ -244,23 +235,21 @@ a {
   height: 100%;
   display: grid;
   place-items: center;
-  border-radius: 13px;
+  border-radius: 14px;
   background: var(--acento-gradiente);
   color: #fff;
-  box-shadow: 0 8px 22px rgba(66, 44, 242, .38);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, .4);
 }
 
-/* Nove seções não cabem na altura de um celular: a lista rola sozinha,
-   sem barra visível, e o rodapé fica preso embaixo. */
 .trilho {
   flex: 1;
   min-height: 0;
   width: 100%;
-  padding: 2px 0;
+  padding: 4px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   overflow-y: auto;
   scrollbar-width: none;
 }
@@ -272,8 +261,8 @@ a {
 .trilho-item {
   position: relative;
   flex: none;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
   border: 0;
@@ -281,7 +270,7 @@ a {
   background: none;
   color: var(--texto-fraco);
   cursor: pointer;
-  transition: background var(--transicao), color var(--transicao);
+  transition: all var(--transicao);
 }
 
 .trilho-item:hover {
@@ -297,29 +286,27 @@ a {
 .trilho-item[aria-current='true']::before {
   content: '';
   position: absolute;
-  left: -11px;
+  left: -12px;
   top: 50%;
   width: 3px;
-  height: 20px;
+  height: 24px;
   border-radius: 0 3px 3px 0;
   background: var(--acento-vivo);
   transform: translateY(-50%);
 }
 
-/* O nome só aparece no mouse ou no teclado: o trilho é de ícones, mas
-   ninguém precisa adivinhar o que cada um faz. */
 .trilho-rotulo {
   position: absolute;
-  left: calc(100% + 12px);
+  left: calc(100% + 14px);
   top: 50%;
   transform: translateY(-50%);
   padding: 6px 12px;
   border: 1px solid var(--borda-forte);
-  border-radius: 9px;
+  border-radius: 8px;
   background: var(--superficie-alta);
   box-shadow: var(--sombra-flutuante);
   color: var(--texto);
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 500;
   white-space: nowrap;
   opacity: 0;
@@ -338,7 +325,7 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .trilho-ponto {
@@ -347,28 +334,26 @@ a {
   margin-bottom: 4px;
   border-radius: 50%;
   background: var(--texto-fraco);
-  transition: background var(--transicao);
+  transition: all var(--transicao);
 }
 
 .trilho-ponto[data-estado='salvo'] {
   background: var(--verde);
-  box-shadow: 0 0 0 3px rgba(61, 220, 151, .16);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, .2);
 }
 
 .trilho-ponto[data-estado='salvando'] {
   background: var(--ambar);
-  animation: pulsa 1.1s ease-in-out infinite;
+  animation: pulsa 1s ease-in-out infinite;
 }
 
 .trilho-ponto[data-estado='erro'] {
   background: var(--vermelho);
-  box-shadow: 0 0 0 3px rgba(240, 119, 109, .18);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, .2);
 }
 
 @keyframes pulsa {
-  50% {
-    opacity: .3;
-  }
+  50% { opacity: .4; }
 }
 
 /* ============================================== cabeçalho e estado */
@@ -380,17 +365,17 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
-  padding: 18px 30px;
-  padding-top: calc(18px + env(safe-area-inset-top));
+  gap: 16px;
+  padding: 16px 28px;
+  padding-top: calc(16px + env(safe-area-inset-top));
   background: var(--vidro);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--borda);
 }
 
 .topo h1 {
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 600;
   letter-spacing: -.01em;
   min-width: 0;
@@ -402,13 +387,13 @@ a {
 .topo-estado {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex: none;
-  padding: 9px 16px;
+  padding: 8px 14px;
   border: 1px solid var(--borda-forte);
   border-radius: 999px;
   background: var(--veu);
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--texto-suave);
   white-space: nowrap;
 }
@@ -425,17 +410,17 @@ a {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 42px;
-  padding: 0 17px;
+  min-height: 40px;
+  padding: 0 16px;
   border: 1px solid transparent;
   border-radius: var(--raio-p);
   background: var(--veu-medio);
   color: var(--texto);
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
-  transition: background var(--transicao), border-color var(--transicao), transform var(--transicao);
+  transition: all var(--transicao);
 }
 
 .btn:hover {
@@ -462,24 +447,9 @@ a {
   background: var(--botao-primario-hover);
 }
 
-.btn-contorno {
-  border-color: var(--borda-forte);
-  background: var(--veu);
-}
-
-.btn-contorno:hover {
-  background: var(--veu-medio);
-}
-
-.btn-pequeno {
-  min-height: 36px;
-  padding: 0 14px;
-  font-size: 12.5px;
-}
-
 .btn-icone {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   display: grid;
   place-items: center;
   border: 1px solid var(--borda);
@@ -487,7 +457,7 @@ a {
   background: none;
   color: var(--texto-suave);
   cursor: pointer;
-  transition: background var(--transicao), color var(--transicao), border-color var(--transicao);
+  transition: all var(--transicao);
 }
 
 .btn-icone:hover {
@@ -496,9 +466,9 @@ a {
 }
 
 .btn-icone--perigo:hover {
-  background: rgba(240, 119, 109, .16);
+  background: rgba(239, 68, 68, .15);
   color: var(--vermelho);
-  border-color: rgba(240, 119, 109, .4);
+  border-color: rgba(239, 68, 68, .3);
 }
 
 /* =========================================================== conteúdo */
@@ -508,34 +478,29 @@ a {
   width: 100%;
   max-width: var(--largura-maxima);
   margin: 0 auto;
-  padding: 30px 34px 90px;
+  padding: 24px 28px 80px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 
 .painel {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  animation: entra .28s ease both;
+  gap: 20px;
+  animation: entra .25s ease both;
 }
 
 @keyframes entra {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(8px);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  .painel {
-    animation: none;
-  }
+  html { scroll-behavior: auto; }
+  .painel { animation: none; }
 }
 
 .painel:focus {
@@ -546,22 +511,22 @@ a {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 18px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
 .painel-titulo {
-  font-size: 25px;
+  font-size: 24px;
   font-weight: 600;
   letter-spacing: -.02em;
   line-height: 1.2;
 }
 
 .painel-desc {
-  margin-top: 5px;
-  font-size: 13.5px;
+  margin-top: 4px;
+  font-size: 13px;
   color: var(--texto-suave);
-  max-width: 66ch;
+  max-width: 60ch;
 }
 
 .painel-acoes {
@@ -580,11 +545,11 @@ a {
   justify-content: space-between;
   gap: 20px;
   flex-wrap: wrap;
-  padding: 26px 28px;
+  padding: 24px 26px;
   border: 1px solid var(--borda);
   border-radius: calc(var(--raio) + 4px);
   background:
-    linear-gradient(120deg, var(--acento-veu), transparent 52%),
+    linear-gradient(135deg, var(--acento-veu), transparent 50%),
     var(--superficie);
   box-shadow: var(--sombra-cartao);
 }
@@ -592,12 +557,12 @@ a {
 .boas-vindas::after {
   content: '';
   position: absolute;
-  right: -60px;
-  top: -70px;
-  width: 240px;
-  height: 240px;
+  right: -50px;
+  top: -60px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--acento-veu), transparent 66%);
+  background: radial-gradient(circle, var(--acento-veu), transparent 70%);
   pointer-events: none;
 }
 
@@ -609,19 +574,19 @@ a {
 .boas-vindas-rotulo {
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: .16em;
+  letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--acento-vivo);
 }
 
 .boas-vindas .painel-titulo {
-  margin-top: 6px;
-  font-size: 30px;
+  margin-top: 4px;
+  font-size: 28px;
 }
 
 .grade-estat {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
 }
 
@@ -629,7 +594,7 @@ a {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 18px 20px;
+  padding: 16px 18px;
   background: var(--superficie);
   border: 1px solid var(--borda);
   border-radius: var(--raio);
@@ -637,8 +602,8 @@ a {
 }
 
 .estat-icone {
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   margin-bottom: 4px;
   display: grid;
   place-items: center;
@@ -648,45 +613,40 @@ a {
 }
 
 .estat-icone[data-tom='verde'] {
-  background: rgba(61, 220, 151, .14);
+  background: rgba(16, 185, 129, .15);
   color: var(--verde);
 }
 
 .estat-icone[data-tom='ambar'] {
-  background: rgba(230, 169, 92, .14);
+  background: rgba(245, 158, 11, .15);
   color: var(--ambar);
 }
 
 .estat-valor {
-  font-size: 31px;
+  font-size: 28px;
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -.02em;
   font-variant-numeric: tabular-nums;
 }
 
-.estat-valor[data-tom='verde'] {
-  color: var(--verde);
-}
-
-.estat-valor[data-tom='ambar'] {
-  color: var(--ambar);
-}
+.estat-valor[data-tom='verde'] { color: var(--verde); }
+.estat-valor[data-tom='ambar'] { color: var(--ambar); }
 
 .estat-valor--texto {
-  font-size: 18px;
-  padding: 8px 0 7px;
+  font-size: 16px;
+  padding: 6px 0 5px;
 }
 
 .estat-rotulo {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--texto-fraco);
 }
 
 .dois-quadros {
   display: grid;
-  grid-template-columns: 1.25fr 1fr;
-  gap: 14px;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 16px;
   align-items: start;
 }
 
@@ -702,8 +662,8 @@ a {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 18px;
-  padding: 11px 0;
+  gap: 16px;
+  padding: 10px 0;
   border-bottom: 1px solid var(--borda);
 }
 
@@ -714,13 +674,13 @@ a {
 
 .resumo-linha dt {
   flex: none;
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--texto-fraco);
 }
 
 .resumo-linha dd {
   min-width: 0;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 500;
   text-align: right;
   overflow-wrap: anywhere;
@@ -732,23 +692,23 @@ a {
 
 .etiqueta {
   display: inline-block;
-  padding: 3px 11px;
+  padding: 2px 10px;
   border-radius: 999px;
   border: 1px solid var(--borda-forte);
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
   -webkit-line-clamp: unset;
 }
 
 .etiqueta[data-estado='publicado'] {
-  border-color: rgba(61, 220, 151, .4);
-  background: rgba(61, 220, 151, .12);
+  border-color: rgba(16, 185, 129, .4);
+  background: rgba(16, 185, 129, .12);
   color: var(--verde);
 }
 
 .etiqueta[data-estado='oculto'] {
-  border-color: rgba(240, 119, 109, .4);
-  background: rgba(240, 119, 109, .12);
+  border-color: rgba(239, 68, 68, .4);
+  background: rgba(239, 68, 68, .12);
   color: var(--vermelho);
 }
 
@@ -763,7 +723,7 @@ a {
 .atalho {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 12px;
   width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--borda);
@@ -772,18 +732,18 @@ a {
   color: var(--texto);
   text-align: left;
   cursor: pointer;
-  transition: background var(--transicao), border-color var(--transicao), transform var(--transicao);
+  transition: all var(--transicao);
 }
 
 .atalho:hover {
   background: var(--acento-veu);
   border-color: var(--acento-borda);
-  transform: translateX(3px);
+  transform: translateX(4px);
 }
 
 .atalho-icone {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   flex: none;
   display: grid;
   place-items: center;
@@ -799,31 +759,18 @@ a {
 
 .atalho-nome {
   display: block;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 .atalho-desc {
   display: block;
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--texto-fraco);
 }
 
 .atalho > .icone--p {
   color: var(--texto-fraco);
-}
-
-.link-suave {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--acento-vivo);
-}
-
-.link-suave:hover {
-  text-decoration: underline;
 }
 
 /* ============================================================= cartões */
@@ -837,15 +784,15 @@ a {
 }
 
 .cartao + .cartao {
-  margin-top: 14px;
+  margin-top: 16px;
 }
 
 .cartao-topo {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 16px 22px;
+  gap: 14px;
+  padding: 14px 20px;
   border-bottom: 1px solid var(--borda);
 }
 
@@ -853,29 +800,29 @@ a {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .cartao-corpo {
-  padding: 20px 22px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
 /* ============================================================== campos */
 
 .grade-campos {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
 }
 
 .campo {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 6px;
   min-width: 0;
 }
 
@@ -884,13 +831,13 @@ a {
 }
 
 .campo-rotulo {
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--texto-suave);
 }
 
 .campo-dica {
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--texto-fraco);
   overflow-wrap: anywhere;
 }
@@ -898,18 +845,18 @@ a {
 .entrada,
 .area {
   width: 100%;
-  min-height: 44px;
-  padding: 11px 14px;
+  min-height: 42px;
+  padding: 10px 14px;
   border: 1px solid transparent;
   border-radius: var(--raio-p);
   background: var(--veu-campo);
   color: var(--texto);
   font-size: 14px;
-  transition: border-color var(--transicao), background var(--transicao), box-shadow var(--transicao);
+  transition: all var(--transicao);
 }
 
 .area {
-  min-height: 96px;
+  min-height: 90px;
   resize: vertical;
   line-height: 1.5;
 }
@@ -928,21 +875,21 @@ a {
 }
 
 .entrada[type='file'] {
-  padding: 10px 14px;
-  font-size: 12.5px;
+  padding: 8px 12px;
+  font-size: 12px;
   color: var(--texto-suave);
   cursor: pointer;
 }
 
 .entrada[type='file']::file-selector-button {
-  margin-right: 12px;
-  padding: 8px 14px;
+  margin-right: 10px;
+  padding: 6px 12px;
   border: 1px solid var(--acento-borda);
   border-radius: 8px;
   background: var(--acento-veu);
   color: var(--texto);
   font: inherit;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   transition: background var(--transicao);
@@ -957,15 +904,15 @@ a {
 .miniatura {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .miniatura img {
-  width: 80px;
-  height: 80px;
+  width: 72px;
+  height: 72px;
   flex: none;
   object-fit: cover;
-  border-radius: 11px;
+  border-radius: 10px;
   border: 1px solid var(--borda);
   background: var(--veu-medio);
 }
@@ -977,29 +924,15 @@ a {
 }
 
 .miniatura figcaption {
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--texto-fraco);
   overflow-wrap: anywhere;
 }
 
-/* Prévia da capa: imagem ou vídeo, os dois no mesmo retângulo. O vídeo fica
-   sem som e em loop, como vai aparecer no site. */
-.capa-video {
-  width: 80px;
-  height: 80px;
-  flex: none;
-  object-fit: cover;
-  border-radius: 11px;
-  border: 1px solid var(--borda);
-  background: rgba(0, 0, 0, .4);
-}
-
 /* ==================================================== grupo de upload */
 
-/* Separa o upload do meio dos campos de texto abaixo: é outra escolha
-   (foto OU vídeo), com regra própria, e não mais um rótulo solto. */
 .grupo-arquivo {
-  padding: 16px;
+  padding: 14px;
   border: 1px solid var(--borda);
   border-radius: var(--raio-p);
   background: var(--veu);
@@ -1007,15 +940,15 @@ a {
 
 .grupo-arquivo-titulo {
   margin: 0 0 4px;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--texto);
 }
 
 .grupo-arquivo-dica {
-  margin: 0 0 12px;
-  font-size: 12px;
-  line-height: 1.55;
+  margin: 0 0 10px;
+  font-size: 11px;
+  line-height: 1.5;
   color: var(--texto-fraco);
 }
 
@@ -1027,14 +960,11 @@ a {
   gap: 12px;
 }
 
-/* Cinco colunas na primeira linha: miniatura, três campos e o botão de
-   remover. Os dois grupos de baixo (descrição e imagem) têm campo--largo e
-   ocupam a linha inteira sozinhos. */
 .servico {
   display: grid;
-  grid-template-columns: 96px repeat(3, minmax(0, 1fr)) auto;
+  grid-template-columns: 90px repeat(3, minmax(0, 1fr)) auto;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   padding: 14px;
   border: 1px solid var(--borda);
   border-radius: 14px;
@@ -1061,7 +991,7 @@ a {
   aspect-ratio: 4 / 3;
   height: auto;
   object-fit: cover;
-  border-radius: 11px;
+  border-radius: 10px;
   border: 1px solid var(--borda);
 }
 
@@ -1074,7 +1004,7 @@ a {
 
 .servico-miniatura figcaption {
   width: 100%;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--texto-fraco);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1120,82 +1050,21 @@ a {
 }
 
 .duvida-ordem {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   flex: none;
-  margin-top: 22px;
+  margin-top: 20px;
   display: grid;
   place-items: center;
   border-radius: 8px;
   background: var(--acento-veu);
   color: var(--acento-vivo);
-  font-size: 11.5px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ============================================================ agenda */
-
-.agenda-caixa {
-  min-width: 0;
-}
-
-.agenda {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-}
-
-.agenda-cabecalho {
-  padding-bottom: 6px;
-  text-align: center;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--texto-fraco);
-}
-
-.agenda-dia {
-  aspect-ratio: 1;
-  min-height: 44px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--borda);
-  border-radius: 10px;
-  background: var(--veu);
-  color: var(--texto);
-  font-size: 13.5px;
   font-variant-numeric: tabular-nums;
-  cursor: pointer;
-  transition: background var(--transicao), border-color var(--transicao), color var(--transicao);
 }
 
-.agenda-dia:hover:not([disabled]) {
-  background: var(--acento-veu);
-  border-color: var(--acento-borda);
-}
-
-.agenda-dia[aria-pressed='true'] {
-  background: var(--acento-vivo);
-  border-color: var(--acento-vivo);
-  color: #fff;
-  font-weight: 600;
-}
-
-/* Fora do mês, e os dias que já passaram sem marcação, não são clicáveis:
-   o calendário do site também não os oferece. */
-.agenda-dia[disabled] {
-  opacity: .32;
-  cursor: not-allowed;
-}
-
-.agenda-dia[data-fora='true'] {
-  opacity: .2;
-  cursor: default;
-}
-
-/* ========================================================== categorias */
+/* ============================================================ categorias */
 
 .lista-categorias {
   display: flex;
@@ -1207,7 +1076,7 @@ a {
   display: grid;
   grid-template-columns: 80px 1fr 1fr auto;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   padding: 14px;
   border: 1px solid var(--borda);
   border-radius: 14px;
@@ -1220,8 +1089,6 @@ a {
   border-color: var(--acento-borda);
 }
 
-/* No cartão de categoria a miniatura fica acima da legenda, não ao lado —
-   a coluna tem só 80px e a legenda ao lado sairia espremida. */
 .miniatura--cartao {
   flex-direction: column;
   align-items: center;
@@ -1241,7 +1108,7 @@ a {
   display: grid;
   place-items: center;
   border: 1px dashed var(--borda-forte);
-  border-radius: 11px;
+  border-radius: 10px;
   color: var(--texto-fraco);
 }
 
@@ -1251,9 +1118,9 @@ a {
 }
 
 .vazio {
-  padding: 38px 20px;
+  padding: 32px 20px;
   text-align: center;
-  font-size: 13.5px;
+  font-size: 13px;
   color: var(--texto-fraco);
   border: 1px dashed var(--borda-forte);
   border-radius: 14px;
@@ -1263,8 +1130,8 @@ a {
 
 .grade-vis {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
   align-items: start;
 }
 
@@ -1272,12 +1139,12 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 12px 16px;
+  gap: 14px;
+  padding: 10px 14px;
   border: 1px solid transparent;
   border-radius: var(--raio-p);
   background: var(--veu);
-  transition: background var(--transicao), border-color var(--transicao);
+  transition: all var(--transicao);
 }
 
 .item-vis:hover {
@@ -1287,14 +1154,14 @@ a {
 
 .item-vis-nome {
   display: block;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 500;
 }
 
 .item-vis-tag {
   display: block;
   margin-top: 1px;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--texto-fraco);
   font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
 }
@@ -1304,8 +1171,8 @@ a {
 .chave {
   position: relative;
   flex: none;
-  width: 46px;
-  height: 26px;
+  width: 44px;
+  height: 24px;
   cursor: pointer;
 }
 
@@ -1329,13 +1196,13 @@ a {
 .chave-trilho::after {
   content: '';
   position: absolute;
-  top: 3px;
-  left: 3px;
+  top: 2px;
+  left: 2px;
   width: 20px;
   height: 20px;
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, .28);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
   transition: transform var(--transicao);
 }
 
@@ -1357,22 +1224,22 @@ a {
 .filtros {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
   flex-wrap: wrap;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--texto-suave);
 }
 
 .filtro {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   cursor: pointer;
 }
 
 .filtro input {
-  width: 17px;
-  height: 17px;
+  width: 16px;
+  height: 16px;
   accent-color: var(--acento-vivo);
   cursor: pointer;
 }
@@ -1382,22 +1249,22 @@ a {
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(26px + env(safe-area-inset-bottom));
+  bottom: calc(24px + env(safe-area-inset-bottom));
   z-index: 60;
   display: flex;
   align-items: center;
   gap: 10px;
-  max-width: min(92vw, 460px);
-  padding: 13px 20px;
+  max-width: min(92vw, 440px);
+  padding: 12px 18px;
   border: 1px solid var(--borda-forte);
   border-radius: 999px;
   background: var(--superficie-alta);
   box-shadow: var(--sombra-flutuante);
-  font-size: 13.5px;
-  transform: translate(-50%, 22px);
+  font-size: 13px;
+  transform: translate(-50%, 20px);
   opacity: 0;
   pointer-events: none;
-  transition: transform var(--transicao), opacity var(--transicao);
+  transition: all var(--transicao);
 }
 
 .toast[data-visivel='true'] {
@@ -1406,7 +1273,7 @@ a {
 }
 
 .toast[data-tipo='erro'] {
-  border-color: rgba(240, 119, 109, .5);
+  border-color: rgba(239, 68, 68, .5);
   color: var(--erro-texto);
 }
 
@@ -1430,8 +1297,8 @@ a {
 
 #admin-gate .caixa {
   width: 100%;
-  max-width: 356px;
-  padding: 34px 28px;
+  max-width: 340px;
+  padding: 32px 26px;
   background: var(--superficie);
   border: 1px solid var(--borda);
   border-radius: 20px;
@@ -1440,22 +1307,22 @@ a {
 }
 
 #admin-gate h1 {
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 600;
 }
 
 #admin-gate p.ajuda {
-  margin: 7px 0 24px;
-  font-size: 13px;
+  margin: 6px 0 20px;
+  font-size: 12px;
   color: var(--texto-fraco);
 }
 
 #admin-gate label {
   display: block;
-  margin-bottom: 7px;
-  font-size: 11.5px;
+  margin-bottom: 6px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: .14em;
+  letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--texto-fraco);
   text-align: left;
@@ -1463,16 +1330,16 @@ a {
 
 #admin-gate input {
   width: 100%;
-  padding: 14px 12px 14px 26px;
-  margin-bottom: 14px;
+  padding: 12px 10px 12px 24px;
+  margin-bottom: 12px;
   border: 1px solid transparent;
   border-radius: var(--raio-p);
   background: var(--veu-campo);
   color: var(--texto);
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 600;
   text-align: center;
-  letter-spacing: 15px;
+  letter-spacing: 12px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1484,12 +1351,12 @@ a {
 
 #admin-gate button {
   width: 100%;
-  min-height: 46px;
+  min-height: 44px;
   border: 0;
   border-radius: var(--raio-p);
   background: var(--botao-primario-fundo);
   color: var(--botao-primario-texto);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: background var(--transicao);
@@ -1505,19 +1372,18 @@ a {
 }
 
 #admin-gate .erro {
-  margin: 15px 0 0;
-  min-height: 19px;
-  font-size: 13px;
+  margin: 12px 0 0;
+  min-height: 18px;
+  font-size: 12px;
   color: var(--vermelho);
 }
 
 /* ====================================================== botão Sair */
 
-/* No trilho, o Sair é mais um ícone: o nome vem no balão, como nos outros. */
 #admin-logout {
   position: relative;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
   border: 0;
@@ -1525,21 +1391,21 @@ a {
   background: none;
   color: var(--texto-fraco);
   cursor: pointer;
-  transition: background var(--transicao), color var(--transicao);
+  transition: all var(--transicao);
 }
 
 #admin-logout span {
   position: absolute;
-  left: calc(100% + 12px);
+  left: calc(100% + 14px);
   top: 50%;
   transform: translateY(-50%);
   padding: 6px 12px;
   border: 1px solid var(--borda-forte);
-  border-radius: 9px;
+  border-radius: 8px;
   background: var(--superficie-alta);
   box-shadow: var(--sombra-flutuante);
   color: var(--texto);
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 500;
   white-space: nowrap;
   opacity: 0;
@@ -1563,7 +1429,6 @@ a {
   cursor: progress;
 }
 
-/* Se a página não tiver o trilho, ele vera flutuante com o nome visível. */
 #admin-logout[data-flutuante='true'] {
   position: fixed;
   right: 16px;
@@ -1580,7 +1445,7 @@ a {
   background: var(--superficie-alta);
   box-shadow: var(--sombra-flutuante);
   color: var(--texto-suave);
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -1604,11 +1469,11 @@ a {
 
 @media (max-width: 1024px) {
   .topo {
-    padding: calc(16px + env(safe-area-inset-top)) 20px 16px;
+    padding: calc(14px + env(safe-area-inset-top)) 18px 14px;
   }
 
   .conteudo {
-    padding: 22px 20px 80px;
+    padding: 20px 18px 70px;
   }
 
   .servico,
@@ -1616,8 +1481,6 @@ a {
     grid-template-columns: 72px 1fr;
   }
 
-  /* Em telas estreitas os campos descem para a coluna do lado da miniatura,
-     em vez de ficarem espremidos numa coluna de 72px. */
   .servico > .campo:not(.campo--largo),
   .categoria > .campo:not(.campo--largo) {
     grid-column: 2 / -1;
@@ -1632,27 +1495,21 @@ a {
 
 @media (max-width: 720px) {
   :root {
-    /* O trilho encolhe para sobrar largura para o conteúdo: num celular de
-       360px, 64px de menu são 18% da tela. */
-    --trilho-largura: 58px;
+    --trilho-largura: 60px;
   }
 
   .lateral {
     padding-top: calc(12px + env(safe-area-inset-top));
-    gap: 12px;
+    gap: 14px;
   }
 
-  /* 44px é o alvo mínimo confortável para o dedo; abaixo disso o erro de
-     toque acerta o item vizinho. */
   .trilho-item,
   .marca,
   #admin-logout {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
   }
 
-  /* Nada de seleção de texto ao segurar no menu, e nada de flash azul ao
-     tocar: o menu é só navegação. */
   .trilho-item,
   .marca,
   .lateral {
@@ -1661,23 +1518,21 @@ a {
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Abaixo de 16px o iOS dá zoom ao focar o campo, e não volta sozinho.
-     No campo de arquivo o zoom não incomoda, então ele fica menor. */
   .entrada:not([type='file']),
   .area {
     font-size: 16px;
   }
 
   .painel-titulo {
-    font-size: 21px;
+    font-size: 20px;
   }
 
   .boas-vindas {
-    padding: 22px 20px;
+    padding: 20px 18px;
   }
 
   .boas-vindas .painel-titulo {
-    font-size: 25px;
+    font-size: 24px;
   }
 
   .grade-estat {
@@ -1685,26 +1540,26 @@ a {
   }
 
   .cartao-estat {
-    padding: 15px 16px;
+    padding: 14px 16px;
   }
 
   .estat-valor {
-    font-size: 26px;
+    font-size: 24px;
   }
 
   .estat-valor--texto {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 
 @media (max-width: 560px) {
   .topo {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 14px;
+    padding-right: 14px;
   }
 
   .topo h1 {
-    font-size: 17px;
+    font-size: 16px;
   }
 
   .painel-topo {
@@ -1713,13 +1568,13 @@ a {
 
   .painel-acoes .btn {
     flex: 1;
-    min-height: 44px;
+    min-height: 42px;
   }
 
   .cartao-topo,
   .cartao-corpo {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 14px;
+    padding-right: 14px;
   }
 
   .cartao-topo {
@@ -1729,14 +1584,13 @@ a {
   .resumo-linha {
     flex-direction: column;
     align-items: flex-start;
-    gap: 3px;
+    gap: 2px;
   }
 
   .resumo-linha dd {
     text-align: left;
   }
 
-  /* Os dois selos lado a lado ficavam espremidos; a linha inteira para cada. */
   .resumo-linha dd {
     display: flex;
     align-items: center;
@@ -1744,32 +1598,8 @@ a {
     flex-wrap: wrap;
   }
 
-  /* Um calendário de 7 colunas não cabe com o padding do cartão. O cartão
-     da agenda sangra até a borda para o dia não ficar com 28px de largura. */
-  .agenda-caixa {
-    margin: 0 -16px;
-    padding: 16px 8px;
-  }
-
-  .agenda {
-    gap: 3px;
-  }
-
-  .agenda-dia {
-    min-height: 42px;
-    border-radius: 9px;
-    font-size: 13px;
-  }
-
-  .agenda-cabecalho {
-    font-size: 10px;
-  }
-
-  /* No celular o serviço vira cartão: miniatura e nome dividem a primeira
-     linha, preço e duração dividem a segunda. Sem isto os campos curtos caem
-     na regra de tablet (que os joga na coluna 2) e o cartão passa de 950px. */
   .servico {
-    grid-template-columns: 96px 1fr;
+    grid-template-columns: 90px 1fr;
     align-items: start;
   }
 
@@ -1777,8 +1607,6 @@ a {
     grid-column: 2 / -1;
   }
 
-  /* Mesma especificidade da regra de tablet, mas depois: vence o empurrão
-     para a coluna 2 e deixa os dois campos curtos lado a lado. */
   .servico > .campo.campo--curto {
     grid-column: auto;
   }
@@ -1792,13 +1620,12 @@ a {
     justify-content: flex-end;
   }
 
-  /* O aviso ocupa a largura da tela, acima da barra do sistema. */
   .toast {
     left: 12px;
     right: 12px;
     bottom: calc(14px + env(safe-area-inset-bottom));
     max-width: none;
-    transform: translateY(22px);
+    transform: translateY(20px);
   }
 
   .toast[data-visivel='true'] {
@@ -1806,14 +1633,13 @@ a {
   }
 
   #admin-gate input {
-    /* Abaixo de 16px o iOS dá zoom ao focar o campo. */
-    font-size: 28px;
+    font-size: 24px;
   }
 }
 
 /* Em modo standalone (PWA ou APK) não existe barra do navegador. */
 @media (display-mode: standalone) {
   .conteudo {
-    padding-bottom: calc(90px + env(safe-area-inset-bottom));
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
   }
 }

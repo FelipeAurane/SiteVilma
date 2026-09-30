@@ -89,6 +89,6 @@
     // Initial display update
     updateAnalyticsDisplay();
 
-    // Periodically update display (every 1 second) for testing
-    setInterval(updateAnalyticsDisplay, 1000);
+    // Periodically update display (every 5 seconds) for testing
+    setInterval(updateAnalyticsDisplay, 5000);
 })();

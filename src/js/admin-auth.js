@@ -70,7 +70,9 @@ function montarBotaoSair() {
   const botao = document.createElement('button');
   botao.id = 'admin-logout';
   botao.type = 'button';
-  botao.textContent = 'Sair';
+  botao.title = 'Encerrar a sessão do painel';
+  botao.innerHTML =
+    '<svg class="icone icone--p" aria-hidden="true"><use href="#i-sair"></use></svg><span>Sair</span>';
 
   botao.addEventListener('click', async () => {
     botao.disabled = true;
@@ -82,7 +84,15 @@ function montarBotaoSair() {
     window.location.reload();
   });
 
-  document.body.appendChild(botao);
+  // O painel tem um lugar reservado no cabeçalho. Em página que não tem esse
+  // lugar, ele continua flutuante no canto (ver css/config.css).
+  const slot = document.getElementById('slot-sair');
+  if (slot) slot.appendChild(botao);
+  else {
+    botao.dataset.flutuante = 'true';
+    document.body.appendChild(botao);
+  }
+
   return botao;
 }
 

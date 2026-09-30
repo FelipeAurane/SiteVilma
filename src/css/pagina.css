@@ -1,0 +1,821 @@
+/**
+ * Vilma Fotografia — sistema visual das subpáginas.
+ *
+ * A home (site.css) é a referência: preto quente, Montserrat leve, acento
+ * rosa, vidro no cabeçalho e quase nenhum peso de borda. Aqui repetimos os
+ * mesmos tokens e os mesmos componentes para que Serviços, Dúvidas e Sobre
+ * pareçam a mesma página em outro endereço — não um site paralelo.
+ *
+ * Os valores abaixo precisam continuar iguais aos de site.css. Se um token
+ * mudar lá, muda aqui.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&display=swap');
+
+/* ------------------------------------------------------------- tokens */
+
+:root {
+  --preto: #0e0e10;
+  --preto-suave: #17171a;
+  --preto-vidro: rgba(14, 14, 16, .72);
+
+  --creme: #f6f3ee;
+  --creme-fundo: #efeae1;
+
+  --branco: #ffffff;
+  --texto-sobre-escuro: rgba(255, 255, 255, .72);
+  --texto-sobre-escuro-fraco: rgba(255, 255, 255, .5);
+  --texto-escuro: #26262a;
+  --texto-escuro-fraco: #6d6d76;
+
+  --borda-clara: rgba(255, 255, 255, .16);
+  --borda-sutil: rgba(255, 255, 255, .08);
+  --borda-escura: rgba(0, 0, 0, .1);
+
+  /* O acento da home vive num fallback (var(--rosa, #e0abab)); aqui ele é
+     declarado de verdade, para a página não depender de sortimento. */
+  --rosa: #e0abab;
+  --rosa-ouro: #e0abab;
+
+  --cabecalho-altura: 64px;
+  --gutter: 20px;
+  --largura-maxima: 1240px;
+  --leitura-maxima: 68ch;
+
+  --raio: 12px;
+  --raio-pilula: 999px;
+
+  --transicao: .35s cubic-bezier(.22, .61, .36, 1);
+}
+
+@media (min-width: 900px) {
+  :root {
+    --cabecalho-altura: 76px;
+    --gutter: 40px;
+  }
+}
+
+/* -------------------------------------------------------------- reset */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+@media (min-width: 900px) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(224, 171, 171, 0.45) transparent;
+  }
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--branco);
+  background: var(--preto);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--rosa);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ============================================================ cabeçalho */
+
+/* Só aparece para leitor de tela: pula a barra e a navegação ao conteúdo. */
+.pular-para {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  z-index: 200;
+  transform: translate(-50%, -120%);
+  padding: 10px 18px;
+  border-radius: 0 0 var(--raio-pilula) var(--raio-pilula);
+  background: var(--creme);
+  color: var(--preto);
+  font-size: 12px;
+  font-weight: 500;
+  transition: transform var(--transicao);
+}
+
+.pular-para:focus-visible {
+  transform: translate(-50%, 0);
+}
+
+/*
+ * Mesma receita do cabeçalho da home: vidro escuro por cima do conteúdo,
+ * linha de 1px embaixo. A diferença é que aqui a barra é fixa no fluxo da
+ * página, não flutuando sobre um hero.
+ */
+.topo {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--cabecalho-altura);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 var(--gutter);
+  background: rgba(14, 14, 16, .72);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border-bottom: 1px solid var(--borda-sutil);
+}
+
+.topo__voltar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border: 1px solid var(--borda-clara);
+  border-radius: 50%;
+  color: var(--texto-sobre-escuro);
+  transition: color var(--transicao), border-color var(--transicao),
+    background var(--transicao), transform var(--transicao);
+}
+
+.topo__voltar:hover {
+  color: var(--branco);
+  border-color: rgba(255, 255, 255, .32);
+  background: rgba(255, 255, 255, .06);
+  transform: translateX(-2px);
+}
+
+.topo__voltar svg {
+  width: 16px;
+  height: 16px;
+}
+
+.topo__marca {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  line-height: 1;
+  margin-right: auto;
+}
+
+.topo__nome {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: .34em;
+  text-indent: .34em;
+  text-transform: uppercase;
+}
+
+.topo__tipo {
+  font-size: 7px;
+  font-weight: 300;
+  letter-spacing: .3em;
+  text-indent: .3em;
+  text-transform: uppercase;
+  color: var(--texto-sobre-escuro-fraco);
+}
+
+.topo__acao {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  padding: 9px 16px;
+  border-radius: var(--raio-pilula);
+  background: var(--branco);
+  color: var(--preto);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  transition: transform var(--transicao), background var(--transicao);
+}
+
+.topo__acao:hover {
+  transform: translateY(-2px);
+  background: var(--creme);
+}
+
+.topo__acao svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+/* ------------------------------------------------------ navegação entre */
+
+/*
+ * As três subpáginas são irmãs. Esta barra é o que fecha a família: o
+ * leitor chega sempre no mesmo lugar e sabe onde está.
+ */
+.subnav {
+  position: sticky;
+  top: var(--cabecalho-altura);
+  z-index: 90;
+  display: flex;
+  gap: 8px;
+  padding: 10px var(--gutter);
+  background: rgba(14, 14, 16, .88);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border-bottom: 1px solid var(--borda-sutil);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.subnav::-webkit-scrollbar {
+  display: none;
+}
+
+.subnav a {
+  flex: none;
+  padding: 7px 15px;
+  border: 1px solid transparent;
+  border-radius: var(--raio-pilula);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: .16em;
+  text-indent: .16em;
+  text-transform: uppercase;
+  color: var(--texto-sobre-escuro-fraco);
+  white-space: nowrap;
+  transition: color var(--transicao), border-color var(--transicao),
+    background var(--transicao);
+}
+
+.subnav a:hover {
+  color: var(--branco);
+  background: rgba(255, 255, 255, .05);
+}
+
+.subnav a[aria-current='page'] {
+  color: var(--preto);
+  background: var(--creme);
+  border-color: var(--creme);
+}
+
+/* ============================================================== página */
+
+.pagina {
+  flex: 1;
+  width: 100%;
+  max-width: var(--largura-maxima);
+  margin: 0 auto;
+  padding: 44px var(--gutter) 72px;
+}
+
+@media (min-width: 900px) {
+  .pagina {
+    padding: 72px var(--gutter) 96px;
+  }
+}
+
+/* Abertura da página: mesma escala e mesmo respiro da home. */
+.pagina-intro {
+  max-width: 56ch;
+  margin-bottom: 40px;
+}
+
+@media (min-width: 900px) {
+  .pagina-intro {
+    margin-bottom: 56px;
+  }
+}
+
+.etiqueta {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 400;
+  letter-spacing: .34em;
+  text-indent: .34em;
+  text-transform: uppercase;
+  color: var(--texto-sobre-escuro-fraco);
+  margin-bottom: 14px;
+}
+
+.pagina-titulo {
+  font-size: clamp(30px, 5.6vw, 46px);
+  font-weight: 300;
+  letter-spacing: -.01em;
+  line-height: 1.08;
+  margin-bottom: 16px;
+}
+
+.pagina-lead {
+  max-width: var(--leitura-maxima);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--texto-sobre-escuro);
+}
+
+/* --------------------------------------------------------- seção/cartão */
+
+.secao {
+  margin-top: 52px;
+}
+
+.secao__titulo {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: .28em;
+  text-indent: .28em;
+  text-transform: uppercase;
+  color: var(--texto-sobre-escuro-fraco);
+  padding-bottom: 14px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--borda-sutil);
+}
+
+/* ------------------------------------------------------------- grade */
+
+.grade {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 620px) {
+  .grade {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .grade {
+    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* -------------------------------------------------------- cartão comum */
+
+.cartao {
+  display: flex;
+  flex-direction: column;
+  background: var(--preto-suave);
+  border: 1px solid var(--borda-sutil);
+  border-radius: var(--raio);
+  overflow: hidden;
+  transition: transform var(--transicao), border-color var(--transicao);
+}
+
+.cartao:hover {
+  transform: translateY(-3px);
+  border-color: var(--borda-clara);
+}
+
+.cartao__foto {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: var(--preto);
+  overflow: hidden;
+}
+
+.cartao__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .6s cubic-bezier(.22, .61, .36, 1);
+}
+
+.cartao:hover .cartao__foto img {
+  transform: scale(1.04);
+}
+
+.cartao__corpo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 12px;
+  padding: 22px;
+}
+
+.cartao__marca {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .22em;
+  color: var(--rosa);
+}
+
+.cartao__topo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cartao__titulo {
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -.005em;
+}
+
+.cartao__preco {
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--rosa);
+}
+
+.cartao__duracao {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 4px 11px;
+  border: 1px solid var(--borda-sutil);
+  border-radius: var(--raio-pilula);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--texto-sobre-escuro-fraco);
+}
+
+.cartao__texto {
+  font-size: 13.5px;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--texto-sobre-escuro);
+}
+
+.cartao__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--borda-sutil);
+}
+
+.cartao__lista li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 12.5px;
+  font-weight: 300;
+  line-height: 1.6;
+  color: var(--texto-sobre-escuro);
+}
+
+.cartao__lista li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: .62em;
+  width: 8px;
+  height: 1px;
+  background: var(--rosa);
+}
+
+.cartao__corpo .btn {
+  margin-top: auto;
+}
+
+/* ------------------------------------------------------------ botões */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 12px 20px;
+  border: 1px solid var(--borda-clara);
+  border-radius: var(--raio-pilula);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--branco);
+  transition: gap var(--transicao), background var(--transicao),
+    border-color var(--transicao), transform var(--transicao);
+}
+
+.btn:hover {
+  gap: 13px;
+  background: rgba(255, 255, 255, .07);
+}
+
+.btn--cheio {
+  background: var(--branco);
+  border-color: var(--branco);
+  color: var(--preto);
+}
+
+.btn--cheio:hover {
+  background: var(--creme);
+  border-color: var(--creme);
+}
+
+.btn svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+}
+
+/* -------------------------------------------------------- acordeão FAQ */
+
+.faq-lista {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--borda-sutil);
+}
+
+.faq-lista[hidden] {
+  display: none;
+}
+
+.faq {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--borda-sutil);
+}
+
+.faq__pergunta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  width: 100%;
+  padding: 22px 0;
+  text-align: start;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--texto-sobre-escuro);
+  transition: color var(--transicao);
+}
+
+.faq__pergunta:hover {
+  color: var(--branco);
+}
+
+.faq[data-aberto='true'] .faq__pergunta {
+  color: var(--branco);
+}
+
+.faq__sinal {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--borda-clara);
+  border-radius: 50%;
+  transition: transform var(--transicao), background var(--transicao),
+    border-color var(--transicao);
+}
+
+.faq__sinal svg {
+  width: 11px;
+  height: 11px;
+}
+
+.faq[data-aberto='true'] .faq__sinal {
+  transform: rotate(180deg);
+  background: var(--creme);
+  border-color: var(--creme);
+  color: var(--preto);
+}
+
+/*
+ * 0fr → 1fr anima até a altura real do texto sem medir nada em JavaScript.
+ * O curtidor (o div interno) é quem recebe overflow:hidden — se ele sumisse,
+ * a trilha fr voltaria a zero e o painel nunca abriria.
+ */
+.faq__painel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--transicao);
+}
+
+.faq[data-aberto='true'] .faq__painel {
+  grid-template-rows: 1fr;
+}
+
+.faq__painel > div {
+  overflow: hidden;
+}
+
+.faq__resposta {
+  max-width: var(--leitura-maxima);
+  padding: 0 0 24px;
+  font-size: 13.5px;
+  font-weight: 300;
+  line-height: 1.85;
+  color: var(--texto-sobre-escuro);
+  white-space: pre-line;
+}
+
+/* ------------------------------------------------------ estado vazio */
+
+.estado-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 64px 24px;
+  border: 1px dashed var(--borda-clara);
+  border-radius: var(--raio);
+  text-align: center;
+}
+
+.estado-vazio[hidden] {
+  display: none;
+}
+
+.estado-vazio svg {
+  width: 26px;
+  height: 26px;
+  color: var(--texto-sobre-escuro-fraco);
+}
+
+.estado-vazio strong {
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.estado-vazio span {
+  max-width: 42ch;
+  font-size: 13.5px;
+  color: var(--texto-sobre-escuro);
+}
+
+/* --------------------------------------------------------------- sobre */
+
+.sobre {
+  display: grid;
+  gap: 28px;
+  align-items: start;
+}
+
+@media (min-width: 820px) {
+  .sobre {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: 48px;
+  }
+}
+
+.sobre__foto {
+  border-radius: var(--raio);
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background: var(--preto-suave);
+}
+
+.sobre__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sobre__texto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.sobre__texto p {
+  max-width: var(--leitura-maxima);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.85;
+  color: var(--texto-sobre-escuro);
+}
+
+.sobre__destaque {
+  font-size: clamp(19px, 3.4vw, 23px);
+  font-weight: 300;
+  line-height: 1.4;
+  color: var(--branco) !important;
+}
+
+.sobre__fecho {
+  padding-top: 8px;
+  border-top: 1px solid var(--borda-sutil);
+  width: 100%;
+}
+
+.sobre__texto .btn {
+  margin-top: 6px;
+}
+
+/* --------------------------------------------------------- chamada CTA */
+
+
+.chamada {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: 64px;
+  padding: 48px 24px;
+  border: 1px solid var(--borda-sutil);
+  border-radius: var(--raio);
+  background: var(--preto-suave);
+  text-align: center;
+}
+
+.chamada__titulo {
+  font-size: clamp(21px, 4.5vw, 27px);
+  font-weight: 300;
+  line-height: 1.25;
+}
+
+.chamada__texto {
+  max-width: 46ch;
+  font-size: 13.5px;
+  color: var(--texto-sobre-escuro);
+}
+
+/* ------------------------------------------------------------ rodapé */
+
+.rodape {
+  border-top: 1px solid var(--borda-sutil);
+  padding: 28px var(--gutter) 34px;
+  text-align: center;
+}
+
+.rodape p {
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--texto-sobre-escuro-fraco);
+}
+
+.rodape__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 22px;
+  margin-bottom: 16px;
+}
+
+.rodape__links a {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: .16em;
+  text-indent: .16em;
+  text-transform: uppercase;
+  color: var(--texto-sobre-escuro-fraco);
+  transition: color var(--transicao);
+}
+
+.rodape__links a:hover {
+  color: var(--branco);
+}

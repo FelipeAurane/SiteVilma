@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Só para a build de debug.
+
+  O app roda em https://localhost (os arquivos vão no pacote), então falar com
+  um servidor http:// da rede local é conteúdo misto. A versão de release não
+  tem nada disto: lá a API é https e o manifesto principal não abre tráfego
+  em texto claro.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:usesCleartextTraffic="true"
+        tools:replace="android:usesCleartextTraffic" />
+</manifest>

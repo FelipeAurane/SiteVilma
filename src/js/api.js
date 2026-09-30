@@ -7,7 +7,23 @@
  */
 
 const isNative = typeof window.Capacitor !== 'undefined' && window.Capacitor.isNativePlatform();
-const BASE = isNative ? 'https://site-vilma-six.vercel.app/api' : '/api';
+
+/**
+ * Para onde o app fala quando é nativo.
+ *
+ * No navegador é sempre /api, relativo: mesma origem, sem configuração.
+ *
+ * No app a origem é https://localhost (os arquivos vão dentro do pacote), então
+ * precisa do endereço completo do servidor. Em produção é o da Vercel.
+ *
+ * Para testar no celular contra a máquina de desenvolvimento, com os dois no
+ * mesmo Wi-Fi, troque a linha de baixo para API_LOCAL. O endereço é o IP da
+ * máquina na rede local: descubra com `ipconfig` e ajuste.
+ */
+const API_NATIVA = 'https://site-vilma-six.vercel.app/api';
+const API_LOCAL = 'http://192.168.1.100:3000/api';
+
+const BASE = isNative ? API_LOCAL : '/api';
 
 class ApiError extends Error {
   constructor(message, status) {
