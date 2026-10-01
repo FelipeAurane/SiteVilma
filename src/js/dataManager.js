@@ -51,7 +51,60 @@ const defaultData = {
     { name: 'Doces', subtitle: 'Bombons e trufas', image: './img/p-2.JPG', gallery: [] },
     { name: 'Outros trabalhos', subtitle: 'Projetos diversos', image: './img/vilma.jpg', gallery: [] }
   ],
-  services: [],
+  services: [
+    {
+      name: 'Cardápio Digital & iFood',
+      image: './img/p-burger.jpg',
+      price: 'Sob Consulta',
+      duration: '3 a 5 horas de ensaio',
+      description: 'Fotografia gastronômica focada em aumentar a taxa de conversão em cardápios digitais, iFood e totens de autoatendimento. Fotos com iluminação que valorizam cores e apetite.',
+      includes: [
+        'Iluminação profissional de estúdio no seu estabelecimento',
+        'Edição e tratamento refinado em alta resolução',
+        'Arquivos padronizados e otimizados para delivery e web',
+        'Entrega rápida em até 5 dias úteis'
+      ]
+    },
+    {
+      name: 'Editorial & Lançamento de Pratos',
+      image: './img/p-massa.jpg',
+      price: 'Sob Consulta',
+      duration: '4 a 6 horas de produção',
+      description: 'Ensaios conceituais e artísticos para menus sazonais, redes sociais e campanhas promocionais. Cenários compostos e direção criativa autoral.',
+      includes: [
+        'Planejamento de conceito visual e paleta de cores',
+        'Cenografia e composição com adereços harmonizados',
+        'Tratamento autoral de cores, texturas e brilho',
+        'Versões em altíssima resolução para impressão e campanhas'
+      ]
+    },
+    {
+      name: 'Produção Culinária & Food Styling',
+      image: './img/p-sobremesa.jpg',
+      price: 'Sob Consulta',
+      duration: 'Turno completo',
+      description: 'Cuidado minucioso com cortes, brilho, texturas e frescor para despertar desejo imediato em quem vê. Ideal para marcas e docerias sofisticadas.',
+      includes: [
+        'Montagem e finalização de pratos e sobremesas no local',
+        'Técnicas de valorização de textura e temperatura',
+        'Composição harmoniosa de ingredientes e complementos',
+        'Alinhamento direto com o chef durante os cliques'
+      ]
+    },
+    {
+      name: 'Ambiente & Experiência Gastronômica',
+      image: './img/p-3.JPG',
+      price: 'Sob Consulta',
+      duration: '2 a 4 horas de sessão',
+      description: 'Registros da energia do salão, arquitetura do espaço, cozinha show e momentos autênticos do atendimento para compor a presença institucional.',
+      includes: [
+        'Fotografia de arquitetura com iluminação ambiente equilibrada',
+        'Bastidores da cozinha e finalização ao vivo',
+        'Fotos institucionais da equipe em ação',
+        'Acervo completo para redes sociais, Google e site'
+      ]
+    }
+  ],
   lastUpdated: 0,
   version: 0
 };

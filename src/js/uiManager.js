@@ -593,19 +593,43 @@ class UIManager {
     }
 
     if (!category) {
-      const found = data.categories.find((c) => c.name === categoryName);
+      const found = (data.categories || []).find(
+        (c) => c.name && c.name.toLowerCase() === categoryName.toLowerCase()
+      );
       if (found) category = { ...found, gallery: [...(found.gallery || [])].reverse() };
     }
 
-    if (!category) {
-      container.replaceChildren(this.buildEmptyState(`Categoria "${categoryName}" não encontrada.`));
-      return;
+    const heading = document.querySelector('.cabecalho') || document.getElementById('category-title');
+    if (heading) heading.textContent = text(category ? category.name : categoryName);
+
+    const subHeading = document.getElementById('category-subtitle');
+    if (subHeading && category && category.subtitle) subHeading.textContent = text(category.subtitle);
+
+    // Fallbacks para não deixar a galeria vazia caso o painel ainda não tenha galeria preenchida
+    const FALLBACK_CATEGORIAS = {
+      gastronomia: ['../img/p-4.JPG', '../img/p-massa.jpg', '../img/capa.jpg', '../img/p-steak.jpg', '../img/p-3.JPG', '../img/img1.jpg'],
+      confeitaria: ['../img/p-6.JPG', '../img/p-2.JPG', '../img/p-sobremesa.jpg', '../img/p-cafe.jpg'],
+      hambúrgueres: ['../img/p-burger.jpg', '../img/p-steak.jpg', '../img/p-4.JPG'],
+      hamburgueres: ['../img/p-burger.jpg', '../img/p-steak.jpg', '../img/p-4.JPG'],
+      pizzas: ['../img/p-pizza.jpg', '../img/p-massa.jpg', '../img/p-4.JPG'],
+      bebidas: ['../img/p-7.jpg', '../img/p-drink.jpg', '../img/p-cafe.jpg'],
+      restaurantes: ['../img/p-3.JPG', '../img/p-steak.jpg', '../img/img1.jpg', '../img/p-4.JPG'],
+      'alta gastronomia': ['../img/p-5.jpg', '../img/p-massa.jpg', '../img/p-sobremesa.jpg', '../img/p-steak.jpg'],
+      cardápios: ['../img/img1.jpg', '../img/p-burger.jpg', '../img/p-pizza.jpg', '../img/p-steak.jpg'],
+      cardapios: ['../img/img1.jpg', '../img/p-burger.jpg', '../img/p-pizza.jpg', '../img/p-steak.jpg'],
+      'vilma silva': ['../img/vilma.jpg', '../img/capa.jpg', '../img/p-4.JPG']
+    };
+
+    let rawImages = Array.isArray(category?.gallery) && category.gallery.length > 0 ? category.gallery : [];
+    if (rawImages.length === 0 && category?.image) {
+      rawImages = [category.image];
+    }
+    if (rawImages.length === 0) {
+      const chave = categoryName.toLowerCase().trim();
+      rawImages = FALLBACK_CATEGORIAS[chave] || FALLBACK_CATEGORIAS['gastronomia'] || [];
     }
 
-    const heading = document.querySelector('.cabecalho');
-    if (heading) heading.textContent = `Galeria - ${text(category.name)}`;
-
-    const images = (Array.isArray(category.gallery) ? category.gallery : [])
+    const images = rawImages
       .map((src) => safeImageSrc(src))
       .filter(Boolean);
 
@@ -618,12 +642,40 @@ class UIManager {
       ...images.map((src, index) => {
         const item = document.createElement('div');
         item.className = 'gallery-item';
+        item.setAttribute('role', 'button');
+        item.setAttribute('tabindex', '0');
+        item.setAttribute('aria-label', `Ampliar foto ${index + 1} de ${text(categoryName)}`);
 
         const img = document.createElement('img');
         img.src = src;
-        img.alt = `${text(category.name)} - Imagem ${index + 1}`;
-        img.loading = 'lazy';
+        img.alt = `${text(categoryName)} - Foto ${index + 1}`;
+        img.loading = index < 4 ? 'eager' : 'lazy';
         item.appendChild(img);
+
+        const overlay = document.createElement('div');
+        overlay.className = 'gallery-item-overlay';
+        overlay.innerHTML = '<span class="gallery-item-zoom"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 14z"/></svg> Ver ampliada</span>';
+        item.appendChild(overlay);
+
+        const abrirLightbox = () => {
+          const lightbox = document.getElementById('lightbox');
+          const lightboxImg = document.getElementById('lightbox-img');
+          const lightboxCounter = document.getElementById('lightbox-counter');
+          if (lightbox && lightboxImg) {
+            lightboxImg.src = src;
+            if (lightboxCounter) lightboxCounter.textContent = `${index + 1} de ${images.length}`;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+          }
+        };
+
+        item.addEventListener('click', abrirLightbox);
+        item.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            abrirLightbox();
+          }
+        });
 
         return item;
       })

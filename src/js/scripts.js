@@ -143,6 +143,38 @@
     if (indicador) indicador.addEventListener('click', irParaProximaSecao);
   }
 
+  function cuidarDosLinksDeNavegacao() {
+    var links = document.querySelectorAll('a[href="#portfolio"], a[href$="#portfolio"]');
+    links.forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        irParaProximaSecao();
+        try {
+          history.pushState(null, '', '#portfolio');
+        } catch (err) {}
+      });
+    });
+
+    if (window.location.hash === '#portfolio' || window.location.hash === '#next-section') {
+      setTimeout(function() {
+        irParaProximaSecao();
+      }, 200);
+    }
+  }
+
+  // -------------------------------------------------- modal galeria portfólio
+  var CATEGORIA_FOTOS_PADRAO = {
+    'Gastronomia': ['./img/p-4.JPG', './img/p-massa.jpg', './img/capa.jpg', './img/p-steak.jpg', './img/p-3.JPG', './img/img1.jpg'],
+    'Confeitaria': ['./img/p-6.JPG', './img/p-2.JPG', './img/p-sobremesa.jpg', './img/p-cafe.jpg'],
+    'Hambúrgueres': ['./img/p-burger.jpg', './img/p-steak.jpg', './img/p-4.JPG'],
+    'Pizzas': ['./img/p-pizza.jpg', './img/p-massa.jpg', './img/p-4.JPG'],
+    'Bebidas': ['./img/p-7.jpg', './img/p-drink.jpg', './img/p-cafe.jpg'],
+    'Restaurantes': ['./img/p-3.JPG', './img/p-steak.jpg', './img/img1.jpg', './img/p-4.JPG'],
+    'Alta Gastronomia': ['./img/p-5.jpg', './img/p-massa.jpg', './img/p-sobremesa.jpg', './img/p-steak.jpg'],
+    'Cardápios': ['./img/img1.jpg', './img/p-burger.jpg', './img/p-pizza.jpg', './img/p-steak.jpg'],
+    'Vilma Silva': ['./img/vilma.jpg', './img/capa.jpg', './img/p-4.JPG']
+  };
+
   // ------------------------- animação scroll storytelling: Section 1 (Hero) -> Section 2 (Portfólio)
   // Section 1: Primeira imagem do hero em tela cheia com título e botão.
   // Ao rolar: O conteúdo da Section 1 suaviza e os cartões da Section 2 montam-se em 3 colunas,
@@ -425,43 +457,22 @@
     pinterestCards.forEach(function(card) {
       card.addEventListener('click', function(e) {
         var isMobile = window.innerWidth < 900;
+        // No desktop, se a Section 2 ainda não estiver ativada, rola suavemente até ela
         if (!isMobile && !pinterestGrid.classList.contains('section-2-active')) {
-          e.preventDefault();
-          return;
+          var alvo = document.getElementById('next-section');
+          if (alvo) alvo.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-        var cat = card.getAttribute('data-category');
+
+        var cat = card.getAttribute('data-category') || 'Gastronomia';
         var badge = card.querySelector('.pinterest-badge');
         var badgeText = badge ? badge.textContent.trim() : (cat || '');
 
-        if (cat === 'Vilma Silva') {
-          window.location.href = './pages/sobremim.html';
-          return;
-        }
-        if (cat === 'Cardápios') {
-          window.location.href = './pages/servicos.html';
-          return;
-        }
+        var cardImg = card.querySelector('img');
+        var clickedSrc = cardImg ? (cardImg.getAttribute('src') || cardImg.src) : null;
+
         if (cat) {
           try {
-            var galeriaFotos = [
-              './img/p-burger.jpg',
-              './img/p-pizza.jpg',
-              './img/p-massa.jpg',
-              './img/p-steak.jpg',
-              './img/p-drink.jpg',
-              './img/p-sobremesa.jpg',
-              './img/p-cafe.jpg',
-              './img/p-2.JPG',
-              './img/p-3.JPG',
-              './img/p-4.JPG',
-              './img/p-5.jpg',
-              './img/p-6.JPG',
-              './img/p-7.jpg',
-              './img/img1.jpg'
-            ];
-            // Primeiro o índice que o painel montou, que já é o que está na tela.
-            // O localStorage é só a rede de segurança para categorias que ainda
-            // não chegaram neste carregamento.
+            // Busca as fotos correspondentes a esta categoria
             var fotosCat = fotosPorCategoria[cat] || [];
             if (fotosCat.length === 0) {
               var cached = localStorage.getItem('vilma_fotografia_data');
@@ -470,22 +481,67 @@
                 var encontrada = (parsed.categories || []).find(function(c) {
                   return c.name && c.name.toLowerCase() === cat.toLowerCase();
                 });
-                if (encontrada && encontrada.gallery && encontrada.gallery.length > 0) {
+                if (encontrada && Array.isArray(encontrada.gallery) && encontrada.gallery.length > 0) {
                   fotosCat = encontrada.gallery;
+                } else if (encontrada && encontrada.image) {
+                  fotosCat = [encontrada.image];
                 }
               }
             }
             if (fotosCat.length === 0) {
-              fotosCat = embaralharArray(galeriaFotos);
+              var chaves = Object.keys(CATEGORIA_FOTOS_PADRAO);
+              for (var k = 0; k < chaves.length; k++) {
+                if (chaves[k].toLowerCase() === cat.toLowerCase()) {
+                  fotosCat = CATEGORIA_FOTOS_PADRAO[chaves[k]].slice();
+                  break;
+                }
+              }
             }
+            if (fotosCat.length === 0) {
+              fotosCat = CATEGORIA_FOTOS_PADRAO['Gastronomia'].slice();
+            }
+
+            // Garante que a foto clicada seja a imagem inicial no visualizador
+            var startIndex = 0;
+            if (clickedSrc) {
+              var normalizar = function(s) {
+                if (!s) return '';
+                var p = s.split('?')[0];
+                var parts = p.split('/');
+                return parts[parts.length - 1].toLowerCase();
+              };
+              var targetName = normalizar(clickedSrc);
+              var idxFound = -1;
+              for (var fi = 0; fi < fotosCat.length; fi++) {
+                if (normalizar(fotosCat[fi]) === targetName) {
+                  idxFound = fi;
+                  break;
+                }
+              }
+              if (idxFound >= 0) {
+                startIndex = idxFound;
+              } else {
+                fotosCat.unshift(clickedSrc);
+                startIndex = 0;
+              }
+            }
+
             localStorage.setItem('current_gallery_data', JSON.stringify({
               name: cat,
               subtitle: badgeText,
               gallery: fotosCat,
               timestamp: Date.now()
             }));
-          } catch (err) {}
-          window.location.href = './pages/galeria.html?category=' + encodeURIComponent(cat);
+
+            // Navega para a nova tela de galeria correspondente
+            var urlDestino = './pages/galeria.html?category=' + encodeURIComponent(cat);
+            if (clickedSrc) {
+              urlDestino += '&img=' + encodeURIComponent(clickedSrc);
+            }
+            window.location.href = urlDestino;
+          } catch (err) {
+            window.location.href = './pages/galeria.html?category=' + encodeURIComponent(cat);
+          }
         }
       });
       card.addEventListener('keydown', function(e) {
@@ -927,6 +983,7 @@
     cuidarDaGaveta();
     cuidarDoCabecalho();
     cuidarDoIndicador();
+    cuidarDosLinksDeNavegacao();
     cuidarDaTransicaoPinterestPortfolio();
     cuidarDoVideoHero();
   }
