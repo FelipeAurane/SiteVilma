@@ -128,6 +128,11 @@
                     <svg class="icone" aria-hidden="true"><use href="#i-visao-geral"/></svg>
                     <span class="trilho-rotulo" aria-hidden="true">Visão geral</span>
                 </button>
+                <button class="trilho-item" type="button" data-alvo="textos"
+                    aria-label="Textos & Capa" aria-current="false">
+                    <svg class="icone" aria-hidden="true"><use href="#i-camadas"/></svg>
+                    <span class="trilho-rotulo" aria-hidden="true">Textos</span>
+                </button>
                 <button class="trilho-item" type="button" data-alvo="portfolio"
                     aria-label="Portfólio" aria-current="false">
                     <svg class="icone" aria-hidden="true"><use href="#i-portfolio"/></svg>
@@ -142,6 +147,11 @@
                     aria-label="Dúvidas" aria-current="false">
                     <svg class="icone" aria-hidden="true"><use href="#i-duvidas"/></svg>
                     <span class="trilho-rotulo" aria-hidden="true">Dúvidas</span>
+                </button>
+                <button class="trilho-item" type="button" data-alvo="visibilidade"
+                    aria-label="Visibilidade" aria-current="false">
+                    <svg class="icone" aria-hidden="true"><use href="#i-olho"/></svg>
+                    <span class="trilho-rotulo" aria-hidden="true">Visibilidade</span>
                 </button>
             </nav>
 
@@ -236,6 +246,16 @@
                                         <dt>Página de dúvidas</dt>
                                         <dd id="resumo-duvidas">—</dd>
                                     </div>
+                                    <div class="resumo-linha">
+                                        <dt>Grade do portfólio</dt>
+                                        <dd>
+                                            <span class="etiqueta" id="resumo-grade" data-estado="publicado">Publicada</span>
+                                        </dd>
+                                    </div>
+                                    <div class="resumo-linha">
+                                        <dt>PIN de Acesso</dt>
+                                        <dd><code style="font-family: monospace; font-size: 13px; background: var(--veu-campo); padding: 3px 8px; border-radius: 6px; letter-spacing: 2px;">7811</code></dd>
+                                    </div>
                                 </dl>
                             </div>
                         </div>
@@ -246,6 +266,14 @@
                             </div>
                             <div class="cartao-corpo">
                                 <div class="atalhos">
+                                    <button class="atalho" type="button" data-ir="textos">
+                                        <span class="atalho-icone"><svg class="icone" aria-hidden="true"><use href="#i-camadas"/></svg></span>
+                                        <span class="atalho-textos">
+                                            <span class="atalho-nome">Textos & Capa</span>
+                                            <span class="atalho-desc">Títulos, mídias e WhatsApp</span>
+                                        </span>
+                                        <svg class="icone icone--p" aria-hidden="true"><use href="#i-seta-dir"/></svg>
+                                    </button>
                                     <button class="atalho" type="button" data-ir="portfolio">
                                         <span class="atalho-icone"><svg class="icone" aria-hidden="true"><use href="#i-portfolio"/></svg></span>
                                         <span class="atalho-textos">
@@ -270,13 +298,136 @@
                                         </span>
                                         <svg class="icone icone--p" aria-hidden="true"><use href="#i-seta-dir"/></svg>
                                     </button>
+                                    <button class="atalho" type="button" data-ir="visibilidade">
+                                        <span class="atalho-icone"><svg class="icone" aria-hidden="true"><use href="#i-olho"/></svg></span>
+                                        <span class="atalho-textos">
+                                            <span class="atalho-nome">Visibilidade</span>
+                                            <span class="atalho-desc">Ligar e desligar blocos</span>
+                                        </span>
+                                        <svg class="icone icone--p" aria-hidden="true"><use href="#i-seta-dir"/></svg>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- ------------------------------------------ 2. portfólio -->
+                <!-- ------------------------------------------ 2. textos & capa -->
+                <section class="painel" id="painel-textos" tabindex="-1" hidden>
+
+                    <div class="painel-topo">
+                        <div>
+                            <h2 class="painel-titulo">Textos & Capa</h2>
+                            <p class="painel-desc">Personalize o título, legendas, botão de WhatsApp e as mídias da página principal.</p>
+                        </div>
+                        <div class="painel-acoes">
+                            <button class="btn btn-primario" type="button" data-salvar="hero">Salvar Seção Principal</button>
+                        </div>
+                    </div>
+
+                    <div class="cartao">
+                        <div class="cartao-topo">
+                            <h3 class="cartao-titulo">Seção Principal (Hero)</h3>
+                        </div>
+                        <div class="cartao-corpo">
+                            <div class="grade-campos">
+                                <div class="campo">
+                                    <label class="campo-rotulo" for="hero-etiqueta">Etiqueta superior (eyebrow)</label>
+                                    <input class="entrada" id="hero-etiqueta" type="text" placeholder="Ex: Fotografia Gastronômica">
+                                </div>
+                                <div class="campo">
+                                    <label class="campo-rotulo" for="hero-titulo">Título principal</label>
+                                    <input class="entrada" id="hero-titulo" type="text" placeholder="Ex: Vilma Silva">
+                                </div>
+                                <div class="campo campo--largo">
+                                    <label class="campo-rotulo" for="hero-subtitulo">Subtítulo / Mensagem de boas-vindas</label>
+                                    <textarea class="area" id="hero-subtitulo" rows="2" placeholder="Ex: Transformando sabores e momentos em imagens inesquecíveis."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="cartao-topo" style="padding-top: 14px; border-top: 1px solid var(--borda);">
+                                <h4 class="cartao-titulo" style="font-size: 13px;">Botão de Orçamento & WhatsApp</h4>
+                            </div>
+                            <div class="grade-campos">
+                                <div class="campo">
+                                    <label class="campo-rotulo" for="botao-texto">Texto do botão</label>
+                                    <input class="entrada" id="botao-texto" type="text" placeholder="Ex: Solicitar Orçamento">
+                                </div>
+                                <div class="campo">
+                                    <label class="campo-rotulo" for="botao-whatsapp">Número de WhatsApp (com DDD)</label>
+                                    <input class="entrada" id="botao-whatsapp" type="text" placeholder="Ex: 5581998370180">
+                                    <span class="campo-dica">Somente números, incluindo o DDD (ex: 81998370180)</span>
+                                </div>
+                                <div class="campo campo--largo">
+                                    <label class="campo-rotulo" for="botao-mensagem">Mensagem pré-preenchida do WhatsApp</label>
+                                    <input class="entrada" id="botao-mensagem" type="text" placeholder="Ex: Olá, gostaria de solicitar um orçamento!">
+                                </div>
+                            </div>
+
+                            <div class="cartao-topo" style="padding-top: 14px; border-top: 1px solid var(--borda);">
+                                <h4 class="cartao-titulo" style="font-size: 13px;">Mídia de Capa & Fundo</h4>
+                            </div>
+                            <div class="grupo-arquivo">
+                                <div class="grupo-arquivo-titulo">Foto ou Vídeo da Capa</div>
+                                <div class="grupo-arquivo-dica">Envie uma imagem em alta resolução ou um vídeo MP4 curto para o fundo do cabeçalho.</div>
+                                <div class="miniatura" style="margin-bottom: 12px;">
+                                    <img id="hero-previa" src="" alt="Prévia da capa" hidden>
+                                    <video id="hero-previa-video" autoplay loop muted playsinline hidden></video>
+                                    <div class="miniatura-vazia" id="hero-previa-vazia">Sem mídia</div>
+                                    <figcaption id="hero-imagem-atual">Nenhuma capa definida.</figcaption>
+                                </div>
+                                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                    <input class="entrada" id="hero-imagem" type="file" accept="image/*,video/*" style="max-width: 320px;">
+                                    <button class="btn" type="button" id="hero-tirar-video" hidden>Remover vídeo</button>
+                                </div>
+                            </div>
+
+                            <div class="grupo-arquivo">
+                                <div class="grupo-arquivo-titulo">Mídia Central (Opcional)</div>
+                                <div class="grupo-arquivo-dica">Mídia em destaque posicionada no meio da composição.</div>
+                                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                    <input class="entrada" id="center-arquivo" type="file" accept="image/*,video/*" style="max-width: 320px;">
+                                    <span class="campo-dica" id="center-atual">Padrão do site</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cartao" style="margin-top: 24px;">
+                        <div class="cartao-topo">
+                            <h3 class="cartao-titulo">Banner Intermediário</h3>
+                            <button class="btn btn-primario" type="button" data-salvar="banner">Salvar Banner</button>
+                        </div>
+                        <div class="cartao-corpo">
+                            <div class="grade-campos">
+                                <div class="campo">
+                                    <label class="campo-rotulo" for="banner-titulo-tela">Título de tela / categoria</label>
+                                    <input class="entrada" id="banner-titulo-tela" type="text" placeholder="Ex: Portfólio em Destaque">
+                                </div>
+                                <div class="campo">
+                                    <label class="campo-rotulo" for="banner-titulo">Título principal do banner</label>
+                                    <input class="entrada" id="banner-titulo" type="text" placeholder="Ex: Arte em cada detalhe">
+                                </div>
+                                <div class="campo campo--largo">
+                                    <label class="campo-rotulo" for="banner-subtitulo">Subtítulo do banner</label>
+                                    <input class="entrada" id="banner-subtitulo" type="text" placeholder="Ex: Ensaios e produções exclusivas">
+                                </div>
+                            </div>
+
+                            <div class="grupo-arquivo" style="margin-top: 10px;">
+                                <div class="grupo-arquivo-titulo">Imagem de Fundo do Banner</div>
+                                <div class="miniatura" style="margin-bottom: 12px;">
+                                    <img id="banner-previa" src="" alt="Prévia do banner" hidden>
+                                    <div class="miniatura-vazia" id="banner-previa-vazia">Sem imagem</div>
+                                    <figcaption id="banner-imagem-atual">Nenhuma imagem definida</figcaption>
+                                </div>
+                                <input class="entrada" id="banner-arquivo" type="file" accept="image/*" style="max-width: 320px;">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ------------------------------------------ 3. portfólio -->
                 <section class="painel" id="painel-portfolio" tabindex="-1" hidden>
 
                     <div class="painel-topo">
@@ -340,11 +491,35 @@
                     <div class="lista-duvidas" id="lista-duvidas"></div>
                 </section>
 
+                <!-- ------------------------------------------ 6. visibilidade -->
+                <section class="painel" id="painel-visibilidade" tabindex="-1" hidden>
+
+                    <div class="painel-topo">
+                        <div>
+                            <h2 class="painel-titulo">Visibilidade dos Blocos</h2>
+                            <p class="painel-desc">Controle em tempo real quais seções e elementos aparecem no site.</p>
+                        </div>
+                        <div class="painel-acoes">
+                            <div class="filtros">
+                                <label class="filtro"><input type="checkbox" id="filtro-publicados" checked> Publicados</label>
+                                <label class="filtro"><input type="checkbox" id="filtro-ocultos" checked> Ocultos</label>
+                            </div>
+                            <button class="btn" type="button" id="mostrar-tudo">Publicar todos</button>
+                            <button class="btn" type="button" id="ocultar-tudo">Ocultar todos</button>
+                        </div>
+                    </div>
+
+                    <div class="grade-vis" id="grade-vis"></div>
+                </section>
+
             </main>
 
         </div>
 
     </div>
+
+    <!-- Toast de notificações -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <!-- Scripts -->
     <script type="module" src="./js/admin-panel.js"></script>

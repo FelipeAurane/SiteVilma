@@ -17,36 +17,34 @@
   function cuidarDoSplash() {
     var splash = document.getElementById('splashScreen');
     var principal = document.getElementById('mainContent');
-    if (!splash || !principal) return;
+    if (!splash) return;
 
-    function revelar() {
-      splash.classList.add('hidden');
+    if (principal) {
       principal.style.display = 'block';
+    }
+
+    var fechado = false;
+
+    function esconder() {
+      if (fechado) return;
+      fechado = true;
+      splash.classList.add('hidden');
+      splash.setAttribute('hidden', '');
+      if (principal) principal.style.display = 'block';
       setTimeout(function () {
         splash.style.display = 'none';
       }, 500);
     }
 
-    var jaViu = false;
-    try {
-      jaViu = Boolean(localStorage.getItem(CHAVE_SPLASH));
-    } catch (e) {
-      // Modo privativo: mostra a abertura e segue.
-    }
+    // Clique ou toque na tela fecha imediatamente
+    splash.addEventListener('click', esconder);
+    splash.addEventListener('touchstart', esconder, { passive: true });
 
-    if (jaViu) {
-      splash.style.display = 'none';
-      principal.style.display = 'block';
-      return;
-    }
+    // Fecha automaticamente em 2.2 segundos
+    setTimeout(esconder, 2200);
 
-    try {
-      localStorage.setItem(CHAVE_SPLASH, 'true');
-    } catch (e) {
-      // Sem cache: a abertura aparece de novo na próxima visita.
-    }
-
-    setTimeout(revelar, 2600);
+    // Trava de segurança definitiva: não fica na tela em hipótese alguma
+    setTimeout(esconder, 3000);
   }
 
   // ------------------------------------------------------------ gaveta
@@ -132,33 +130,78 @@
 
   // ---------------------------------------------------------- rolagem
 
-  function irParaProximaSecao() {
-    var alvo = document.getElementById('next-section');
-    if (alvo) alvo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  function irParaInicio() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    try {
+      if (window.location.hash) {
+        history.pushState(null, '', window.location.pathname);
+      }
+    } catch (e) {}
+  }
+
+  function irParaPortfolio() {
+    var vh = window.innerHeight || 800;
+    if (window.innerWidth >= 900) {
+      // No desktop: Section 2 atinge o estado completo em vh * 2.5
+      var targetY = Math.round(vh * 2.5);
+      window.scrollTo({ top: targetY, behavior: 'smooth' });
+    } else {
+      var alvo = document.getElementById('next-section') || document.getElementById('hero-pinterest-grid');
+      if (alvo) {
+        alvo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+    try {
+      history.pushState(null, '', '#portfolio');
+    } catch (e) {}
   }
 
   function cuidarDoIndicador() {
     // É um <button> de verdade, então Enter e espaço já funcionam sozinhos.
     var indicador = document.getElementById('scroll-down-btn');
-    if (indicador) indicador.addEventListener('click', irParaProximaSecao);
+    if (indicador) {
+      indicador.addEventListener('click', function(e) {
+        e.preventDefault();
+        irParaPortfolio();
+      });
+    }
   }
 
   function cuidarDosLinksDeNavegacao() {
-    var links = document.querySelectorAll('a[href="#portfolio"], a[href$="#portfolio"]');
-    links.forEach(function(link) {
+    // Links para Início (Section 1)
+    var linksInicio = document.querySelectorAll('a[href="#topo"], a[href="#hero"], li[data-tag="menu-inicio"] a');
+    linksInicio.forEach(function(link) {
       link.addEventListener('click', function(e) {
         e.preventDefault();
-        irParaProximaSecao();
-        try {
-          history.pushState(null, '', '#portfolio');
-        } catch (err) {}
+        irParaInicio();
+      });
+    });
+
+    // Logo / marca: rola para a Section 1 se já estiver na página inicial
+    var marcaLogo = document.querySelector('.marca[data-tag="logo"]');
+    if (marcaLogo) {
+      marcaLogo.addEventListener('click', function(e) {
+        var path = window.location.pathname;
+        if (path.endsWith('index.html') || path.endsWith('/') || path === '') {
+          e.preventDefault();
+          irParaInicio();
+        }
+      });
+    }
+
+    // Links para Portfólio (Section 2)
+    var linksPortfolio = document.querySelectorAll('a[href="#portfolio"], a[href$="#portfolio"], a[href="#next-section"], li[data-tag="menu-galeria"] a');
+    linksPortfolio.forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        irParaPortfolio();
       });
     });
 
     if (window.location.hash === '#portfolio' || window.location.hash === '#next-section') {
       setTimeout(function() {
-        irParaProximaSecao();
-      }, 200);
+        irParaPortfolio();
+      }, 250);
     }
   }
 
@@ -778,18 +821,8 @@
       }
       pinterestGrid.style.paddingTop = (ease * padFinalPx).toFixed(1) + 'px';
 
-      // 5.9 Recorte da faixa do cabeçalho.
-      // O título "Portfólio" é `position: fixed` e a galeria é transladada
-      // para cima (bloco 6): sem recorte, os cards passam por baixo do texto.
-      // `clip-path` corta a grade exatamente na borda inferior do cabeçalho,
-      // então os cards desaparecem sob o título em vez de se sobrepor a ele.
-      // Função pura de `ease` (0 -> headerInsetPx), logo reversível por
-      // construção; em ease = 0 volta a `''`, o estado original sem recorte.
-      if (headerInsetPx === null) headerInsetPx = medirHeaderInset();
-      var clipPx = ease * headerInsetPx;
-      pinterestGrid.style.clipPath = ease > 0.0005
-        ? 'inset(' + clipPx.toFixed(1) + 'px 0px 0px 0px)'
-        : '';
+      // 5.9 Faixa do cabeçalho flui junto com os itens
+      pinterestGrid.style.clipPath = '';
 
       // 5.5 Revelação do cabeçalho "Portfólio".
       var headerProg = Math.min(Math.max((ease - 0.15) / 0.5, 0), 1);
@@ -871,23 +904,17 @@
             // Section 3 entrando na tela: empurra suavemente o final já visível da galeria
             var pushUp = sobreRect.top - vh;
             pinterestGrid.style.transform = 'translate3d(0, ' + (-translateY + pushUp).toFixed(1) + 'px, 0)';
-            // O recorte acompanha o título, que também sobe: mantém a borda
-            // de recorte colada na base do cabeçalho em vez de deixar uma
-            // faixa vazia no topo.
-            if (clipPx > 0) {
-              pinterestGrid.style.clipPath =
-                'inset(' + Math.max(clipPx + pushUp, 0).toFixed(1) + 'px 0px 0px 0px)';
-            }
             if (heroVeu) heroVeu.style.transform = 'translate3d(0, ' + pushUp.toFixed(1) + 'px, 0)';
-            if (portfolioHeaderBar) portfolioHeaderBar.style.transform = 'translate3d(0, ' + pushUp.toFixed(1) + 'px, 0)';
+            if (portfolioHeaderBar) portfolioHeaderBar.style.transform = 'translate3d(0, ' + (-translateY + pushUp).toFixed(1) + 'px, 0)';
           } else {
-            // Navegação fluida por todos os itens da galeria
+            // Navegação fluida: o cabeçalho fica no topo dos itens e é afetado pelo scroll junto com eles
             pinterestGrid.style.transform = 'translate3d(0, -' + translateY.toFixed(1) + 'px, 0)';
             if (heroVeu) heroVeu.style.transform = 'translate3d(0, 0, 0)';
-            if (portfolioHeaderBar) portfolioHeaderBar.style.transform = 'translate3d(0, 0, 0)';
+            if (portfolioHeaderBar) portfolioHeaderBar.style.transform = 'translate3d(0, -' + translateY.toFixed(1) + 'px, 0)';
           }
         } else {
           pinterestGrid.style.transform = 'translate3d(0, -' + translateY.toFixed(1) + 'px, 0)';
+          if (portfolioHeaderBar) portfolioHeaderBar.style.transform = 'translate3d(0, -' + translateY.toFixed(1) + 'px, 0)';
         }
       }
     }
@@ -976,6 +1003,33 @@
     }
   }
 
+  // ----------------------------------------------------------- expandir sobre
+
+  function cuidarDoTextoExpandirSobre() {
+    var btn = document.getElementById('btn-expandir-sobre');
+    var expandido = document.getElementById('sobre-texto-expandido');
+    var rotulo = document.getElementById('btn-expandir-sobre-rotulo');
+    var icone = document.getElementById('btn-expandir-sobre-icone');
+    if (!btn || !expandido) return;
+
+    btn.addEventListener('click', function (evento) {
+      evento.preventDefault();
+      var expandidoAtualmente = !expandido.hidden;
+
+      if (expandidoAtualmente) {
+        expandido.hidden = true;
+        btn.setAttribute('aria-expanded', 'false');
+        if (rotulo) rotulo.textContent = 'Saiba mais';
+        if (icone) icone.innerHTML = '&rarr;';
+      } else {
+        expandido.hidden = false;
+        btn.setAttribute('aria-expanded', 'true');
+        if (rotulo) rotulo.textContent = 'Ver menos';
+        if (icone) icone.innerHTML = '&uarr;';
+      }
+    });
+  }
+
   // ------------------------------------------------------------ início
 
   function iniciar() {
@@ -986,6 +1040,7 @@
     cuidarDosLinksDeNavegacao();
     cuidarDaTransicaoPinterestPortfolio();
     cuidarDoVideoHero();
+    cuidarDoTextoExpandirSobre();
   }
 
   if (document.readyState === 'loading') {

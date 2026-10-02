@@ -54,7 +54,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'src', 'index.html'));
 });
 
-app.get('/config', (req, res) => {
+app.get(['/config', '/admin', '/painel'], (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   res.sendFile(path.join(__dirname, 'src', 'config.html'));
 });
