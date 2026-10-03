@@ -882,9 +882,9 @@
         Math.max(maxColH + paddingFinal + MARGEM_FIM_GALERIA - vh, 0);
 
       // Folga de rolagem com a galeria já no fim: mantém o último card
-      // afastado enquanto a Section 3 (#sobre) começa a entrar na tela.
-      var folgaAntesDoSobre = 100;
-      var targetNextH = Math.round(transDist + scrollableGalleryDistance + folgaAntesDoSobre);
+      // afastado enquanto a próxima seção começa a entrar na tela.
+      var folgaAntesDoSeguinte = 60;
+      var targetNextH = Math.round(transDist + scrollableGalleryDistance + folgaAntesDoSeguinte);
       if (nextSection && targetNextH > 0) {
         nextSection.style.height = targetNextH + 'px';
       }
@@ -898,11 +898,14 @@
         var galleryScroll = scrollY - transDist;
         var translateY = Math.min(galleryScroll, scrollableGalleryDistance);
 
-        if (sobreSection) {
-          var sobreRect = sobreSection.getBoundingClientRect();
-          if (sobreRect.top < vh) {
-            // Section 3 entrando na tela: empurra suavemente o final já visível da galeria
-            var pushUp = sobreRect.top - vh;
+        var bannerClienteEl = document.getElementById('banner-galeria-cliente');
+        var secaoSeguinte = (bannerClienteEl && bannerClienteEl.offsetParent !== null) ? bannerClienteEl : sobreSection;
+
+        if (secaoSeguinte) {
+          var rectSeguinte = secaoSeguinte.getBoundingClientRect();
+          if (rectSeguinte.top < vh) {
+            // Seção seguinte entrando na tela: empurra a galeria para cima sem sobrepor
+            var pushUp = rectSeguinte.top - vh;
             pinterestGrid.style.transform = 'translate3d(0, ' + (-translateY + pushUp).toFixed(1) + 'px, 0)';
             if (heroVeu) heroVeu.style.transform = 'translate3d(0, ' + pushUp.toFixed(1) + 'px, 0)';
             if (portfolioHeaderBar) portfolioHeaderBar.style.transform = 'translate3d(0, ' + (-translateY + pushUp).toFixed(1) + 'px, 0)';

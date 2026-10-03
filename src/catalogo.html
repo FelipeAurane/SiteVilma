@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Fotos do Estabelecimento | Vilma Fotografia</title>
-    <meta name="description" content="Área exclusiva do cliente para visualização, aprovação e download das fotos profissionais do seu estabelecimento e produtos.">
+    <title>Seleção de Fotos do Estabelecimento | Vilma Fotografia</title>
+    <meta name="description" content="Área de prova e seleção de fotos do cliente com proteção de imagens, marca d'água e selo de aprovação.">
     <link rel="icon" type="image/svg+xml" href="./img/camera-icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,12 +17,13 @@
             --preto-card-hover: #181820;
             --branco: #ffffff;
             --creme: #f5ede4;
-            --ouro: #d4af37;
+            --azul-selo: #2563eb;
+            --azul-brilhante: #3b82f6;
+            --azul-fundo: rgba(37, 99, 235, 0.15);
             --cinza-texto: #a1a1aa;
             --cinza-fraco: #71717a;
             --borda: rgba(255, 255, 255, 0.08);
             --borda-destaque: rgba(245, 237, 228, 0.25);
-            --verde-sucesso: #10b981;
             --transicao: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -30,6 +31,8 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         html {
@@ -39,7 +42,25 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Scrollbar: Escondido no mobile, estilizado no desktop */
+        /* Proteção contra impressão */
+        @media print {
+            body * {
+                display: none !important;
+                visibility: hidden !important;
+            }
+            body::before {
+                content: "IMPRESSÃO E CÓPIA NÃO AUTORIZADAS - Vilma Silva Fotografia";
+                display: block !important;
+                background: #000000 !important;
+                color: #ffffff !important;
+                font-size: 26px !important;
+                padding: 100px 30px !important;
+                text-align: center !important;
+                font-family: sans-serif !important;
+            }
+        }
+
+        /* Scrollbar */
         @media (max-width: 899px) {
             html, body {
                 scrollbar-width: none;
@@ -54,13 +75,13 @@
         @media (min-width: 900px) {
             html {
                 scrollbar-width: thin;
-                scrollbar-color: rgba(224, 171, 171, 0.45) transparent;
+                scrollbar-color: rgba(59, 130, 246, 0.4) transparent;
             }
             html::-webkit-scrollbar {
                 width: 8px;
             }
             html::-webkit-scrollbar-thumb {
-                background: rgba(224, 171, 171, 0.35);
+                background: rgba(59, 130, 246, 0.3);
                 border-radius: 4px;
             }
         }
@@ -69,7 +90,69 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            background: radial-gradient(circle at 50% 0%, #171720 0%, var(--preto) 80%);
+            background: radial-gradient(circle at 50% 0%, #131722 0%, var(--preto) 80%);
+        }
+
+        /* Escudo Anti-Print Fullscreen */
+        .escudo-anti-print {
+            position: fixed;
+            inset: 0;
+            z-index: 999999;
+            background: #000000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .escudo-anti-print.ativo {
+            display: flex;
+        }
+
+        .escudo-aviso {
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .escudo-aviso h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #ef4444;
+            letter-spacing: -0.01em;
+        }
+
+        .escudo-aviso p {
+            font-size: 14px;
+            color: #d1d5db;
+            line-height: 1.6;
+        }
+
+        .aviso-sub {
+            font-size: 12.5px !important;
+            color: var(--azul-brilhante) !important;
+            font-weight: 500;
+        }
+
+        .btn-fechar-escudo {
+            margin-top: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 10px 22px;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all var(--transicao);
+        }
+
+        .btn-fechar-escudo:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         /* Topbar de controle do cliente */
@@ -77,7 +160,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(9, 9, 11, 0.85);
+            background: rgba(9, 9, 11, 0.88);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--borda);
@@ -91,24 +174,7 @@
         .marca-bloco {
             display: flex;
             align-items: center;
-            gap: 12px;
-        }
-
-        .marca-simbolo {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            background: rgba(245, 237, 228, 0.08);
-            border: 1px solid var(--borda-destaque);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--creme);
-        }
-
-        .marca-simbolo svg {
-            width: 16px;
-            height: 16px;
+            gap: 10px;
         }
 
         .marca-info {
@@ -126,9 +192,10 @@
 
         .marca-rotulo {
             font-size: 10px;
-            color: var(--creme);
+            color: var(--azul-brilhante);
             letter-spacing: 0.15em;
             text-transform: uppercase;
+            font-weight: 500;
         }
 
         .usuario-controles {
@@ -153,8 +220,8 @@
             width: 7px;
             height: 7px;
             border-radius: 50%;
-            background: var(--verde-sucesso);
-            box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+            background: var(--azul-brilhante);
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
         }
 
         .btn-acao-topo {
@@ -182,9 +249,9 @@
             height: 14px;
         }
 
-        /* Banner de Identificação do Estabelecimento */
+        /* Banner de Apresentação */
         .banner-cliente {
-            padding: 40px 24px 28px;
+            padding: 34px 24px 22px;
             max-width: 1200px;
             width: 100%;
             margin: 0 auto;
@@ -193,8 +260,8 @@
         .banner-header {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-bottom: 24px;
+            gap: 8px;
+            margin-bottom: 20px;
         }
 
         .etiqueta-status {
@@ -202,14 +269,14 @@
             align-items: center;
             gap: 6px;
             font-size: 11px;
-            font-weight: 500;
-            letter-spacing: 0.2em;
+            font-weight: 600;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
-            color: var(--creme);
+            color: var(--azul-brilhante);
         }
 
         .banner-titulo {
-            font-size: clamp(24px, 4vw, 36px);
+            font-size: clamp(22px, 3.5vw, 32px);
             font-weight: 500;
             letter-spacing: -0.01em;
             line-height: 1.25;
@@ -217,40 +284,49 @@
         }
 
         .banner-descricao {
-            font-size: 14.5px;
+            font-size: 13.5px;
             color: var(--cinza-texto);
             line-height: 1.6;
-            max-width: 720px;
+            max-width: 760px;
             font-weight: 300;
         }
 
-        /* Métricas e Estatísticas do Ensaio */
+        /* Métricas e Estatísticas */
         .metricas-grade {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 14px;
-            margin-top: 20px;
+            gap: 12px;
+            margin-top: 16px;
         }
 
         .metrica-card {
             background: var(--preto-card);
             border: 1px solid var(--borda);
             border-radius: 12px;
-            padding: 16px 20px;
+            padding: 14px 18px;
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
 
+        .metrica-card.destaque-azul {
+            border-color: rgba(59, 130, 246, 0.35);
+            background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), var(--preto-card));
+        }
+
         .metrica-valor {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 600;
-            color: var(--creme);
+            color: var(--branco);
             letter-spacing: -0.02em;
         }
 
+        .metrica-valor.azul {
+            color: #60a5fa;
+        }
+
         .metrica-rotulo {
-            font-size: 11.5px;
+            font-size: 11px;
             color: var(--cinza-fraco);
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -266,7 +342,7 @@
             -webkit-backdrop-filter: blur(16px);
             border-top: 1px solid var(--borda);
             border-bottom: 1px solid var(--borda);
-            padding: 14px 24px;
+            padding: 12px 24px;
         }
 
         .filtros-conteudo {
@@ -276,7 +352,7 @@
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            gap: 14px;
+            gap: 12px;
         }
 
         .categorias-lista {
@@ -296,10 +372,10 @@
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--borda);
             color: var(--cinza-texto);
-            padding: 8px 16px;
+            padding: 7px 15px;
             border-radius: 999px;
             font-family: inherit;
-            font-size: 12.5px;
+            font-size: 12px;
             font-weight: 400;
             cursor: pointer;
             white-space: nowrap;
@@ -312,10 +388,15 @@
         }
 
         .btn-categoria.ativa {
-            background: var(--creme);
-            color: var(--preto);
-            border-color: var(--creme);
+            background: var(--azul-selo);
+            color: var(--branco);
+            border-color: var(--azul-brilhante);
             font-weight: 500;
+        }
+
+        .btn-categoria.aba-selecionadas.ativa {
+            background: #1d4ed8;
+            box-shadow: 0 0 12px rgba(37, 99, 235, 0.5);
         }
 
         .busca-e-acoes {
@@ -333,8 +414,8 @@
         .campo-busca-wrapper svg {
             position: absolute;
             left: 12px;
-            width: 15px;
-            height: 15px;
+            width: 14px;
+            height: 14px;
             color: var(--cinza-fraco);
             pointer-events: none;
         }
@@ -343,9 +424,9 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--borda);
             border-radius: 999px;
-            padding: 8px 14px 8px 34px;
+            padding: 7px 14px 7px 32px;
             font-family: inherit;
-            font-size: 12.5px;
+            font-size: 12px;
             color: var(--branco);
             outline: none;
             width: 190px;
@@ -353,8 +434,8 @@
         }
 
         .campo-busca:focus {
-            width: 240px;
-            border-color: var(--borda-destaque);
+            width: 230px;
+            border-color: var(--azul-brilhante);
             background: rgba(255, 255, 255, 0.08);
         }
 
@@ -363,37 +444,43 @@
             max-width: 1200px;
             width: 100%;
             margin: 0 auto;
-            padding: 32px 24px 60px;
+            padding: 28px 24px 60px;
             flex: 1;
         }
 
         .grade-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 22px;
         }
 
         .foto-card {
             background: var(--preto-card);
             border: 1px solid var(--borda);
-            border-radius: 16px;
+            border-radius: 14px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             transition: transform var(--transicao), border-color var(--transicao), box-shadow var(--transicao);
+            position: relative;
         }
 
         .foto-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(245, 237, 228, 0.2);
-            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+            transform: translateY(-3px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .foto-card.selecionada {
+            border-color: var(--azul-brilhante);
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.35);
         }
 
         .foto-imagem-wrapper {
             position: relative;
             aspect-ratio: 4 / 3;
             overflow: hidden;
-            background: #1a1a22;
+            background: #111116;
             cursor: pointer;
         }
 
@@ -401,22 +488,151 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            /* Diminuir a resolução perceptível de prova de seleção */
+            filter: contrast(102%) brightness(98%);
             transition: transform 0.4s ease;
+            pointer-events: none;
+            -webkit-user-drag: none;
         }
 
         .foto-card:hover .foto-imagem {
-            transform: scale(1.05);
+            transform: scale(1.04);
+        }
+
+        /* Escudo transparente que impede salvar e arrastar a foto */
+        .escudo-anti-salvar {
+            position: absolute;
+            inset: 0;
+            z-index: 6;
+            cursor: pointer;
+        }
+
+        /* Marca d'água de proteção fotográfica */
+        .marca-dagua-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .marca-dagua-repetida {
+            position: absolute;
+            transform: rotate(-25deg);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            color: rgba(255, 255, 255, 0.16);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+            white-space: nowrap;
+            text-transform: uppercase;
+        }
+
+        .marca-dagua-centro {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: rgba(9, 9, 11, 0.55);
+            padding: 6px 12px;
+            border-radius: 6px;
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .marca-dagua-nome {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .marca-dagua-aviso {
+            font-size: 8.5px;
+            letter-spacing: 0.05em;
+            color: rgba(147, 197, 253, 0.8);
+            text-transform: uppercase;
+        }
+
+        /* Selo Azul de Seleção no Topo */
+        .btn-selo-azul {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 11px;
+            border-radius: 999px;
+            background: rgba(9, 9, 11, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1.5px solid rgba(59, 130, 246, 0.4);
+            color: #93c5fd;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: all var(--transicao);
+        }
+
+        .btn-selo-azul:hover {
+            transform: scale(1.06);
+            background: rgba(30, 58, 138, 0.95);
+            border-color: #60a5fa;
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(59, 130, 246, 0.6);
+        }
+
+        .btn-selo-azul.ativo {
+            background: #2563eb;
+            border-color: #93c5fd;
+            color: #ffffff;
+            box-shadow: 0 0 16px rgba(37, 99, 235, 0.75);
+        }
+
+        .btn-selo-azul svg {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+        }
+
+        .badge-categoria {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 9;
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: rgba(9, 9, 11, 0.75);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--creme);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
         }
 
         .foto-overlay {
             position: absolute;
             inset: 0;
+            z-index: 7;
             background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 60%);
             opacity: 0;
             transition: opacity var(--transicao);
             display: flex;
             align-items: flex-end;
-            padding: 16px;
+            padding: 14px;
+            pointer-events: none;
         }
 
         .foto-card:hover .foto-overlay {
@@ -429,171 +645,104 @@
             gap: 6px;
             padding: 6px 12px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.18);
             backdrop-filter: blur(8px);
             color: var(--branco);
             font-size: 11px;
             font-weight: 500;
         }
 
-        .badge-categoria {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            padding: 4px 10px;
-            border-radius: 999px;
-            background: rgba(9, 9, 11, 0.75);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 10.5px;
-            font-weight: 500;
-            color: var(--creme);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-
-        .btn-favoritar {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: rgba(9, 9, 11, 0.75);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--branco);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all var(--transicao);
-        }
-
-        .btn-favoritar:hover {
-            transform: scale(1.1);
-            border-color: rgba(245, 237, 228, 0.4);
-        }
-
-        .btn-favoritar.aprovada {
-            background: var(--verde-sucesso);
-            color: #fff;
-            border-color: var(--verde-sucesso);
-        }
-
-        .btn-favoritar svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        .foto-info {
-            padding: 18px 20px;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            justify-content: space-between;
-            gap: 14px;
-        }
-
-        .foto-textos {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .foto-titulo {
-            font-size: 15.5px;
-            font-weight: 500;
-            color: var(--branco);
-            line-height: 1.35;
-        }
-
-        .foto-descricao {
-            font-size: 12.5px;
-            color: var(--cinza-texto);
-            line-height: 1.5;
-            font-weight: 300;
-        }
-
-        .foto-especs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 4px;
-        }
-
-        .espec-tag {
-            font-size: 10.5px;
-            padding: 3px 8px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--borda);
-            color: var(--cinza-fraco);
-        }
-
-        .foto-rodape-card {
+        .foto-rodape-simples {
+            padding: 12px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-top: 12px;
+            background: var(--preto-card);
             border-top: 1px solid var(--borda);
-            gap: 10px;
         }
 
-        .foto-resolucao {
-            font-size: 11px;
-            color: var(--cinza-fraco);
-        }
-
-        .btn-download-foto {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 7px 14px;
-            border-radius: 999px;
-            background: rgba(245, 237, 228, 0.1);
-            border: 1px solid var(--borda-destaque);
-            color: var(--creme);
-            text-decoration: none;
-            font-size: 12px;
+        .foto-titulo-limpo {
+            font-size: 13.5px;
             font-weight: 500;
-            transition: all var(--transicao);
+            color: var(--branco);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .btn-download-foto:hover {
-            background: var(--creme);
-            color: var(--preto);
-        }
-
-        .btn-download-foto svg {
-            width: 14px;
-            height: 14px;
-        }
-
-        /* Modal Lightbox */
+        /* Modal Lightbox com Zoom */
         .lightbox-modal {
             position: fixed;
             inset: 0;
             z-index: 200;
-            background: rgba(5, 5, 7, 0.95);
+            background: rgba(5, 5, 7, 0.96);
             backdrop-filter: blur(24px);
             display: none;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 24px;
+            justify-content: space-between;
+            padding: 20px 24px;
         }
 
         .lightbox-modal.ativo {
             display: flex;
         }
 
+        .lightbox-topbar {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            z-index: 20;
+        }
+
+        .lightbox-contador {
+            font-size: 13px;
+            color: var(--cinza-texto);
+            font-weight: 500;
+        }
+
+        .lightbox-topbar-acoes {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-selo-lightbox {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1.5px solid rgba(59, 130, 246, 0.5);
+            color: #93c5fd;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transicao);
+        }
+
+        .btn-selo-lightbox:hover {
+            background: rgba(37, 99, 235, 0.8);
+            border-color: #93c5fd;
+            color: #ffffff;
+            box-shadow: 0 0 16px rgba(37, 99, 235, 0.6);
+        }
+
+        .btn-selo-lightbox.ativo {
+            background: #2563eb;
+            border-color: #93c5fd;
+            color: #ffffff;
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.8);
+        }
+
         .btn-fechar-lightbox {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid var(--borda);
@@ -609,65 +758,147 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        .btn-fechar-lightbox svg {
-            width: 20px;
-            height: 20px;
+        /* Área de Visualização e Zoom */
+        .lightbox-palco {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin: 12px 0;
         }
 
-        .lightbox-conteudo {
-            max-width: 900px;
-            width: 100%;
-            max-height: 85vh;
+        .lightbox-zoom-container {
+            position: relative;
+            max-width: 100%;
+            max-height: 72vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 16px;
+            justify-content: center;
+            cursor: zoom-in;
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .lightbox-zoom-container.em-zoom {
+            cursor: zoom-out;
         }
 
         .lightbox-imagem {
             max-width: 100%;
-            max-height: 65vh;
+            max-height: 72vh;
             object-fit: contain;
-            border-radius: 12px;
+            border-radius: 10px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+            -webkit-user-drag: none;
         }
 
-        .lightbox-detalhes {
+        /* Controles de Navegação */
+        .btn-nav-lightbox {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: rgba(9, 9, 11, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--branco);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transicao);
+            z-index: 30;
+        }
+
+        .btn-nav-lightbox:hover {
+            background: rgba(37, 99, 235, 0.8);
+            border-color: #93c5fd;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .btn-nav-lightbox.anterior {
+            left: 12px;
+        }
+
+        .btn-nav-lightbox.proxima {
+            right: 12px;
+        }
+
+        .lightbox-barra-zoom {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(9, 9, 11, 0.75);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--borda);
+            padding: 6px 14px;
+            border-radius: 999px;
+            z-index: 20;
+        }
+
+        .btn-zoom-controle {
+            background: transparent;
+            border: none;
+            color: var(--branco);
+            font-size: 15px;
+            font-weight: 600;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background var(--transicao);
+        }
+
+        .btn-zoom-controle:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .zoom-valor {
+            font-size: 11px;
+            color: var(--cinza-texto);
+            min-width: 44px;
+            text-align: center;
+        }
+
+        .lightbox-rodape {
             text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
+            z-index: 20;
         }
 
         .lightbox-titulo {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 500;
             color: var(--branco);
         }
 
-        .lightbox-especs {
-            font-size: 13px;
-            color: var(--cinza-texto);
-        }
-
-        .lightbox-acoes {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 6px;
+        .lightbox-aviso {
+            font-size: 12px;
+            color: var(--cinza-fraco);
         }
 
         /* Rodapé do Catálogo */
         .rodape-catalogo {
             margin-top: auto;
             border-top: 1px solid var(--borda);
-            padding: 32px 24px;
+            padding: 28px 24px;
             background: var(--preto-card);
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             font-size: 13px;
             color: var(--cinza-texto);
         }
@@ -681,15 +912,43 @@
             color: var(--branco);
         }
 
+        /* Toast de Notificação */
+        .toast-aviso {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(30px);
+            background: rgba(9, 9, 11, 0.95);
+            border: 1px solid var(--azul-brilhante);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 999px;
+            font-size: 12.5px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .toast-aviso.visivel {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
         @media (max-width: 768px) {
             .topo-catalogo {
                 padding: 12px 16px;
             }
             .banner-cliente {
-                padding: 24px 16px;
+                padding: 22px 16px 14px;
             }
             .catalogo-secao {
-                padding: 20px 16px 40px;
+                padding: 16px 16px 40px;
             }
             .grade-cards {
                 grid-template-columns: 1fr;
@@ -703,19 +962,26 @@
 
 <body>
 
+    <!-- Escudo Anti-Print Screen (Tela fica escura quando identifica captura) -->
+    <div id="escudo-anti-print" class="escudo-anti-print" aria-hidden="true">
+        <div class="escudo-aviso">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <h2>Captura de Tela Bloqueada</h2>
+            <p>Por razões de segurança e direitos autorais, as provas de fotos não podem ser printadas ou baixadas.</p>
+            <p class="aviso-sub">Para selecionar suas fotos, utilize o selo azul de aprovação.</p>
+            <button type="button" class="btn-fechar-escudo" id="btn-fechar-escudo">Voltar para a Seleção</button>
+        </div>
+    </div>
+
     <!-- Topo da Área do Cliente -->
     <header class="topo-catalogo">
         <div class="marca-bloco">
-            <div class="marca-simbolo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="3" y="3" width="18" height="18" rx="4" />
-                    <circle cx="8.5" cy="8.5" r="1.5" />
-                    <path d="M21 15l-5-5L5 21" />
-                </svg>
-            </div>
             <div class="marca-info">
                 <span class="marca-nome">Vilma Silva</span>
-                <span class="marca-rotulo">Catálogo do Cliente</span>
+                <span class="marca-rotulo">Seleção de Fotos</span>
             </div>
         </div>
 
@@ -738,10 +1004,10 @@
     <!-- Banner de Apresentação do Estabelecimento -->
     <section class="banner-cliente">
         <div class="banner-header">
-            <span class="etiqueta-status">Ensaio Gastronômico Finalizado</span>
+            <span class="etiqueta-status">Seleção de Fotos do Ensaio</span>
             <h1 class="banner-titulo" id="estabelecimento-nome">Bistrô & Parrilla Jardins</h1>
             <p class="banner-descricao">
-                Bem-vindo ao catálogo exclusivo do seu estabelecimento. Aqui você pode navegar por todos os itens fotografados, aprovar as fotos preferidas para os seus cardápios e baixar os arquivos em alta resolução.
+                Marque com o <strong>selo azul</strong> no topo de cada imagem para selecionar suas fotos. As imagens estão em baixa resolução protegidas com marca d'água exclusivamente para seleção.
             </p>
         </div>
 
@@ -751,17 +1017,13 @@
                 <span class="metrica-valor" id="total-fotos-contador">12</span>
                 <span class="metrica-rotulo">Fotos no Catálogo</span>
             </div>
-            <div class="metrica-card">
-                <span class="metrica-valor" id="total-aprovadas-contador">0</span>
-                <span class="metrica-rotulo">Fotos Aprovadas</span>
+            <div class="metrica-card destaque-azul">
+                <span class="metrica-valor azul" id="total-aprovadas-contador">0</span>
+                <span class="metrica-rotulo">Fotos Selecionadas (Selo Azul)</span>
             </div>
             <div class="metrica-card">
-                <span class="metrica-valor">4K / 300 DPI</span>
-                <span class="metrica-rotulo">Padrão de Impressão</span>
-            </div>
-            <div class="metrica-card">
-                <span class="metrica-valor">iFood & Cardápio</span>
-                <span class="metrica-rotulo">Formato Homologado</span>
+                <span class="metrica-valor">Baixa Resolução</span>
+                <span class="metrica-rotulo">Amostra Protegida</span>
             </div>
         </div>
     </section>
@@ -775,7 +1037,7 @@
                 <button type="button" class="btn-categoria" data-categoria="lanches">Hambúrgueres & Pizzas</button>
                 <button type="button" class="btn-categoria" data-categoria="sobremesas">Sobremesas</button>
                 <button type="button" class="btn-categoria" data-categoria="drinks">Bebidas & Cafés</button>
-                <button type="button" class="btn-categoria" data-categoria="aprovadas">⭐ Aprovadas (<span id="aba-aprovadas-contador">0</span>)</button>
+                <button type="button" class="btn-categoria aba-selecionadas" data-categoria="aprovadas">✓ Selecionadas (<span id="aba-aprovadas-contador">0</span>)</button>
             </div>
 
             <div class="busca-e-acoes">
@@ -784,7 +1046,7 @@
                         <circle cx="11" cy="11" r="8" />
                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
-                    <input type="text" class="campo-busca" id="campo-busca" placeholder="Buscar prato ou produto...">
+                    <input type="text" class="campo-busca" id="campo-busca" placeholder="Buscar prato ou item...">
                 </div>
             </div>
         </div>
@@ -797,43 +1059,83 @@
         </div>
     </main>
 
-    <!-- Modal Lightbox para visualização em alta definição -->
+    <!-- Modal Lightbox com Zoom e Avanço Automático ao Selecionar -->
     <div class="lightbox-modal" id="lightbox" role="dialog" aria-hidden="true">
-        <button type="button" class="btn-fechar-lightbox" id="btn-fechar-lightbox" aria-label="Fechar visualização">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-        </button>
-        <div class="lightbox-conteudo">
-            <img class="lightbox-imagem" id="lightbox-img" src="" alt="Foto em alta resolução">
-            <div class="lightbox-detalhes">
-                <h3 class="lightbox-titulo" id="lightbox-titulo">Nome do Prato</h3>
-                <p class="lightbox-especs" id="lightbox-especs">3840 x 2560 px • Resolução Nativa para Cardápio</p>
-                <div class="lightbox-acoes">
-                    <a href="#" download class="btn-acao-topo" id="lightbox-download">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="7 10 12 15 17 10" />
-                            <line x1="12" y1="15" x2="12" y2="3" />
-                        </svg>
-                        <span>Baixar Foto em Alta Definição</span>
-                    </a>
-                </div>
+        <div class="lightbox-topbar">
+            <span class="lightbox-contador" id="lightbox-contador">Foto 1 de 12</span>
+            <div class="lightbox-topbar-acoes">
+                <button type="button" class="btn-selo-lightbox" id="btn-selo-lightbox">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <span id="texto-selo-lightbox">Selecionar Foto</span>
+                </button>
+                <button type="button" class="btn-fechar-lightbox" id="btn-fechar-lightbox" aria-label="Fechar visualização">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
             </div>
         </div>
+
+        <div class="lightbox-palco">
+            <button type="button" class="btn-nav-lightbox anterior" id="btn-nav-anterior" aria-label="Foto anterior">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+
+            <div class="lightbox-zoom-container" id="zoom-container">
+                <img class="lightbox-imagem" id="lightbox-img" src="" alt="Foto de seleção" draggable="false">
+
+                <!-- Marca d'água no Lightbox -->
+                <div class="marca-dagua-overlay" aria-hidden="true">
+                    <span class="marca-dagua-repetida">VILMA SILVA • PROVA DE SELEÇÃO • NÃO AUTORIZADO</span>
+                    <div class="marca-dagua-centro">
+                        <span class="marca-dagua-nome">Vilma Silva Fotografia</span>
+                        <span class="marca-dagua-aviso">Amostra Protegida • Proibido Download e Print</span>
+                    </div>
+                </div>
+
+                <!-- Escudo transparente de bloqueio de clique direito -->
+                <div class="escudo-anti-salvar" id="escudo-lightbox"></div>
+            </div>
+
+            <button type="button" class="btn-nav-lightbox proxima" id="btn-nav-proxima" aria-label="Próxima foto">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+        </div>
+
+        <div class="lightbox-barra-zoom">
+            <button type="button" class="btn-zoom-controle" id="btn-zoom-menos" title="Diminuir zoom">−</button>
+            <span class="zoom-valor" id="zoom-valor-display">100%</span>
+            <button type="button" class="btn-zoom-controle" id="btn-zoom-mais" title="Aumentar zoom">+</button>
+            <button type="button" class="btn-zoom-controle" id="btn-zoom-reset" title="Resetar zoom" style="font-size: 11px;">↺</button>
+        </div>
+
+        <div class="lightbox-rodape">
+            <h3 class="lightbox-titulo" id="lightbox-titulo">Nome do Prato</h3>
+            <p class="lightbox-aviso">Clique na imagem para alternar zoom • Marque o selo azul para avançar à próxima</p>
+        </div>
+    </div>
+
+    <!-- Toast de Notificação -->
+    <div id="toast-aviso" class="toast-aviso">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+        <span id="toast-mensagem">Foto selecionada com sucesso!</span>
     </div>
 
     <!-- Rodapé -->
     <footer class="rodape-catalogo">
-        <p>Precisa de suporte ou novas fotos para seu cardápio? <a href="https://wa.me/5581998370180?text=Ol%C3%A1!%20Acessei%20o%20cat%C3%A1logo%20do%20meu%20estabelecimento%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener">Fale direto com a Vilma no WhatsApp</a></p>
-        <p><a href="./index.html">← Voltar para a página principal do site</a></p>
+        <p>Vilma Silva Fotografia Gastronômica • Seleção protegida de ensaio</p>
+        <p><a href="./index.html">← Voltar para o início</a></p>
     </footer>
 
     <script type="module">
         import { getSession, logout } from './js/api.js';
 
-        // 1. Verificação de sessão de acesso (com tolerância a iframes)
+        // 1. Verificação de sessão de acesso
         const temCredencialLocal = localStorage.getItem('vf_client_logged_in') === 'true' || Boolean(localStorage.getItem('vf_session_token'));
         try {
             const sessao = await getSession();
@@ -860,278 +1162,361 @@
             window.location.replace('./login.html?sair=1');
         });
 
-        // 2. Dados do Catálogo de Fotos do Estabelecimento
-        const FOTOS_CATALOGO = [
-            {
-                id: 'foto-1',
-                titulo: 'Prime Steak na Brasa com Ramos de Alecrim',
-                categoria: 'pratos',
-                categoriaNome: 'Pratos Principais',
-                descricao: 'Corte nobre grelhado ao ponto, selado com manteiga de ervas e finalizado com flor de sal.',
-                especs: ['Cardápio Principal', 'iFood Premium', 'Banner'],
-                resolucao: '4200 x 2800 • 300 DPI',
-                src: './img/p-steak.jpg'
-            },
-            {
-                id: 'foto-2',
-                titulo: 'Smash Burger Trufado com Queijo Cheddar Inglês',
-                categoria: 'lanches',
-                categoriaNome: 'Hambúrgueres',
-                descricao: 'Pão brioche tostado na manteiga, burger artesanal blend especial e cebola caramelizada.',
-                especs: ['iFood Capa', 'Instagram Reels', 'Promoções'],
-                resolucao: '4000 x 2667 • 300 DPI',
-                src: './img/p-burger.jpg'
-            },
-            {
-                id: 'foto-3',
-                titulo: 'Pizza Napolitana Artesanal com Manjericão Fresco',
-                categoria: 'lanches',
-                categoriaNome: 'Pizzas',
-                descricao: 'Massa de fermentação lenta de 48h, molho de tomate pelado San Marzano e fior di latte.',
-                especs: ['Cardápio Digital', 'iFood Destaque'],
-                resolucao: '3840 x 2560 • 300 DPI',
-                src: './img/p-pizza.jpg'
-            },
-            {
-                id: 'foto-4',
-                titulo: 'Fettuccine Italiano ao Molho de Tomates Rústicos',
-                categoria: 'pratos',
-                categoriaNome: 'Pratos Principais',
-                descricao: 'Massa fresca artesanal com redução de pomodoro, azeite extra virgem e queijo parmesão ralado.',
-                especs: ['Cardápio Almoço', 'Instagram Feed'],
-                resolucao: '4200 x 2800 • 300 DPI',
-                src: './img/p-massa.jpg'
-            },
-            {
-                id: 'foto-5',
-                titulo: 'Torta Cremosa com Calda de Frutas Silvestres',
-                categoria: 'sobremesas',
-                categoriaNome: 'Sobremesas',
-                descricao: 'Sobremesa autoral com base crocante, creme aveludado e coulis de amoras e framboesas.',
-                especs: ['Sobremesas', 'Cardápio Doce'],
-                resolucao: '3840 x 2560 • 300 DPI',
-                src: './img/p-sobremesa.jpg'
-            },
-            {
-                id: 'foto-6',
-                titulo: 'Coquetel Autoral Defumado com Cítricos',
-                categoria: 'drinks',
-                categoriaNome: 'Drinks & Bar',
-                descricao: 'Drink sofisticado com base premium, notas botânicas, gelo translúcido e fatias de laranja desidratada.',
-                especs: ['Carta de Drinks', 'Happy Hour'],
-                resolucao: '4000 x 2667 • 300 DPI',
-                src: './img/p-drink.jpg'
-            },
-            {
-                id: 'foto-7',
-                titulo: 'Café Espresso Especial com Latte Art Artesanal',
-                categoria: 'drinks',
-                categoriaNome: 'Cafés Especiais',
-                descricao: 'Extração perfeita de grãos selecionados da serra, leite vaporizado e crema aveludada.',
-                especs: ['Café da Manhã', 'Sobremesa'],
-                resolucao: '3840 x 2560 • 300 DPI',
-                src: './img/p-cafe.jpg'
-            },
-            {
-                id: 'foto-8',
-                titulo: 'Composição de Mesa e Ambiente Gastronômico',
-                categoria: 'pratos',
-                categoriaNome: 'Ambiente & Experiência',
-                descricao: 'Fotografia de ambientação do salão, mesa posta para recepção e iluminação acolhedora.',
-                especs: ['Site Institucional', 'Google Meu Negócio'],
-                resolucao: '4500 x 3000 • 300 DPI',
-                src: './img/capa.jpg'
-            },
-            {
-                id: 'foto-9',
-                titulo: 'Corte Especial Grelhado com Legumes Salteados',
-                categoria: 'pratos',
-                categoriaNome: 'Pratos Principais',
-                descricao: 'Acompanhamentos frescos na manteiga noisette com apresentação requintada.',
-                especs: ['Prato Executivo', 'Cardápio'],
-                resolucao: '3840 x 2560 • 300 DPI',
-                src: './img/p-2.JPG'
-            },
-            {
-                id: 'foto-10',
-                titulo: 'Entrada Fina de Queijos e Castanhas',
-                categoria: 'pratos',
-                categoriaNome: 'Entradas',
-                descricao: 'Tábua de degustação com produtos artesanais locais para harmonização com vinhos.',
-                especs: ['Entradas', 'Carta de Vinhos'],
-                resolucao: '3840 x 2560 • 300 DPI',
-                src: './img/p-3.JPG'
-            },
-            {
-                id: 'foto-11',
-                titulo: 'Sobremesa de Chocolate Belga com Texturas',
-                categoria: 'sobremesas',
-                categoriaNome: 'Sobremesas',
-                descricao: 'Duo de chocolates nobres com crocante de avelãs tostadas e calda quente.',
-                especs: ['Menu Degustação', 'Instagram'],
-                resolucao: '4000 x 2667 • 300 DPI',
-                src: './img/p-4.JPG'
-            },
-            {
-                id: 'foto-12',
-                titulo: 'Prato Autoral de Frutos do Mar',
-                categoria: 'pratos',
-                categoriaNome: 'Pratos Principais',
-                descricao: 'Pesca do dia grelhada em chama alta com emulsão de ervas e limão siciliano.',
-                especs: ['Especial do Chef', 'Cardápio'],
-                resolucao: '4200 x 2800 • 300 DPI',
-                src: './img/p-5.jpg'
+        // ==============================================================
+        // 2. Proteção Anti-Print e Anti-Download
+        // ==============================================================
+        const escudoAntiPrint = document.getElementById('escudo-anti-print');
+        const btnFecharEscudo = document.getElementById('btn-fechar-escudo');
+
+        function dispararBloqueioPrint() {
+            escudoAntiPrint.classList.add('ativo');
+            escudoAntiPrint.setAttribute('aria-hidden', 'false');
+        }
+
+        function fecharBloqueioPrint() {
+            escudoAntiPrint.classList.remove('ativo');
+            escudoAntiPrint.setAttribute('aria-hidden', 'true');
+        }
+
+        btnFecharEscudo.addEventListener('click', fecharBloqueioPrint);
+
+        // Detecta atalhos de PrintScreen e captura
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'PrintScreen' || e.code === 'PrintScreen' || e.keyCode === 44) {
+                dispararBloqueioPrint();
             }
+        });
+
+        window.addEventListener('keydown', (e) => {
+            // PrintScreen
+            if (e.key === 'PrintScreen' || e.code === 'PrintScreen' || e.keyCode === 44) {
+                dispararBloqueioPrint();
+            }
+            // Ctrl + P ou Cmd + P (Impressão)
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
+                e.preventDefault();
+                dispararBloqueioPrint();
+            }
+            // Cmd + Shift + 3 / 4 / 5 no Mac
+            if (e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === '5')) {
+                dispararBloqueioPrint();
+            }
+            // Ctrl + S ou Cmd + S (Salvar página)
+            if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+                e.preventDefault();
+                mostrarToast('Salvar imagens desabilitado na área de prova.');
+            }
+        });
+
+        // Quando a janela perde o foco por ativação de ferramenta de captura
+        window.addEventListener('blur', () => {
+            // Protege temporariamente a tela ao perder foco
+            dispararBloqueioPrint();
+        });
+
+        // Impede clique com botão direito
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            mostrarToast('Imagens protegidas por direitos autorais.');
+            return false;
+        });
+
+        // Impede arrastar imagens
+        document.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+            return false;
+        });
+
+        // ==============================================================
+        // 3. Dados das Fotos do Ensaio
+        // ==============================================================
+        const FOTOS_CATALOGO = [
+            { id: 'foto-1', titulo: 'Prime Steak na Brasa', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/p-steak.jpg' },
+            { id: 'foto-2', titulo: 'Smash Burger Trufado', categoria: 'lanches', categoriaNome: 'Hambúrgueres', src: './img/p-burger.jpg' },
+            { id: 'foto-3', titulo: 'Pizza Napolitana Artesanal', categoria: 'lanches', categoriaNome: 'Pizzas', src: './img/p-pizza.jpg' },
+            { id: 'foto-4', titulo: 'Fettuccine ao Pomodoro Rústico', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/p-massa.jpg' },
+            { id: 'foto-5', titulo: 'Torta de Frutas Silvestres', categoria: 'sobremesas', categoriaNome: 'Sobremesas', src: './img/p-sobremesa.jpg' },
+            { id: 'foto-6', titulo: 'Coquetel Autoral Defumado', categoria: 'drinks', categoriaNome: 'Drinks & Bar', src: './img/p-drink.jpg' },
+            { id: 'foto-7', titulo: 'Café Espresso com Latte Art', categoria: 'drinks', categoriaNome: 'Cafés Especiais', src: './img/p-cafe.jpg' },
+            { id: 'foto-8', titulo: 'Composição de Mesa e Salão', categoria: 'pratos', categoriaNome: 'Ambiente', src: './img/capa.jpg' },
+            { id: 'foto-9', titulo: 'Corte Grelhado Especial', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/p-2.JPG' },
+            { id: 'foto-10', titulo: 'Tábua de Queijos e Castanhas', categoria: 'pratos', categoriaNome: 'Entradas', src: './img/p-3.JPG' },
+            { id: 'foto-11', titulo: 'Sobremesa de Chocolate Belga', categoria: 'sobremesas', categoriaNome: 'Sobremesas', src: './img/p-4.JPG' },
+            { id: 'foto-12', titulo: 'Prato Autoral de Frutos do Mar', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/p-5.jpg' }
         ];
 
-        // 3. Sistema de Fotos Aprovadas (Persistência Local)
-        let aprovadas = JSON.parse(localStorage.getItem('vf_fotos_aprovadas') || '[]');
+        // 4. Sistema de Seleção com Selo Azul
+        let selecionadas = JSON.parse(localStorage.getItem('vf_fotos_aprovadas') || '[]');
 
-        function salvarAprovadas() {
-            localStorage.setItem('vf_fotos_aprovadas', JSON.stringify(aprovadas));
+        function salvarSelecionadas() {
+            localStorage.setItem('vf_fotos_aprovadas', JSON.stringify(selecionadas));
             atualizarContadores();
         }
 
-        function alternarAprovacao(id) {
-            if (aprovadas.includes(id)) {
-                aprovadas = aprovadas.filter(item => item !== id);
+        function alternarSelecao(id) {
+            const index = selecionadas.indexOf(id);
+            let selecionou = false;
+            if (index >= 0) {
+                selecionadas.splice(index, 1);
+                selecionou = false;
+                mostrarToast('Foto desmarcada.');
             } else {
-                aprovadas.push(id);
+                selecionadas.push(id);
+                selecionou = true;
+                mostrarToast('✓ Foto selecionada com o selo azul!');
             }
-            salvarAprovadas();
+            salvarSelecionadas();
             renderizarFotos();
+            atualizarEstadoSeloLightbox();
+            return selecionou;
         }
 
         function atualizarContadores() {
-            const count = aprovadas.length;
+            const count = selecionadas.length;
             document.getElementById('total-aprovadas-contador').textContent = count;
             document.getElementById('aba-aprovadas-contador').textContent = count;
             document.getElementById('total-fotos-contador').textContent = FOTOS_CATALOGO.length;
         }
 
-        // 4. Renderização Dinâmica dos Cards
+        function mostrarToast(msg) {
+            const toast = document.getElementById('toast-aviso');
+            document.getElementById('toast-mensagem').textContent = msg;
+            toast.classList.add('visivel');
+            clearTimeout(window._toastTimeout);
+            window._toastTimeout = setTimeout(() => {
+                toast.classList.remove('visivel');
+            }, 2500);
+        }
+
+        // 5. Renderização dos Cards na Grade
         const gradeFotos = document.getElementById('grade-fotos');
         let categoriaAtual = 'todas';
         let termoBusca = '';
 
-        function renderizarFotos() {
-            gradeFotos.innerHTML = '';
-
-            const filtradas = FOTOS_CATALOGO.filter(item => {
+        function obterFotosFiltradas() {
+            return FOTOS_CATALOGO.filter(item => {
                 const bateCategoria = categoriaAtual === 'todas'
                     ? true
                     : categoriaAtual === 'aprovadas'
-                        ? aprovadas.includes(item.id)
+                        ? selecionadas.includes(item.id)
                         : item.categoria === categoriaAtual;
 
-                const bateBusca = !termoBusca ||
-                    item.titulo.toLowerCase().includes(termoBusca) ||
-                    item.descricao.toLowerCase().includes(termoBusca) ||
-                    item.especs.some(e => e.toLowerCase().includes(termoBusca));
-
+                const bateBusca = !termoBusca || item.titulo.toLowerCase().includes(termoBusca);
                 return bateCategoria && bateBusca;
             });
+        }
+
+        function renderizarFotos() {
+            gradeFotos.innerHTML = '';
+            const filtradas = obterFotosFiltradas();
 
             if (filtradas.length === 0) {
                 gradeFotos.innerHTML = `
                     <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--cinza-fraco);">
-                        <p style="font-size: 16px; margin-bottom: 8px;">Nenhuma foto encontrada para este filtro.</p>
-                        <p style="font-size: 13px;">Tente buscar por outro termo ou escolher outra categoria.</p>
+                        <p style="font-size: 15px; margin-bottom: 6px;">Nenhuma foto encontrada para esta visualização.</p>
+                        <p style="font-size: 12.5px;">Selecione outra categoria ou limpe o campo de busca.</p>
                     </div>
                 `;
                 return;
             }
 
-            filtradas.forEach(foto => {
-                const estaAprovada = aprovadas.includes(foto.id);
+            filtradas.forEach((foto, idx) => {
+                const estaSelecionada = selecionadas.includes(foto.id);
 
                 const card = document.createElement('article');
-                card.className = 'foto-card';
+                card.className = `foto-card ${estaSelecionada ? 'selecionada' : ''}`;
+                card.id = `card-${foto.id}`;
                 card.innerHTML = `
                     <div class="foto-imagem-wrapper" data-id="${foto.id}">
-                        <img class="foto-imagem" src="${foto.src}" alt="${foto.titulo}" loading="lazy">
-                        <span class="badge-categoria">${foto.categoriaNome}</span>
-                        <button type="button" class="btn-favoritar ${estaAprovada ? 'aprovada' : ''}" data-id="${foto.id}" title="${estaAprovada ? 'Foto Aprovada' : 'Aprovar Foto'}">
-                            <svg viewBox="0 0 24 24" fill="${estaAprovada ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                        <img class="foto-imagem" src="${foto.src}" alt="${foto.titulo}" loading="lazy" draggable="false">
+
+                        <!-- Marca d'água -->
+                        <div class="marca-dagua-overlay" aria-hidden="true">
+                            <span class="marca-dagua-repetida">VILMA SILVA • PROVA • NÃO AUTORIZADO</span>
+                            <div class="marca-dagua-centro">
+                                <span class="marca-dagua-nome">Vilma Silva</span>
+                                <span class="marca-dagua-aviso">Prova de Seleção</span>
+                            </div>
+                        </div>
+
+                        <!-- Escudo transparente anti-salvar -->
+                        <div class="escudo-anti-salvar"></div>
+
+                        <!-- Selo Azul no Topo -->
+                        <button type="button" class="btn-selo-azul ${estaSelecionada ? 'ativo' : ''}" data-id="${foto.id}" title="${estaSelecionada ? 'Foto selecionada' : 'Selecionar com selo azul'}">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                             </svg>
+                            <span>${estaSelecionada ? 'Selecionada' : 'Selecionar'}</span>
                         </button>
+
+                        <span class="badge-categoria">${foto.categoriaNome}</span>
+
                         <div class="foto-overlay">
                             <span class="btn-ampliar">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-                                Ver em Detalhes
+                                Zoom & Detalhes
                             </span>
                         </div>
                     </div>
-                    <div class="foto-info">
-                        <div class="foto-textos">
-                            <h2 class="foto-titulo">${foto.titulo}</h2>
-                            <p class="foto-descricao">${foto.descricao}</p>
-                            <div class="foto-especs">
-                                ${foto.especs.map(e => `<span class="espec-tag">${e}</span>`).join('')}
-                            </div>
-                        </div>
-                        <div class="foto-rodape-card">
-                            <span class="foto-resolucao">${foto.resolucao}</span>
-                            <a href="${foto.src}" download="${foto.titulo}.jpg" class="btn-download-foto">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                <span>Baixar HD</span>
-                            </a>
-                        </div>
+                    <div class="foto-rodape-simples">
+                        <h3 class="foto-titulo-limpo">${foto.titulo}</h3>
                     </div>
                 `;
 
-                // Clique para ampliar no Lightbox
-                card.querySelector('.foto-imagem-wrapper').addEventListener('click', (e) => {
-                    if (e.target.closest('.btn-favoritar')) return;
-                    abrirLightbox(foto);
+                // Clique para abrir no lightbox com zoom
+                card.querySelector('.escudo-anti-salvar').addEventListener('click', (e) => {
+                    abrirLightboxPorId(foto.id);
                 });
 
-                // Clique para aprovar
-                card.querySelector('.btn-favoritar').addEventListener('click', (e) => {
+                // Clique no Selo Azul da grade: seleciona e rola suavemente para o próximo
+                card.querySelector('.btn-selo-azul').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    alternarAprovacao(foto.id);
+                    const selecionou = alternarSelecao(foto.id);
+                    if (selecionou && idx < filtradas.length - 1) {
+                        const proximoCard = document.getElementById(`card-${filtradas[idx + 1].id}`);
+                        if (proximoCard) {
+                            proximoCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                    }
                 });
 
                 gradeFotos.appendChild(card);
             });
         }
 
-        // 5. Lightbox
+        // ==============================================================
+        // 6. Lightbox com Zoom e Avanço Automático ao Selecionar
+        // ==============================================================
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
         const lightboxTitulo = document.getElementById('lightbox-titulo');
-        const lightboxEspecs = document.getElementById('lightbox-especs');
-        const lightboxDownload = document.getElementById('lightbox-download');
+        const lightboxContador = document.getElementById('lightbox-contador');
+        const btnSeloLightbox = document.getElementById('btn-selo-lightbox');
+        const textoSeloLightbox = document.getElementById('texto-selo-lightbox');
         const btnFecharLightbox = document.getElementById('btn-fechar-lightbox');
+        const btnNavAnterior = document.getElementById('btn-nav-anterior');
+        const btnNavProxima = document.getElementById('btn-nav-proxima');
+        const zoomContainer = document.getElementById('zoom-container');
+        const btnZoomMais = document.getElementById('btn-zoom-mais');
+        const btnZoomMenos = document.getElementById('btn-zoom-menos');
+        const btnZoomReset = document.getElementById('btn-zoom-reset');
+        const zoomValorDisplay = document.getElementById('zoom-valor-display');
+        const escudoLightbox = document.getElementById('escudo-lightbox');
 
-        function abrirLightbox(foto) {
+        let fotoAtualIndex = 0;
+        let zoomAtual = 1;
+
+        function atualizarZoom() {
+            zoomContainer.style.transform = `scale(${zoomAtual})`;
+            zoomContainer.classList.toggle('em-zoom', zoomAtual > 1);
+            zoomValorDisplay.textContent = `${Math.round(zoomAtual * 100)}%`;
+        }
+
+        function aplicarZoom(delta) {
+            zoomAtual = Math.min(Math.max(zoomAtual + delta, 1), 3.5);
+            atualizarZoom();
+        }
+
+        function resetarZoom() {
+            zoomAtual = 1;
+            atualizarZoom();
+        }
+
+        btnZoomMais.addEventListener('click', () => aplicarZoom(0.3));
+        btnZoomMenos.addEventListener('click', () => aplicarZoom(-0.3));
+        btnZoomReset.addEventListener('click', resetarZoom);
+
+        // Alternar zoom com clique direto na foto
+        escudoLightbox.addEventListener('click', () => {
+            if (zoomAtual > 1) {
+                resetarZoom();
+            } else {
+                zoomAtual = 2.2;
+                atualizarZoom();
+            }
+        });
+
+        // Zoom com roda do mouse no lightbox
+        lightbox.addEventListener('wheel', (e) => {
+            if (!lightbox.classList.contains('ativo')) return;
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                aplicarZoom(0.2);
+            } else {
+                aplicarZoom(-0.2);
+            }
+        }, { passive: false });
+
+        function atualizarEstadoSeloLightbox() {
+            const foto = FOTOS_CATALOGO[fotoAtualIndex];
+            if (!foto) return;
+            const estaSelecionada = selecionadas.includes(foto.id);
+            btnSeloLightbox.classList.toggle('ativo', estaSelecionada);
+            textoSeloLightbox.textContent = estaSelecionada ? '✓ Foto Selecionada' : 'Selecionar Foto';
+        }
+
+        function carregarFotoLightbox(index) {
+            if (index < 0) index = FOTOS_CATALOGO.length - 1;
+            if (index >= FOTOS_CATALOGO.length) index = 0;
+            fotoAtualIndex = index;
+            resetarZoom();
+
+            const foto = FOTOS_CATALOGO[fotoAtualIndex];
             lightboxImg.src = foto.src;
             lightboxImg.alt = foto.titulo;
             lightboxTitulo.textContent = foto.titulo;
-            lightboxEspecs.textContent = `${foto.resolucao} • Recomendado: ${foto.especs.join(', ')}`;
-            lightboxDownload.href = foto.src;
-            lightboxDownload.download = `${foto.titulo}.jpg`;
-            lightbox.classList.add('ativo');
-            lightbox.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden';
+            lightboxContador.textContent = `Foto ${fotoAtualIndex + 1} de ${FOTOS_CATALOGO.length}`;
+            atualizarEstadoSeloLightbox();
+        }
+
+        function abrirLightboxPorId(id) {
+            const idx = FOTOS_CATALOGO.findIndex(f => f.id === id);
+            if (idx >= 0) {
+                carregarFotoLightbox(idx);
+                lightbox.classList.add('ativo');
+                lightbox.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            }
         }
 
         function fecharLightbox() {
             lightbox.classList.remove('ativo');
             lightbox.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
+            resetarZoom();
         }
 
         btnFecharLightbox.addEventListener('click', fecharLightbox);
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) fecharLightbox();
-        });
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && lightbox.classList.contains('ativo')) fecharLightbox();
+        btnNavAnterior.addEventListener('click', () => carregarFotoLightbox(fotoAtualIndex - 1));
+        btnNavProxima.addEventListener('click', () => carregarFotoLightbox(fotoAtualIndex + 1));
+
+        // Ao clicar no Selo Azul dentro do lightbox: seleciona e avança para a próxima foto!
+        btnSeloLightbox.addEventListener('click', () => {
+            const foto = FOTOS_CATALOGO[fotoAtualIndex];
+            if (!foto) return;
+            const selecionou = alternarSelecao(foto.id);
+            if (selecionou) {
+                // Avança automaticamente para a próxima foto após breve confirmação
+                setTimeout(() => {
+                    carregarFotoLightbox(fotoAtualIndex + 1);
+                }, 300);
+            }
         });
 
-        // 6. Filtros de Categoria
+        // Teclado no Lightbox
+        window.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('ativo')) return;
+            if (e.key === 'Escape') fecharLightbox();
+            if (e.key === 'ArrowRight') carregarFotoLightbox(fotoAtualIndex + 1);
+            if (e.key === 'ArrowLeft') carregarFotoLightbox(fotoAtualIndex - 1);
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                btnSeloLightbox.click();
+            }
+        });
+
+        // 7. Filtros de Categoria
         document.querySelectorAll('.btn-categoria').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.btn-categoria').forEach(b => b.classList.remove('ativa'));
@@ -1141,7 +1526,7 @@
             });
         });
 
-        // 7. Busca em tempo real
+        // 8. Busca em tempo real
         const campoBusca = document.getElementById('campo-busca');
         campoBusca.addEventListener('input', (e) => {
             termoBusca = e.target.value.toLowerCase().trim();
