@@ -1,7 +1,7 @@
 'use strict';
 
 const { query } = require('../../lib/db');
-const { verifyPin, createSessionToken, sessionCookie } = require('../../lib/auth');
+const { verifyPin, verifyCredentials, createSessionToken, sessionCookie } = require('../../lib/auth');
 const { json, fail, methodGuard, sameOriginGuard, handleCors, clientIp, withErrorHandling } = require('../../lib/http');
 
 const WINDOW_MINUTES = 15;
@@ -44,20 +44,34 @@ module.exports = withErrorHandling(async (req, res) => {
     return fail(res, 429, `Tentativas demais. Aguarde ${WINDOW_MINUTES} minutos.`);
   }
 
-  const pin = req.body?.pin;
-  if (typeof pin !== 'string' || pin.length === 0) {
+  const { pin, email, password } = req.body || {};
+
+  let ok = false;
+  let erroMensagem = 'Credenciais inválidas';
+
+  if (typeof email === 'string' && typeof password === 'string') {
+    ok = verifyCredentials(email, password);
+    erroMensagem = 'E-mail ou senha incorretos';
+  } else if (typeof pin !== 'undefined') {
+    if (typeof pin !== 'string' || pin.length === 0) {
+      await recordAttempt(ip, false);
+      return fail(res, 400, 'PIN inválido');
+    }
+    ok = verifyPin(pin);
+    erroMensagem = 'PIN incorreto';
+  } else {
     await recordAttempt(ip, false);
-    return fail(res, 400, 'PIN inválido');
+    return fail(res, 400, 'Credenciais não informadas');
   }
 
-  const ok = verifyPin(pin);
   await recordAttempt(ip, ok);
 
   if (!ok) {
-    return fail(res, 401, 'PIN incorreto');
+    return fail(res, 401, erroMensagem);
   }
 
-  // Autenticação bem‑sucedida – gera cookie de sessão
-  res.setHeader('Set-Cookie', sessionCookie(createSessionToken()));
-  json(res, 200, { authenticated: true });
+  // Autenticação bem‑sucedida – gera cookie de sessão e token de retorno
+  const token = createSessionToken();
+  res.setHeader('Set-Cookie', sessionCookie(token));
+  json(res, 200, { authenticated: true, token });
 });

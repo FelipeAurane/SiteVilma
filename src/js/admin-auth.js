@@ -59,6 +59,13 @@ function montarGate() {
   erro.setAttribute('role', 'alert');
   form.appendChild(erro);
 
+  const linkEmail = document.createElement('p');
+  linkEmail.style.marginTop = '16px';
+  linkEmail.style.fontSize = '12px';
+  linkEmail.style.textAlign = 'center';
+  linkEmail.innerHTML = '<a href="./login.html" style="color: rgba(255,255,255,0.7); text-decoration: underline;">Ou entrar com e-mail e senha</a>';
+  form.appendChild(linkEmail);
+
   caixa.appendChild(form);
   gate.appendChild(caixa);
   document.body.appendChild(gate);

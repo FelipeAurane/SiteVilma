@@ -34,6 +34,12 @@ class ApiError extends Error {
 }
 
 async function request(path, { method = 'GET', body, signal } = {}) {
+  const headers = body === undefined ? {} : { 'Content-Type': 'application/json' };
+  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('vf_session_token') : null;
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
   const response = await fetch(`${BASE}${path}`, {
     method,
     signal,
@@ -45,7 +51,7 @@ async function request(path, { method = 'GET', body, signal } = {}) {
     cache: method === 'GET' ? 'no-store' : 'default',
     // Manda o cookie de sessão nas escritas.
     credentials: 'include',
-    headers: body === undefined ? {} : { 'Content-Type': 'application/json' },
+    headers,
     body: body === undefined ? undefined : JSON.stringify(body)
   });
 
@@ -182,20 +188,43 @@ export async function uploadMedia(file) {
 
 // -------------------------------------------------------------- sessão
 
-export async function login(pin) {
-  return request('/auth/login', { method: 'POST', body: { pin } });
+export async function login(credentials) {
+  const body = typeof credentials === 'string' ? { pin: credentials } : (credentials || {});
+  const res = await request('/auth/login', { method: 'POST', body });
+  if (res && res.token && typeof localStorage !== 'undefined') {
+    localStorage.setItem('vf_session_token', res.token);
+  }
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('vf_client_logged_in', 'true');
+  }
+  return res;
 }
 
 export async function logout() {
+  if (typeof localStorage !== 'undefined') {
+    localStorage.removeItem('vf_session_token');
+    localStorage.removeItem('vf_client_logged_in');
+  }
   return request('/auth/logout', { method: 'POST', body: {} });
 }
 
 export async function getSession() {
   try {
-    return await request('/auth/session');
-  } catch {
-    return { authenticated: false };
+    const res = await request('/auth/session');
+    if (res && res.authenticated) {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('vf_client_logged_in', 'true');
+      }
+      return res;
+    }
+  } catch {}
+
+  const hasToken = typeof localStorage !== 'undefined' && Boolean(localStorage.getItem('vf_session_token'));
+  const hasFlag = typeof localStorage !== 'undefined' && localStorage.getItem('vf_client_logged_in') === 'true';
+  if (hasToken || hasFlag) {
+    return { authenticated: true };
   }
+  return { authenticated: false };
 }
 
 export { ApiError };
