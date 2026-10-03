@@ -1,81 +1,32 @@
 /**
  * Painel de configuração (/config).
  *
- * Quatro seções — Visão geral, Textos do site, Categorias e Visibilidade —
+ * Cinco seções — Visão geral, Textos do site, Portfólio, Serviços e Dúvidas —
  * uma por vez, escolhidas no trilho lateral de ícones.
  *
- * Duas coisas independentes, guardadas no servidor e pelo mesmo cookie de
+ * Três coisas independentes, guardadas no servidor e pelo mesmo cookie de
  * sessão do login:
  *
- *   visibilidade  — liga e desliga blocos do site (as tags data-tag do HTML)
- *   siteData      — os textos, imagens e categorias que a home mostra
+ *   siteData       — os textos, imagens, categorias e serviços que o site mostra
+ *   faqs           — as perguntas e respostas da página de dúvidas
+ *   visibility     — os blocos ligados e desligados, lidos só para o resumo
  *
- * Antes os interruptores eram montados em containers que não existiam no
- * HTML, então nada era controlado. Aqui os containers existem de verdade e a
- * lista de blocos vem de um único lugar (GRUPOS), conferida contra o
- * defaultVisibility do visibility.js.
+ * Cada seção liga os botões que existem no config.html. Se um elemento sumir
+ * do HTML e o JS continuar tentando ligá-lo, `iniciar()` quebra no meio e
+ * nenhuma lista é pintada — por isso aqui não há referência a elemento que a
+ * página não tenha.
  */
 
 import { exigirLogin } from './admin-auth.js';
 import { getContent, putContent, uploadImage, uploadMedia, LIMITE_VIDEO_BYTES } from './api.js';
-import { DataManager, defaultData, safeImageSrc, isVideoMedia } from './dataManager.js';
 import {
-  defaultVisibility,
-  readCache,
-  writeCache,
-  applyVisibility,
-  fetchVisibility
-} from './visibility.js';
-
-// ---------------------------------------------------------------- blocos
-
-/** Nome de cada tag do site, do jeito que a Vilma chamaria. */
-const NOMES = {
-  navbar: 'Barra de navegação',
-  logo: 'Logo',
-  'main-menu': 'Menu principal',
-  'menu-inicio': 'Link Início',
-  'menu-galeria': 'Link Portfólio',
-  'menu-sobre': 'Link Sobre',
-  'menu-servicos': 'Link Serviços',
-  'menu-duvidas': 'Link Dúvidas',
-  'menu-blok': 'Bloco do menu no canto',
-  'overlay-fundo': 'Fundo escuro do menu',
-  'hero-section': 'Seção principal inteira',
-  'title-name': 'Título (seu nome)',
-  subtitle: 'Subtítulo',
-  'hero-buttons': 'Botão de orçamento',
-  'scroll-button': 'Seta de rolar',
-  'next-section': 'Grade do portfólio',
-  'video-section': 'Vídeo de fundo',
-  'cardapio-section': 'Seção do portfólio',
-  'cardapio-title': 'Título do portfólio',
-  'cardapio-banner': 'Fundo do portfólio',
-  'banner-title': 'Chamada',
-  'banner-subtitle': 'Legenda',
-  'banner-image': 'Imagem do fundo',
-  'cardapio-container': 'Cartões de categoria',
-  'sobre-section': 'Seção Sobre',
-  'footer-section': 'Rodapé'
-};
-
-/** Ordem de leitura na tela. */
-const GRUPOS = [
-  { id: 'navegacao', nome: 'Navegação', tags: ['navbar', 'logo', 'main-menu', 'menu-inicio', 'menu-galeria', 'menu-sobre', 'menu-servicos', 'menu-duvidas', 'menu-blok', 'overlay-fundo'] },
-  { id: 'principal', nome: 'Seção principal', tags: ['hero-section', 'title-name', 'subtitle', 'hero-buttons', 'scroll-button'] },
-  { id: 'portfolio', nome: 'Portfólio', tags: ['next-section', 'cardapio-section', 'cardapio-title', 'cardapio-banner', 'banner-title', 'banner-subtitle', 'banner-image', 'cardapio-container', 'video-section'] },
-  { id: 'sobre', nome: 'Sobre e rodapé', tags: ['sobre-section', 'footer-section'] }
-];
-
-/**
- * Grupos que faltarem. Se amanhã o visibility.js ganhar uma tag nova, ela
- * aparece aqui em vez de sumir do painel.
- */
-function gruposCompletos() {
-  const conhecidos = new Set(GRUPOS.flatMap((g) => g.tags));
-  const faltando = Object.keys(defaultVisibility).filter((tag) => !conhecidos.has(tag));
-  return faltando.length ? [...GRUPOS, { id: 'outros', nome: 'Outros', tags: faltando }] : GRUPOS;
-}
+  DataManager,
+  defaultData,
+  safeImageSrc,
+  isVideoMedia,
+  normalizarInclui
+} from './dataManager.js';
+import { defaultVisibility, fetchVisibility } from './visibility.js';
 
 // ---------------------------------------------------------------- estado
 
@@ -84,8 +35,6 @@ let conteudo = null;
 let categorias = [];
 let servicos = [];
 let duvidas = [];
-let datas = {};
-let timerVisibilidade = null;
 
 /**
  * Marcado pelo botão "tirar o vídeo". Vale até o próximo Salvar: sem ele não
@@ -93,9 +42,6 @@ let timerVisibilidade = null;
  * consegue "desescolher" o que já está publicado.
  */
 let tirarVideoCapa = false;
-
-/** Mês mostrado na grade da agenda. Começa no atual, não em janeiro. */
-let mesAgenda = new Date();
 
 const dados = new DataManager();
 
@@ -145,38 +91,18 @@ function formatar(quando) {
   return `${data.toLocaleDateString('pt-BR', mesmoAno ? DIA : DIA_ANO)} às ${hora}`;
 }
 
-// ------------------------------------------------------------ visibilidade
-
-/** Agrupa cliques seguidos numa gravação só: mexer em seis chaves não vira seis escritas. */
-function agendarVisibilidade() {
-  clearTimeout(timerVisibilidade);
-  marcarEstado('salvando', 'Salvando...');
-
-  timerVisibilidade = setTimeout(async () => {
-    try {
-      // A visibilidade mora na chave "visibility"; os textos, na "siteData".
-      await putContent('visibility', visibilidade);
-      marcarEstado('salvo', 'Sincronizado');
-      atualizarEstatisticas();
-    } catch (erro) {
-      marcarEstado('erro', 'Falha ao salvar');
-      avisar(mensagemDeErro(erro), 'erro');
-    }
-  }, 600);
-}
+// -------------------------------------------------------------- resumo
 
 function mensagemDeErro(erro) {
   if (erro?.status === 401) return 'Sua sessão expirou. Recarregue e entre de novo.';
   return erro?.message || 'Algo deu errado.';
 }
 
-function aplicarEAtualizar({ gravar = true } = {}) {
-  writeCache(visibilidade);
-  applyVisibility(visibilidade);
-  atualizarEstatisticas();
-  if (gravar) agendarVisibilidade();
-}
-
+/**
+ * A visibilidade é lida do servidor só para responder "quantos blocos estão no
+ * ar". Quem liga e desliga é o código do site, não este painel — os
+ * interruptores por tag saíram daqui junto com a seção que os mostrava.
+ */
 function atualizarEstatisticas() {
   const chaves = Object.keys(visibilidade);
   const publicados = chaves.filter((tag) => visibilidade[tag]).length;
@@ -213,14 +139,8 @@ function atualizarResumo() {
     ? `${duvidas.length} ${duvidas.length === 1 ? 'pergunta' : 'perguntas'}`
     : 'Nenhuma';
 
-  const dias = Object.keys(datas).length;
-  el('resumo-agenda').textContent = dias
-    ? `${dias} ${dias === 1 ? 'dia' : 'dias'}`
-    : 'Nenhum dia';
-
   definirEtiqueta('resumo-grade', visibilidade['next-section'] !== false, 'Publicada', 'Oculta');
   definirEtiqueta('resumo-servicos-vis', servicos.length > 0, 'Com conteúdo', 'Vazia');
-  definirEtiqueta('resumo-agenda-vis', dias > 0, 'Com datas', 'Sem datas');
 }
 
 /**
@@ -232,97 +152,6 @@ function definirEtiqueta(id, ligado, textoLigado, textoDesligado) {
   if (!etiqueta) return;
   etiqueta.textContent = ligado ? textoLigado : textoDesligado;
   etiqueta.dataset.estado = ligado ? 'publicado' : 'oculto';
-}
-
-function definirTodos(valor) {
-  for (const tag of Object.keys(visibilidade)) visibilidade[tag] = valor;
-  pintarVisibilidade();
-  aplicarEAtualizar();
-  avisar(valor ? 'Todos os blocos foram publicados.' : 'Todos os blocos foram ocultos.', valor ? 'ok' : 'erro');
-}
-
-function pintarVisibilidade() {
-  const grade = el('grade-vis');
-  grade.replaceChildren();
-
-  for (const grupo of gruposCompletos()) {
-    const cartao = document.createElement('section');
-    cartao.className = 'cartao';
-
-    const topo = document.createElement('div');
-    topo.className = 'cartao-topo';
-    const titulo = document.createElement('h3');
-    titulo.className = 'cartao-titulo';
-    titulo.textContent = grupo.nome;
-    topo.appendChild(titulo);
-    cartao.appendChild(topo);
-
-    const corpo = document.createElement('div');
-    corpo.className = 'cartao-corpo';
-    corpo.style.gap = '8px';
-
-    for (const tag of grupo.tags) {
-      corpo.appendChild(linhaVisibilidade(tag));
-    }
-
-    cartao.appendChild(corpo);
-    grade.appendChild(cartao);
-  }
-
-  aplicarFiltros();
-}
-
-function linhaVisibilidade(tag) {
-  const linha = document.createElement('div');
-  linha.className = 'item-vis';
-  linha.dataset.tag = tag;
-
-  const textos = document.createElement('span');
-
-  const nome = document.createElement('span');
-  nome.className = 'item-vis-nome';
-  nome.textContent = NOMES[tag] || tag;
-  textos.appendChild(nome);
-
-  const codigo = document.createElement('span');
-  codigo.className = 'item-vis-tag';
-  codigo.textContent = tag;
-  textos.appendChild(codigo);
-
-  linha.appendChild(textos);
-
-  const chave = document.createElement('label');
-  chave.className = 'chave';
-
-  const input = document.createElement('input');
-  input.type = 'checkbox';
-  input.checked = Boolean(visibilidade[tag]);
-  input.setAttribute('aria-label', nome.textContent);
-
-  const trilho = document.createElement('span');
-  trilho.className = 'chave-trilho';
-
-  chave.appendChild(input);
-  chave.appendChild(trilho);
-
-  input.addEventListener('change', () => {
-    visibilidade[tag] = input.checked;
-    aplicarEAtualizar();
-    aplicarFiltros();
-  });
-
-  linha.appendChild(chave);
-  return linha;
-}
-
-function aplicarFiltros() {
-  const soPublicados = el('filtro-publicados').checked;
-  const soOcultos = el('filtro-ocultos').checked;
-
-  for (const linha of document.querySelectorAll('.item-vis[data-tag]')) {
-    const publicado = Boolean(visibilidade[linha.dataset.tag]);
-    linha.style.display = publicado ? (soPublicados ? '' : 'none') : soOcultos ? '' : 'none';
-  }
 }
 
 // --------------------------------------------------------------- imagens
@@ -538,9 +367,7 @@ async function salvarHero(botao) {
   await comBotao(botao, async () => {
     const atual = conteudo.hero || defaultData.hero;
     const botaoAtual = atual.button || defaultData.hero.button;
-    const centerAtual = conteudo.center || defaultData.center;
     const capa = await enviarCapaSeEscolhido(el('hero-imagem'), atual, tirarVideoCapa);
-    const centro = await enviarCentroSeEscolhido(el('center-arquivo'), centerAtual);
 
     conteudo = await dados.save({
       hero: {
@@ -556,15 +383,31 @@ async function salvarHero(botao) {
           whatsapp: el('botao-whatsapp').value.replace(/\D/g, ''),
           message: el('botao-mensagem').value.trim()
         }
-      },
-      center: centro
+      }
     });
 
     tirarVideoCapa = false;
     el('hero-imagem').value = '';
-    el('center-arquivo').value = '';
     pintarTextos();
     // A tela inicial mostra o que está no ar, não o que está no formulário.
+    atualizarEstatisticas();
+  });
+}
+
+/**
+ * O destaque central é salvo sozinho, e não junto com a capa: são duas
+ * decisões diferentes e quem edita a capa não deveria ter que gravar o
+ * vídeo do meio por tabela.
+ */
+async function salvarCentro(botao) {
+  await comBotao(botao, async () => {
+    const atual = conteudo.center || defaultData.center;
+    const centro = await enviarCentroSeEscolhido(el('center-arquivo'), atual);
+
+    conteudo = await dados.save({ center: centro });
+
+    el('center-arquivo').value = '';
+    pintarCentro();
     atualizarEstatisticas();
   });
 }
@@ -863,10 +706,14 @@ function linhaServico(servico, indice) {
   const grade = document.createElement('div');
   grade.className = 'grade-campos campo--largo';
   grade.appendChild(campoServico('Descrição', servico.description, servico, 'description', 'O que entra no ensaio'));
-  grade.appendChild(campoServico('Inclui', servico.includes, servico, 'includes', '10 fotos, 1 vídeo curto'));
   grade.appendChild(campoServico('WhatsApp próprio (só números)', servico.whatsapp, servico, 'whatsapp', '5581999999999'));
   grade.appendChild(campoServico('Mensagem do WhatsApp', servico.whatsappMessage, servico, 'whatsappMessage', 'Olá! Quero esse serviço.'));
   linha.appendChild(grade);
+
+  // "Inclui" é uma lista, não um texto: a página de serviços renderiza cada
+  // item como um <li> (uiManager.js buildServiceCard). Uma string aqui
+  // apagaria a lista inteira do site.
+  linha.appendChild(campoInclui(servico));
 
   // troca de imagem
   const upload = document.createElement('label');
@@ -890,6 +737,90 @@ function linhaServico(servico, indice) {
 
   return linha;
 }
+
+/**
+ * Editor da lista "Inclui". Cada item é um campo próprio, com um botão para
+ * tirar e outro para incluir — é a diferença entre ver "o que está no ar" e
+ * reescrever tudo de um jeito só.
+ *
+ * Aceita o conteúdo antigo em texto: conteúdo salvo antes desta lista existir
+ * é uma frase com os itens separados por vírgula, e dividir por linha mantém o
+ * que a dona já tinha escrito em vez de mostrar um item só.
+ */
+function campoInclui(servico) {
+  const campo = document.createElement('div');
+  campo.className = 'campo campo--largo';
+
+  const topo = document.createElement('div');
+  topo.className = 'campo-linha';
+
+  const texto = document.createElement('span');
+  texto.className = 'campo-rotulo';
+  texto.textContent = 'Inclui';
+  topo.appendChild(texto);
+
+  const adicionar = document.createElement('button');
+  adicionar.type = 'button';
+  adicionar.className = 'btn btn--pequeno';
+  adicionar.innerHTML = '<svg class="icone icone--p" aria-hidden="true"><use href="#i-mais"></use></svg>Incluir item';
+  adicionar.addEventListener('click', () => {
+    servico.includes.push('');
+    pintarInclui(campo, servico);
+    campo.querySelector('.item-inclui:last-child input')?.focus();
+  });
+  topo.appendChild(adicionar);
+
+  campo.appendChild(topo);
+
+  pintarInclui(campo, servico);
+  return campo;
+}
+
+function pintarInclui(campo, servico) {
+  campo.querySelector('.lista-inclui')?.remove();
+
+  const lista = document.createElement('div');
+  lista.className = 'lista-inclui';
+
+  servico.includes.forEach((item, indice) => {
+    const linha = document.createElement('div');
+    linha.className = 'item-inclui';
+
+    const entrada = document.createElement('input');
+    entrada.className = 'entrada';
+    entrada.type = 'text';
+    entrada.value = String(item ?? '');
+    entrada.placeholder = 'Até 50 fotos editadas';
+    entrada.addEventListener('input', () => {
+      servico.includes[indice] = entrada.value;
+    });
+    linha.appendChild(entrada);
+
+    const remover = document.createElement('button');
+    remover.type = 'button';
+    remover.className = 'btn-icone btn-icone--perigo';
+    remover.title = 'Tirar este item';
+    remover.setAttribute('aria-label', 'Tirar este item da lista');
+    remover.innerHTML = '<svg class="icone" aria-hidden="true"><use href="#i-lixeira"></use></svg>';
+    remover.addEventListener('click', () => {
+      servico.includes.splice(indice, 1);
+      pintarInclui(campo, servico);
+    });
+    linha.appendChild(remover);
+
+    lista.appendChild(linha);
+  });
+
+  if (!servico.includes.length) {
+    const vazio = document.createElement('p');
+    vazio.className = 'campo-dica';
+    vazio.textContent = 'Nenhum item. A lista some do site enquanto estiver vazia.';
+    lista.appendChild(vazio);
+  }
+
+  campo.appendChild(lista);
+}
+
 
 function campoServico(rotulo, valor, servico, propriedade, exemplo, curto = false) {
   const campo = document.createElement('label');
@@ -935,7 +866,8 @@ async function salvarServicos(botao) {
         description: String(servico.description ?? '').trim(),
         price: String(servico.price ?? '').trim(),
         duration: String(servico.duration ?? '').trim(),
-        includes: String(servico.includes ?? '').trim(),
+        // Sempre array: é o que o site lê. String aqui apagaria a lista.
+        includes: normalizarInclui(servico.includes),
         whatsapp: String(servico.whatsapp ?? '').replace(/\D/g, ''),
         whatsappMessage: String(servico.whatsappMessage ?? '').trim(),
         image: imagem || ''
@@ -1061,103 +993,6 @@ async function salvarDuvidas(botao) {
   });
 }
 
-// -------------------------------------------------------------- agenda
-
-const MESES = [
-  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-];
-
-const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-
-/** Chave de dia no mesmo formato que o calendário do site usa. */
-function chaveDia(ano, mes, dia) {
-  return `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-}
-
-function pintarAgenda() {
-  const grade = el('agenda');
-  grade.replaceChildren();
-
-  const ano = mesAgenda.getFullYear();
-  const mes = mesAgenda.getMonth();
-
-  for (const dia of DIAS_SEMANA) {
-    const titulo = document.createElement('div');
-    titulo.className = 'agenda-cabecalho';
-    titulo.textContent = dia;
-    grade.appendChild(titulo);
-  }
-
-  // A primeira semana só tem lugar para os dias que já passaram do mês antes,
-  // para o dia 1 cair na coluna certa.
-  const primeiroDia = new Date(ano, mes, 1).getDay();
-  for (let i = 0; i < primeiroDia; i++) {
-    const vazio = document.createElement('div');
-    vazio.dataset.fora = 'true';
-    grade.appendChild(vazio);
-  }
-
-  const totalDias = new Date(ano, mes + 1, 0).getDate();
-  const hoje = new Date();
-  hoje.setHours(0, 0, 0, 0);
-
-  for (let dia = 1; dia <= totalDias; dia++) {
-    const botao = document.createElement('button');
-    botao.type = 'button';
-    botao.className = 'agenda-dia';
-    botao.textContent = String(dia);
-
-    const chave = chaveDia(ano, mes, dia);
-    const marcado = Boolean(datas[chave]);
-    botao.setAttribute('aria-pressed', String(marcado));
-    botao.setAttribute('aria-label', `Dia ${dia} de ${MESES[mes]}: ${marcado ? 'disponível' : 'indisponível'}`);
-
-    // Um dia que já passou não pode ser marcado: a cliente chegaria depois dele.
-    const data = new Date(ano, mes, dia);
-    if (data < hoje) {
-      botao.disabled = true;
-      botao.title = 'Este dia já passou.';
-    }
-
-    botao.addEventListener('click', () => {
-      if (datas[chave]) delete datas[chave];
-      else datas[chave] = true;
-      botao.setAttribute('aria-pressed', String(Boolean(datas[chave])));
-      atualizarResumoAgenda();
-    });
-
-    grade.appendChild(botao);
-  }
-
-  atualizarResumoAgenda();
-}
-
-function atualizarResumoAgenda() {
-  const marcadas = Object.keys(datas).sort();
-  const resumo = el('agenda-resumo');
-  if (!resumo) return;
-
-  resumo.textContent = marcadas.length
-    ? `${marcadas.length} ${marcadas.length === 1 ? 'dia disponível' : 'dias disponíveis'}: ${formatarListaDeDatas(marcadas)}.`
-    : 'Nenhum dia marcado. Sem marcação, o calendário do site não oferece nenhuma data.';
-}
-
-/** Até 5 datas por linha, para o texto não virar uma parede. */
-function formatarListaDeDatas(chaves) {
-  const formatadas = chaves.map((chave) => {
-    const [ano, mes, dia] = chave.split('-');
-    return `${dia}/${mes}`;
-  });
-  const mostraveis = formatadas.slice(0, 5).join(', ');
-  return formatadas.length > 5 ? `${mostraveis} e mais ${formatadas.length - 5}` : mostraveis;
-}
-
-async function salvarAgenda(botao) {
-  await comBotao(botao, async () => {
-    await putContent('availableDates', datas);
-  });
-}
 
 // ------------------------------------------------------------ navegação
 
@@ -1168,9 +1003,13 @@ async function salvarAgenda(botao) {
  * Contatos e Sobre mim não entram ainda: nenhuma das duas telas tem fonte de
  * dado no site (o rodapé só tem o copyright e a página Sobre é HTML fixo), e
  * uma aba que não edita nada seria função sem ligação com o site.
+ *
+ * A ordem importa: Textos vem logo depois da visão geral porque é o que se
+ * edita com mais frequência.
  */
 const SECOES = {
   'visao-geral': 'Visão geral',
+  textos: 'Textos do site',
   portfolio: 'Portfólio',
   servicos: 'Serviços',
   duvidas: 'Dúvidas'
@@ -1179,21 +1018,44 @@ const SECOES = {
 const ORDEM = Object.keys(SECOES);
 
 /**
+ * Nomes alternativos que levam à mesma seção.
+ *
+ * "Minha Galeria" é o botão fixo no rodapé do trilho. Hoje ele cai em
+ * Portfólio, que é onde as categorias e as fotos do site são gerenciadas.
+ * Quando a tela de Galeria existir, é um caractere aqui e a lista de seções.
+ */
+const ALIAS = {
+  galeria: 'portfolio'
+};
+
+/** Resolve um alvo de rota para uma seção real, com os apelidos aplicados. */
+function resolverSecao(id) {
+  const alvo = ALIAS[id] || id;
+  return ORDEM.includes(alvo) ? alvo : ORDEM[0];
+}
+
+/**
  * Troca de seção mostrando um painel por vez.
  *
  * Sem rolagem: o cabeçalho é fixo, o conteúdo inteiro cabe na tela e rolar até
  * uma seção que já está visível só causaria tremida.
  */
 function mostrarSecao(id, { moverHash = true } = {}) {
-  const alvo = ORDEM.includes(id) ? id : ORDEM[0];
+  const alvo = resolverSecao(id);
 
   for (const nome of ORDEM) {
     const painel = el(`painel-${nome}`);
-    const item = document.querySelector(`.trilho-item[data-alvo="${nome}"]`);
     const ativa = nome === alvo;
 
     if (painel) painel.hidden = !ativa;
-    if (item) item.setAttribute('aria-current', String(ativa));
+
+    // Todos os itens que apontam para esta seção acendem junto: o atalho do
+    // rodapé marca "você está aqui" junto com o item do trilho. Um só
+    // highlighted seria mais limpo, mas deixaria o botão do rodapé sem
+    // resposta visual quando é por ele que a pessoa chegou.
+    for (const item of document.querySelectorAll(`.trilho-item[data-alvo="${nome}"]`)) {
+      item.setAttribute('aria-current', String(ativa));
+    }
   }
 
   el('topo-titulo').textContent = SECOES[alvo];
@@ -1219,17 +1081,13 @@ function ligarNavegacao() {
     atalho.addEventListener('click', () => mostrarSecao(atalho.dataset.ir));
   }
 
-  // /config#agenda abre direto na seção da agenda.
+  // /config#servicos abre direto na seção de serviços.
   window.addEventListener('hashchange', () => {
     mostrarSecao(window.location.hash.slice(1), { moverHash: false });
   });
 
   mostrarSecao(window.location.hash.slice(1));
 
-  el('mostrar-tudo').addEventListener('click', () => definirTodos(true));
-  el('ocultar-tudo').addEventListener('click', () => definirTodos(false));
-  el('filtro-publicados').addEventListener('change', aplicarFiltros);
-  el('filtro-ocultos').addEventListener('change', aplicarFiltros);
   el('add-categoria').addEventListener('click', () => {
     // Mesma forma das categorias que já existem, para o site não encontrar
     // um cartão sem os campos que ele espera.
@@ -1256,7 +1114,8 @@ function ligarNavegacao() {
       description: '',
       price: '',
       duration: '',
-      includes: '',
+      // Lista, não texto: é o formato que a página de serviços renderiza.
+      includes: [],
       image: '',
       whatsapp: '',
       whatsappMessage: ''
@@ -1271,20 +1130,11 @@ function ligarNavegacao() {
     el('lista-duvidas').querySelector('.duvida:last-child .entrada')?.focus();
   });
 
-  el('agenda-mes-antes').addEventListener('click', () => {
-    mesAgenda = new Date(mesAgenda.getFullYear(), mesAgenda.getMonth() - 1, 1);
-    pintarAgenda();
-  });
-
-  el('agenda-mes-depois').addEventListener('click', () => {
-    mesAgenda = new Date(mesAgenda.getFullYear(), mesAgenda.getMonth() + 1, 1);
-    pintarAgenda();
-  });
-
   for (const botao of document.querySelectorAll('[data-salvar]')) {
     const destino = botao.dataset.salvar;
     botao.addEventListener('click', () => {
       if (destino === 'hero') salvarHero(botao);
+      else if (destino === 'centro') salvarCentro(botao);
       else if (destino === 'banner') salvarBanner(botao);
     });
   }
@@ -1292,7 +1142,6 @@ function ligarNavegacao() {
   el('salvar-categorias').addEventListener('click', (evento) => salvarCategorias(evento.currentTarget));
   el('salvar-servicos').addEventListener('click', (evento) => salvarServicos(evento.currentTarget));
   el('salvar-duvidas').addEventListener('click', (evento) => salvarDuvidas(evento.currentTarget));
-  el('salvar-agenda').addEventListener('click', (evento) => salvarAgenda(evento.currentTarget));
 
   // A capa aceita vídeo: a prévia e o aviso de tamanho são os mesmos do
   // campo do meio, e é ela que decide o que mostrar.
@@ -1355,13 +1204,10 @@ async function iniciar() {
   ligarTema();
   aplicarTema(document.documentElement.dataset.tema || 'escuro');
 
-  // Visibilidade também vem do servidor, e não do cache: o painel envia o
-  // mapa inteiro a cada clique, então um estado velho sobrescreveria o que
-  // outra aba tivesse acabado de salvar. O cache serve só de rede de segurança.
-  const remotoVisibilidade = await fetchVisibility();
-  visibilidade = remotoVisibilidade || readCache() || { ...defaultVisibility };
-  pintarVisibilidade();
-  writeCache(visibilidade);
+  // A visibilidade alimenta só os números da visão geral. fetchVisibility já
+  // devolve o padrão quando a chave não existe no servidor, então um erro de
+  // rede aqui não impede o painel de abrir.
+  visibilidade = (await fetchVisibility()) || { ...defaultVisibility };
 
   // Conteúdo: os textos, as categorias e os serviços.
   //
@@ -1374,23 +1220,24 @@ async function iniciar() {
   // publicado) para o próximo save não nascer com versão menor que a atual.
   dados.adopt(conteudo);
   categorias = (conteudo.categories || []).map((categoria) => ({ ...categoria }));
-  servicos = (conteudo.services || []).map((servico) => ({ ...servico }));
+  // includes chega como array do site e como texto de painéis antigos: a lista
+  // só aceita array, então normaliza já na leitura e o editor nunca começa com
+  // um item só, cheio de vírgulas.
+  servicos = (conteudo.services || []).map((servico) => ({
+    ...servico,
+    includes: normalizarInclui(servico.includes)
+  }));
 
-  // Dúvidas e agenda moram em chaves próprias, não em siteData: são o que
-  // cada página do site busca. Falha ao buscar não impede o painel de abrir —
+  // Dúvidas moram em chave própria, não em siteData: é o que a página
+  // /pages/duvidas.html busca. Falha ao buscar não impede o painel de abrir —
   // a seção cai no estado vazio e a dona salva o que quiser.
-  const [remotoDuvidas, remotoDatas] = await Promise.all([
-    getContent('faqs').catch(() => null),
-    getContent('availableDates').catch(() => null)
-  ]);
+  const remotoDuvidas = await getContent('faqs').catch(() => null);
   duvidas = Array.isArray(remotoDuvidas) ? remotoDuvidas : [];
-  datas = remotoDatas && typeof remotoDatas === 'object' ? { ...remotoDatas } : {};
 
   pintarTextos();
   pintarCategorias();
   pintarServicos();
   pintarDuvidas();
-  pintarAgenda();
   atualizarEstatisticas();
   marcarEstado('salvo', 'Sincronizado');
 }

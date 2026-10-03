@@ -47,6 +47,16 @@
             <circle cx="12" cy="12" r="9"/>
             <path d="M9.6 9.3a2.5 2.5 0 1 1 3.3 2.4c-.6.2-.9.7-.9 1.3v.5M12 16.8v.2"/>
         </symbol>
+        <symbol id="i-textos" viewBox="0 0 24 24">
+            <path d="M4 6h16M4 11h10M4 16h13"/>
+            <path d="M18.5 15.5 21 18l-2.5 2.5L16 18z"/>
+        </symbol>
+        <symbol id="i-galeria" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="16" rx="2.5"/>
+            <circle cx="8.5" cy="9.5" r="1.5"/>
+            <path d="M4 17l4.5-4.5a2 2 0 0 1 2.8 0L16 17"/>
+            <path d="M14 14l1.8-1.8a2 2 0 0 1 2.8 0L21 15"/>
+        </symbol>
         <symbol id="i-menu" viewBox="0 0 24 24">
             <path d="M4 7h16M4 12h16M4 17h10"/>
         </symbol>
@@ -128,6 +138,11 @@
                     <svg class="icone" aria-hidden="true"><use href="#i-visao-geral"/></svg>
                     <span class="trilho-rotulo" aria-hidden="true">Visão geral</span>
                 </button>
+                <button class="trilho-item" type="button" data-alvo="textos"
+                    aria-label="Textos do site" aria-current="false">
+                    <svg class="icone" aria-hidden="true"><use href="#i-textos"/></svg>
+                    <span class="trilho-rotulo" aria-hidden="true">Textos do site</span>
+                </button>
                 <button class="trilho-item" type="button" data-alvo="portfolio"
                     aria-label="Portfólio" aria-current="false">
                     <svg class="icone" aria-hidden="true"><use href="#i-portfolio"/></svg>
@@ -151,6 +166,11 @@
                     aria-label="Mudar para o tema claro">
                     <svg class="icone" aria-hidden="true" id="tema-icone"><use href="#i-lua"/></svg>
                     <span class="trilho-rotulo" aria-hidden="true" id="tema-rotulo">Tema claro</span>
+                </button>
+                <button class="trilho-item" type="button" data-alvo="portfolio"
+                    aria-label="Acessar minha Galeria" aria-current="false">
+                    <svg class="icone" aria-hidden="true"><use href="#i-galeria"/></svg>
+                    <span class="trilho-rotulo" aria-hidden="true">Acessar minha Galeria</span>
                 </button>
                 <a class="trilho-item" href="/" target="_blank" rel="noopener" aria-label="Ver o site">
                     <svg class="icone" aria-hidden="true"><use href="#i-externo"/></svg>
@@ -222,6 +242,12 @@
                                         <dd id="resumo-subtitulo">—</dd>
                                     </div>
                                     <div class="resumo-linha">
+                                        <dt>Grade do portfólio</dt>
+                                        <dd>
+                                            <span class="etiqueta" id="resumo-grade" data-estado="">—</span>
+                                        </dd>
+                                    </div>
+                                    <div class="resumo-linha">
                                         <dt>Categorias no portfólio</dt>
                                         <dd id="resumo-categorias">—</dd>
                                     </div>
@@ -246,6 +272,14 @@
                             </div>
                             <div class="cartao-corpo">
                                 <div class="atalhos">
+                                    <button class="atalho" type="button" data-ir="textos">
+                                        <span class="atalho-icone"><svg class="icone" aria-hidden="true"><use href="#i-textos"/></svg></span>
+                                        <span class="atalho-textos">
+                                            <span class="atalho-nome">Textos do site</span>
+                                            <span class="atalho-desc">Títulos, legendas e capas</span>
+                                        </span>
+                                        <svg class="icone icone--p" aria-hidden="true"><use href="#i-seta-dir"/></svg>
+                                    </button>
                                     <button class="atalho" type="button" data-ir="portfolio">
                                         <span class="atalho-icone"><svg class="icone" aria-hidden="true"><use href="#i-portfolio"/></svg></span>
                                         <span class="atalho-textos">
@@ -276,7 +310,160 @@
                     </div>
                 </section>
 
-                <!-- ------------------------------------------ 2. portfólio -->
+                <!-- ------------------------------------------ 2. textos -->
+                <section class="painel" id="painel-textos" tabindex="-1" hidden>
+
+                    <div class="painel-topo">
+                        <div>
+                            <h2 class="painel-titulo">Textos do site</h2>
+                            <p class="painel-desc">
+                                O que a visitante lê quando abre o site: título, frase de apoio,
+                                botão de orçamento e as capas.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- ------------------------------------------------- principal -->
+                    <div class="cartao">
+                        <div class="cartao-topo">
+                            <h3 class="cartao-titulo">Seção principal</h3>
+                            <button class="btn btn-primario" type="button" data-salvar="hero">Salvar</button>
+                        </div>
+                        <div class="cartao-corpo">
+
+                            <div class="midia">
+                                <div class="midia-previa">
+                                    <img id="hero-previa" alt="Prévia da capa" hidden>
+                                    <video id="hero-previa-video" muted loop playsinline
+                                        aria-label="Prévia do vídeo de capa" hidden></video>
+                                    <span class="miniatura-vazia" id="hero-previa-vazia">
+                                        <svg class="icone" aria-hidden="true"><use href="#i-upload"/></svg>
+                                    </span>
+                                </div>
+                                <div class="midia-info">
+                                    <span class="campo-rotulo">Capa</span>
+                                    <p class="campo-dica" id="hero-imagem-atual">Nenhuma capa definida.</p>
+                                    <label class="campo">
+                                        <span class="campo-rotulo">Trocar capa (imagem ou vídeo)</span>
+                                        <input class="entrada" type="file" id="hero-imagem"
+                                            accept="image/*,video/mp4,video/webm">
+                                    </label>
+                                    <button class="btn" type="button" id="hero-tirar-video" hidden>
+                                        <svg class="icone icone--p" aria-hidden="true"><use href="#i-x"/></svg>
+                                        Tirar o vídeo
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="grade-campos">
+                                <label class="campo campo--largo">
+                                    <span class="campo-rotulo">Frase acima do nome</span>
+                                    <input class="entrada" type="text" id="hero-etiqueta"
+                                        placeholder="Fotografia Gastronômica">
+                                </label>
+                                <label class="campo">
+                                    <span class="campo-rotulo">Seu nome</span>
+                                    <input class="entrada" type="text" id="hero-titulo" placeholder="Vilma Silva">
+                                </label>
+                                <label class="campo">
+                                    <span class="campo-rotulo">Frase de apoio</span>
+                                    <input class="entrada" type="text" id="hero-subtitulo"
+                                        placeholder="Imagens que despertam o desejo">
+                                </label>
+                            </div>
+
+                            <div class="grupo-arquivo">
+                                <h4 class="grupo-arquivo-titulo">Botão de orçamento</h4>
+                                <p class="grupo-arquivo-dica">
+                                    É o botão que abre o WhatsApp. O número só aceita dígitos, com o código do
+                                    país — o 55 do Brasil é obrigatório.
+                                </p>
+                                <div class="grade-campos">
+                                    <label class="campo">
+                                        <span class="campo-rotulo">Texto do botão</span>
+                                        <input class="entrada" type="text" id="botao-texto"
+                                            placeholder="Solicitar Orçamento">
+                                    </label>
+                                    <label class="campo">
+                                        <span class="campo-rotulo">WhatsApp (só números)</span>
+                                        <input class="entrada" type="text" id="botao-whatsapp"
+                                            inputmode="numeric" placeholder="5581999999999">
+                                    </label>
+                                    <label class="campo campo--largo">
+                                        <span class="campo-rotulo">Mensagem que abre pronta</span>
+                                        <textarea class="area" id="botao-mensagem" rows="2"
+                                            placeholder="Olá! Gostaria de solicitar um orçamento."></textarea>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- --------------------------------------------------- centro -->
+                    <div class="cartao">
+                        <div class="cartao-topo">
+                            <h3 class="cartao-titulo">Destaque central</h3>
+                            <button class="btn btn-primario" type="button" data-salvar="centro">Salvar</button>
+                        </div>
+                        <div class="cartao-corpo">
+                            <p class="painel-desc">
+                                A foto ou o vídeo que aparece no meio da seção principal. Sem este campo o site
+                                usa a própria capa.
+                            </p>
+                            <label class="campo">
+                                <span class="campo-rotulo">Escolher imagem ou vídeo</span>
+                                <input class="entrada" type="file" id="center-arquivo"
+                                    accept="image/*,video/mp4,video/webm">
+                            </label>
+                            <p class="campo-dica" id="center-atual">Padrão do site: a imagem de capa da seção principal.</p>
+                        </div>
+                    </div>
+
+                    <!-- --------------------------------------------------- banner -->
+                    <div class="cartao">
+                        <div class="cartao-topo">
+                            <h3 class="cartao-titulo">Chamada do portfólio</h3>
+                            <button class="btn btn-primario" type="button" data-salvar="banner">Salvar</button>
+                        </div>
+                        <div class="cartao-corpo">
+
+                            <div class="midia">
+                                <div class="midia-previa">
+                                    <img id="banner-previa" alt="Prévia do fundo do portfólio" hidden>
+                                    <span class="miniatura-vazia" id="banner-previa-vazia">
+                                        <svg class="icone" aria-hidden="true"><use href="#i-upload"/></svg>
+                                    </span>
+                                </div>
+                                <div class="midia-info">
+                                    <span class="campo-rotulo">Fundo do portfólio</span>
+                                    <p class="campo-dica" id="banner-imagem-atual">Nenhuma imagem definida.</p>
+                                    <label class="campo">
+                                        <span class="campo-rotulo">Trocar imagem</span>
+                                        <input class="entrada" type="file" id="banner-arquivo" accept="image/*">
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="grade-campos">
+                                <label class="campo">
+                                    <span class="campo-rotulo">Título do bloco</span>
+                                    <input class="entrada" type="text" id="banner-titulo-tela" placeholder="Portfólio">
+                                </label>
+                                <label class="campo">
+                                    <span class="campo-rotulo">Chamada</span>
+                                    <input class="entrada" type="text" id="banner-titulo"
+                                        placeholder="Escolha a categoria e explore nossos trabalhos.">
+                                </label>
+                                <label class="campo campo--largo">
+                                    <span class="campo-rotulo">Legenda (opcional)</span>
+                                    <input class="entrada" type="text" id="banner-subtitulo">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ------------------------------------------ 3. portfólio -->
                 <section class="painel" id="painel-portfolio" tabindex="-1" hidden>
 
                     <div class="painel-topo">
@@ -300,7 +487,7 @@
                     </div>
                 </section>
 
-                <!-- ------------------------------------------ 3. serviços -->
+                <!-- ------------------------------------------ 4. serviços -->
                 <section class="painel" id="painel-servicos" tabindex="-1" hidden>
 
                     <div class="painel-topo">
@@ -320,7 +507,7 @@
                     <div class="lista-servicos" id="lista-servicos"></div>
                 </section>
 
-                <!-- ------------------------------------------ 4. dúvidas -->
+                <!-- ------------------------------------------ 5. dúvidas -->
                 <section class="painel" id="painel-duvidas" tabindex="-1" hidden>
 
                     <div class="painel-topo">
@@ -345,6 +532,10 @@
         </div>
 
     </div>
+
+    <!-- Aviso de salvar. Fica no fim do body para poder passar por cima de
+         tudo, sem depender da seção que estiver aberta. -->
+    <div class="toast" id="toast" role="status" aria-live="polite" data-visivel="false"></div>
 
     <!-- Scripts -->
     <script type="module" src="./js/admin-panel.js"></script>

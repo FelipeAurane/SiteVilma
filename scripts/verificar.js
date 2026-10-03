@@ -23,10 +23,16 @@ function checar(nome, ok, detalhe) {
 async function principal() {
   // --------------------------------------------------------- variáveis
   const url = process.env.DATABASE_URL;
+  const urlValida = Boolean(url) && /^postgres(ql)?:\/\//.test(url);
+
   checar(
     'DATABASE_URL',
-    Boolean(url) && /^postgres(ql)?:\/\//.test(url),
-    url ? 'presente' : 'ausente — pegue a connection string no painel do banco'
+    urlValida,
+    url
+      ? urlValida
+        ? 'presente'
+        : 'não parece uma connection string do Postgres'
+      : 'ausente — pegue a connection string no painel do banco'
   );
 
   const pin = process.env.ADMIN_PIN;
@@ -62,9 +68,9 @@ async function principal() {
   }
 
   // -------------------------------------------------------------- banco
-  if (url) {
+  if (urlValida) {
     try {
-      const { query } = require('../lib/db');
+      const { query, avisaSeMock } = require('../lib/db');
       const { rows } = await query('SELECT version() AS versao');
       checar('Conexão com o banco', true, rows[0].versao.split(',')[0]);
 
@@ -88,9 +94,62 @@ async function principal() {
           ? conteudo.map((c) => `${c.key} (v${c.version})`).join(', ')
           : 'vazio — rode: node scripts/semear.js --gravar'
       );
+
+      // Confere que o banco realmente guarda o que se grava nele. Sem esta
+      // escrita de teste, um banco que aceita ler e descarta escrita passaria
+      // como saudável — e o painel só descobriria isso depois de publicar.
+      const chave = `verificacao:${Date.now()}`;
+      await query(
+        `INSERT INTO content (key, value, version, updated_at)
+              VALUES ($1, '{"ok":true}'::jsonb, 1, now())
+         ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()
+           RETURNING key`,
+        [chave]
+      );
+
+      const { rows: lido } = await query('SELECT value FROM content WHERE key = $1', [chave]);
+      const gravou = lido.length === 1 && lido[0].value?.ok === true;
+
+      await query('DELETE FROM content WHERE key = $1', [chave]);
+
+      checar(
+        'Escrita no banco',
+        gravou,
+        gravou ? 'ok' : 'O banco aceitou a escrita mas não devolveu o valor gravado.'
+      );
+
+      // O servidor cai para banco em memória quando a conexão falha. Com
+      // DATABASE_URL preenchida isso não pode acontecer em silêncio.
+      const { mockPermitido } = require('../lib/db');
+      checar(
+        'Banco em memória',
+        !mockPermitido(),
+        mockPermitido()
+          ? 'PERMITIDO com DATABASE_URL preenchida — o servidor pode gravar num banco que se perde ao reiniciar'
+          : 'desligado (o servidor falha em vez de fingir que salvou)'
+      );
     } catch (err) {
       checar('Conexão com o banco', false, err.message);
     }
+  } else {
+    checar('Conexão com o banco', false, 'pulado — sem DATABASE_URL');
+    checar('Escrita no banco', false, 'pulado — sem DATABASE_URL');
+  }
+
+  // ------------------------------------------------------------- frontend
+  // Um caminho de asset quebrado só aparece quando alguém abre a página.
+  // O build falha nesses casos, mas ele só roda no CI: conferir aqui pega
+  // antes do push.
+  try {
+    const { referenciasDoSite } = require('../scripts/build');
+    const { faltando } = referenciasDoSite();
+    checar(
+      'Assets referenciados',
+      faltando.length === 0,
+      faltando.length ? `faltando: ${faltando.join(', ')}` : 'todos os CSS e JS existem'
+    );
+  } catch (err) {
+    checar('Assets referenciados', false, err.message);
   }
 
   // ---------------------------------------------------------- relatório

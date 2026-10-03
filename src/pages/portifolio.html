@@ -5,12 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Portfólio em Construção</title>
-    <!-- Adicione o link para o seu arquivo CSS -->
-    <link rel="stylesheet" href="/src/css/portifolio.css">
-    <!-- Links para arquivos de estilo -->
-    <link rel="stylesheet" href="/src/css/main_config.css" />
-    <link rel="stylesheet" href="/src/css/style_desktop.css" />
-    <link rel="stylesheet" href="/src/css/style_mobile.css" />
+    <!-- Caminhos relativos como nas outras páginas: o servidor entrega src/ na
+         raiz, então "../css/..." funciona tanto local quanto na Vercel. -->
+    <link rel="stylesheet" href="../css/portifolio.css">
+    <link rel="stylesheet" href="../css/main_config.css" />
+    <link rel="stylesheet" href="../css/style_desktop.css" />
+    <link rel="stylesheet" href="../css/style_mobile.css" />
 
 </head>
 
@@ -25,7 +25,7 @@
         <section id="profile">
             <div class="section__pic-container">
                 <!-- Imagem para dispositivos móveis -->
-                <img src="/src/img/vilmasobremim.png" alt="Foto do perfil" class="pic">
+                <img src="../img/vilmasobremim.png" alt="Foto do perfil" class="pic">
             </div>
 
             <div class="section__text-desktop">
@@ -44,9 +44,9 @@
             <!-- Conteúdo da seção Home -->
             <div class="section__pic-container">
                 <!-- Imagem frontal -->
-                <img src="/src/img/vilmasobremim.png" alt="Foto do perfil" class="pic" id="pic-front">
+                <img src="../img/vilmasobremim.png" alt="Foto do perfil" class="pic" id="pic-front">
                 <!-- Imagem traseira -->
-                <img src="/src/img/img-logo.jpg" alt="Foto do perfil" class="pic" id="pic-back">
+                <img src="../img/img-logo.jpg" alt="Foto do perfil" class="pic" id="pic-back">
             </div>
 
             <div class="section__text-mobile">
@@ -58,7 +58,7 @@
         </section>
     </div>
     <!-- Principais Configurações -->
-    <script src="/src/js/animation.js"></script>
+    <script src="../js/animation.js"></script>
 </body>
 
 </html>

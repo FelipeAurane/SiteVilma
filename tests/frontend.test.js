@@ -201,6 +201,50 @@ async function testIsVideoMedia() {
   console.log('✓ isVideoMedia OK\n');
 }
 
+// "Inclui" de um serviço é lista no site: cada item vira um <li>. Se o painel
+// gravasse texto, a página de serviços perderia a lista inteira. Este teste
+// trava os dois formatos de entrada — array novo e frase antiga.
+async function testNormalizarInclui() {
+  console.log('Testando normalizarInclui...');
+
+  const { normalizarInclui } = await import('../src/js/dataManager.js');
+
+  // O formato que o site lê.
+  assert.deepStrictEqual(
+    normalizarInclui(['Até 50 fotos', 'Entrega em alta resolução']),
+    ['Até 50 fotos', 'Entrega em alta resolução']
+  );
+
+  // Conteúdo antigo, gravado pelo painel que editava "Inclui" como texto.
+  assert.deepStrictEqual(
+    normalizarInclui('Até 50 fotos, Entrega em alta resolução'),
+    ['Até 50 fotos', 'Entrega em alta resolução']
+  );
+  assert.deepStrictEqual(
+    normalizarInclui('Até 50 fotos\nEntrega em alta resolução'),
+    ['Até 50 fotos', 'Entrega em alta resolução']
+  );
+  assert.deepStrictEqual(
+    normalizarInclui('Até 50 fotos; Entrega em alta resolução'),
+    ['Até 50 fotos', 'Entrega em alta resolução']
+  );
+
+  // Item em branco some: o site não teria o que mostrar dele.
+  assert.deepStrictEqual(normalizarInclui(['a', '', '  ', 'b']), ['a', 'b']);
+  assert.deepStrictEqual(normalizarInclui('a, ,b'), ['a', 'b']);
+
+  // Vazio e ausente viram lista vazia, nunca texto — é o que o site espera.
+  assert.deepStrictEqual(normalizarInclui(''), []);
+  assert.deepStrictEqual(normalizarInclui(null), []);
+  assert.deepStrictEqual(normalizarInclui(undefined), []);
+  assert.deepStrictEqual(normalizarInclui([]), []);
+
+  // Array com número continua texto legível em vez de sumir.
+  assert.deepStrictEqual(normalizarInclui(['10 fotos', 50]), ['10 fotos', '50']);
+
+  console.log('V normalizarInclui OK\n');
+}
+
 // ------------------------------------------------------------- execução
 
 console.log('=== Testes de Frontend ===\n');
@@ -213,6 +257,7 @@ console.log('=== Testes de Frontend ===\n');
     testText();
     await testLerSeloPublicacao();
     await testIsVideoMedia();
+    await testNormalizarInclui();
 
     console.log('=== Todos os testes passaram! ===');
     process.exit(0);
