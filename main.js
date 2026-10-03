@@ -54,9 +54,19 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'src', 'index.html'));
 });
 
-app.get('/config', (req, res) => {
+app.get(['/config', '/admin', '/painel'], (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   res.sendFile(path.join(__dirname, 'src', 'config.html'));
+});
+
+app.get(['/login', '/entrar'], (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.sendFile(path.join(__dirname, 'src', 'login.html'));
+});
+
+app.get(['/catalogo', '/galeria-cliente', '/cliente'], (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.sendFile(path.join(__dirname, 'src', 'catalogo.html'));
 });
 
 app.use((req, res) => {

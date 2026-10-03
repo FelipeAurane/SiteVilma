@@ -210,106 +210,17 @@ ul {
 }
 
 .topo__marca {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  line-height: 1;
-  margin-right: auto;
-}
-
-.topo__nome {
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: .34em;
-  text-indent: .34em;
-  text-transform: uppercase;
-}
-
-.topo__tipo {
-  font-size: 7px;
-  font-weight: 300;
-  letter-spacing: .3em;
-  text-indent: .3em;
-  text-transform: uppercase;
-  color: var(--texto-sobre-escuro-fraco);
+  display: none !important;
 }
 
 .topo__acao {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  flex: none;
-  padding: 9px 16px;
-  border-radius: var(--raio-pilula);
-  background: var(--branco);
-  color: var(--preto);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: .04em;
-  transition: transform var(--transicao), background var(--transicao);
-}
-
-.topo__acao:hover {
-  transform: translateY(-2px);
-  background: var(--creme);
-}
-
-.topo__acao svg {
-  width: 14px;
-  height: 14px;
-  flex: none;
+  display: none !important;
 }
 
 /* ------------------------------------------------------ navegação entre */
 
-/*
- * As três subpáginas são irmãs. Esta barra é o que fecha a família: o
- * leitor chega sempre no mesmo lugar e sabe onde está.
- */
 .subnav {
-  position: sticky;
-  top: var(--cabecalho-altura);
-  z-index: 90;
-  display: flex;
-  gap: 8px;
-  padding: 10px var(--gutter);
-  background: rgba(14, 14, 16, .88);
-  backdrop-filter: blur(18px) saturate(180%);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  border-bottom: 1px solid var(--borda-sutil);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.subnav::-webkit-scrollbar {
-  display: none;
-}
-
-.subnav a {
-  flex: none;
-  padding: 7px 15px;
-  border: 1px solid transparent;
-  border-radius: var(--raio-pilula);
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: .16em;
-  text-indent: .16em;
-  text-transform: uppercase;
-  color: var(--texto-sobre-escuro-fraco);
-  white-space: nowrap;
-  transition: color var(--transicao), border-color var(--transicao),
-    background var(--transicao);
-}
-
-.subnav a:hover {
-  color: var(--branco);
-  background: rgba(255, 255, 255, .05);
-}
-
-.subnav a[aria-current='page'] {
-  color: var(--preto);
-  background: var(--creme);
-  border-color: var(--creme);
+  display: none !important;
 }
 
 /* ============================================================== página */

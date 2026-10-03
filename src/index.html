@@ -52,14 +52,15 @@
 
 <body>
 
-    <div class="splash-screen" id="splashScreen">
+    <div class="splash-screen" id="splashScreen" data-tag="splash-screen">
         <div class="loader">
             <span class="name">Vilma Fotografia</span>
+            <span class="subtitulo">Fotografia Gastronômica</span>
             <span class="linha"></span>
         </div>
     </div>
 
-    <div class="mainContent" id="mainContent" style="display: none;">
+    <div class="mainContent" id="mainContent">
 
         <!-- ------------------------------------------------- cabeçalho -->
         <header class="cabecalho" id="cabecalho">
@@ -79,11 +80,9 @@
 
             <button type="button" class="btn-orcamento" id="budget-button-header"
                 aria-label="Solicitar orçamento pelo WhatsApp">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" aria-hidden="true">
                     <path
-                        d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.13h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 0 1-1.26-4.36c0-4.54 3.7-8.23 8.25-8.23 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.41 5.82c0 4.54-3.7 8.24-8.24 8.24z" />
-                    <path
-                        d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.28.17-1.41-.07-.13-.27-.2-.57-.35z" />
+                        d="M17.472 14.382c-.301-.15-1.78-.878-2.056-.978-.276-.1-.476-.15-.676.15-.2.301-.776.979-.951 1.18-.176.2-.351.226-.652.076-.301-.15-1.27-.468-2.42-1.493-.895-.798-1.5-1.783-1.676-2.083-.175-.3-.019-.462.132-.612.136-.135.301-.351.451-.526.151-.176.201-.301.301-.502.1-.2.05-.376-.025-.526-.075-.15-.676-1.63-.926-2.233-.243-.587-.49-.508-.675-.517-.175-.01-.376-.01-.577-.01-.2 0-.526.075-.802.376-.276.301-1.052 1.028-1.052 2.508 0 1.48 1.077 2.91 1.227 3.111.15.2 2.12 3.237 5.136 4.54.717.31 1.277.496 1.713.635.72.228 1.375.196 1.893.119.577-.087 1.78-.727 2.03-1.43.25-.702.25-1.303.176-1.43-.076-.126-.276-.201-.577-.351zM12.067 20.01h-.007a8.04 8.04 0 0 1-4.103-1.127l-.294-.175-3.05.8 1.01-2.973-.191-.305a8.04 8.04 0 0 1-1.233-4.286c0-4.437 3.61-8.048 8.053-8.048a8.01 8.01 0 0 1 5.69 2.358 8.02 8.02 0 0 1 2.353 5.694c-.002 4.44-3.613 8.05-8.056 8.05l-.173.007zm7.11-15.163A10.02 10.02 0 0 0 12.06 1.94c-5.56 0-10.08 4.52-10.08 10.08 0 1.777.464 3.51 1.346 5.037L1.939 22.06l5.14-1.348a10.05 10.05 0 0 0 4.98 1.31h.005c5.558 0 10.08-4.522 10.082-10.082 0-2.693-1.049-5.225-2.97-7.143z" />
                 </svg>
                 <span id="budget-label-header">Solicitar Orçamento</span>
             </button>
@@ -107,6 +106,14 @@
                 <li data-tag="menu-servicos"><a href="./pages/servicos.html">Serviços</a></li>
                 <li data-tag="menu-duvidas"><a href="./pages/duvidas.html">Dúvidas</a></li>
             </ul>
+            <div class="menu-rodape-gaveta">
+                <a href="./login.html" class="btn-acessar-galeria">
+                    <span>Acessar minha galeria</span>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
             <div class="blok-menu" data-tag="menu-blok"></div>
         </nav>
 
@@ -308,11 +315,9 @@
                     <div class="view-buttons" data-tag="hero-buttons">
                         <button type="button" id="budget-button" class="btn-orcamento"
                             aria-label="Solicitar orçamento pelo WhatsApp">
-                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" aria-hidden="true">
                                 <path
-                                    d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.13h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 0 1-1.26-4.36c0-4.54 3.7-8.23 8.25-8.23 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.41 5.82c0 4.54-3.7 8.24-8.24 8.24z" />
-                                <path
-                                    d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.28.17-1.41-.07-.13-.27-.2-.57-.35z" />
+                                    d="M17.472 14.382c-.301-.15-1.78-.878-2.056-.978-.276-.1-.476-.15-.676.15-.2.301-.776.979-.951 1.18-.176.2-.351.226-.652.076-.301-.15-1.27-.468-2.42-1.493-.895-.798-1.5-1.783-1.676-2.083-.175-.3-.019-.462.132-.612.136-.135.301-.351.451-.526.151-.176.201-.301.301-.502.1-.2.05-.376-.025-.526-.075-.15-.676-1.63-.926-2.233-.243-.587-.49-.508-.675-.517-.175-.01-.376-.01-.577-.01-.2 0-.526.075-.802.376-.276.301-1.052 1.028-1.052 2.508 0 1.48 1.077 2.91 1.227 3.111.15.2 2.12 3.237 5.136 4.54.717.31 1.277.496 1.713.635.72.228 1.375.196 1.893.119.577-.087 1.78-.727 2.03-1.43.25-.702.25-1.303.176-1.43-.076-.126-.276-.201-.577-.351zM12.067 20.01h-.007a8.04 8.04 0 0 1-4.103-1.127l-.294-.175-3.05.8 1.01-2.973-.191-.305a8.04 8.04 0 0 1-1.233-4.286c0-4.437 3.61-8.048 8.053-8.048a8.01 8.01 0 0 1 5.69 2.358 8.02 8.02 0 0 1 2.353 5.694c-.002 4.44-3.613 8.05-8.056 8.05l-.173.007zm7.11-15.163A10.02 10.02 0 0 0 12.06 1.94c-5.56 0-10.08 4.52-10.08 10.08 0 1.777.464 3.51 1.346 5.037L1.939 22.06l5.14-1.348a10.05 10.05 0 0 0 4.98 1.31h.005c5.558 0 10.08-4.522 10.082-10.082 0-2.693-1.049-5.225-2.97-7.143z" />
                             </svg>
                             <span id="budget-label">Solicitar Orçamento</span>
                         </button>
@@ -339,6 +344,53 @@
             </div>
         </section>
 
+        <!-- ====================================================== BANNER: ÁREA DO CLIENTE / GALERIA (EXCLUSIVO WEB) -->
+        <section class="banner-area-cliente" id="banner-galeria-cliente" aria-label="Acesso à Galeria do Cliente">
+            <div class="faixa">
+                <div class="banner-cliente-card">
+                    <div class="banner-cliente-conteudo">
+                        <span class="banner-cliente-tag">Área do Cliente • Vilma Silva</span>
+                        <h2 class="banner-cliente-titulo">Acesse as fotos e o catálogo do seu estabelecimento</h2>
+                        <p class="banner-cliente-desc">
+                            Já realizou seu ensaio fotográfico? Entre na sua galeria privada para visualizar todas as fotos produzidas para os seus pratos e produtos, aprovar seus cliques preferidos e fazer o download em altíssima resolução (4K / 300 DPI) prontas para cardápio, iFood e redes sociais.
+                        </p>
+                        <div class="banner-cliente-beneficios">
+                            <span class="beneficio-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                Alta Definição (300 DPI)
+                            </span>
+                            <span class="beneficio-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                Seleção e Aprovação Online
+                            </span>
+                            <span class="beneficio-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                Padrão iFood & Impressão
+                            </span>
+                        </div>
+                        <div class="banner-cliente-acoes">
+                            <a href="./login.html" class="btn-acessar-banner" id="btn-acessar-galeria-banner">
+                                <span>Acessar minha galeria</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="banner-cliente-visual" aria-hidden="true">
+                        <div class="banner-visual-moldura">
+                            <img src="./img/p-steak.jpg" alt="Foto gastronômica de prato em alta definição" loading="lazy">
+                            <div class="banner-visual-overlay"></div>
+                            <div class="banner-visual-badge">
+                                <span class="badge-status-ponto"></span>
+                                <span>Catálogo Disponível</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- ----------------------------------------------- sobre a Vilma -->
         <section class="sobre-section" id="sobre" data-tag="sobre-section">
             <div class="faixa sobre-grade">
@@ -352,13 +404,21 @@
                         Trabalho com fotografia gastronômica para restaurantes, confeitarias,
                         marcas e empreendedores que querem mostrar o melhor do que fazem.
                     </p>
-                    <a class="btn-vazado" href="./pages/sobremim.html">Saiba mais &rarr;</a>
+                    <div class="sobre-texto-expandido" id="sobre-texto-expandido" hidden>
+                        <p class="sobre-texto">
+                            Fotógrafa de comida em Caruaru, Pernambuco. Trabalhei alguns anos no ramo da alimentação antes de me dedicar à fotografia. Foi lá que entendi a importância da imagem na mesa: o prato que ninguém enxerga não existe.
+                        </p>
+                        <p class="sobre-texto">
+                            Tenho paixão por capturar a essência dos sabores. Meu objetivo é continuar me desenvolvendo na área e crescer junto com a sua empresa. Vamos crescer juntos com fotos que geram desejo e encantam? Me manda um "Oi" pelo WhatsApp — tenho uma proposta exclusiva para você.
+                        </p>
+                    </div>
+                    <a class="btn-vazado" id="btn-expandir-sobre" href="#sobre" role="button" aria-expanded="false" aria-controls="sobre-texto-expandido"><span id="btn-expandir-sobre-rotulo">Saiba mais</span> <span id="btn-expandir-sobre-icone" aria-hidden="true">&rarr;</span></a>
                 </div>
             </div>
         </section>
 
         <footer data-tag="footer-section">
-            <p>&copy; 2025 Vilma Fotografia. Todos os direitos reservados.</p>
+            <p>&copy; 2025 Vilma Fotografia. Todos os direitos reservados. &bull; <a href="./config.html" class="link-admin" title="Painel de controle" style="color: inherit; text-decoration: none; opacity: 0.55; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.55'">Painel</a></p>
         </footer>
 
     </div>

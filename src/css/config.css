@@ -907,7 +907,8 @@ a {
   gap: 12px;
 }
 
-.miniatura img {
+.miniatura img,
+.miniatura video {
   width: 72px;
   height: 72px;
   flex: none;

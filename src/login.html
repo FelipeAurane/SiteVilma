@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área do Cliente | Fotos do Estabelecimento | Vilma Fotografia</title>
+    <meta name="description" content="Acesse a galeria exclusiva com as fotos do seu estabelecimento e produtos.">
+    <link rel="icon" type="image/svg+xml" href="./img/camera-icon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --preto: #09090b;
+            --preto-profundo: #050507;
+            --branco: #ffffff;
+            --creme: #f5ede4;
+            --ouro: #d4af37;
+            --cinza-texto: #a1a1aa;
+            --cinza-fraco: #71717a;
+            --borda-sutil: rgba(255, 255, 255, 0.1);
+            --borda-foco: rgba(245, 237, 228, 0.4);
+            --campo-fundo: rgba(255, 255, 255, 0.04);
+            --transicao: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            min-height: 100%;
+            background: var(--preto);
+            color: var(--branco);
+            font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Scrollbar: Escondido no mobile, estilo padrão do site no desktop */
+        @media (max-width: 899px) {
+            html, body {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            html::-webkit-scrollbar,
+            body::-webkit-scrollbar {
+                width: 0;
+                height: 0;
+                display: none;
+            }
+        }
+
+        @media (min-width: 900px) {
+            html {
+                scrollbar-width: thin;
+                scrollbar-color: rgba(224, 171, 171, 0.45) transparent;
+            }
+            html::-webkit-scrollbar {
+                width: 8px;
+            }
+            html::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            html::-webkit-scrollbar-thumb {
+                background: rgba(224, 171, 171, 0.35);
+                border-radius: 4px;
+            }
+            html::-webkit-scrollbar-thumb:hover {
+                background: rgba(224, 171, 171, 0.6);
+            }
+        }
+
+        /* Tela inteira (Fullscreen), sem parecer sobrepor nada */
+        body {
+            min-height: 100dvh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            background: radial-gradient(circle at 50% 15%, #18181f 0%, var(--preto) 70%);
+            padding: 32px 20px;
+            position: relative;
+        }
+
+        /* Topo integrado e limpo */
+        .marca-topo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .marca-nome {
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.36em;
+            text-indent: 0.36em;
+            text-transform: uppercase;
+            color: var(--branco);
+        }
+
+        .marca-sub {
+            font-size: 8.5px;
+            font-weight: 300;
+            letter-spacing: 0.3em;
+            text-indent: 0.3em;
+            text-transform: uppercase;
+            color: var(--cinza-fraco);
+        }
+
+        /* Conteúdo Principal Fullscreen integrado */
+        .portal-principal {
+            width: 100%;
+            max-width: 410px;
+            display: flex;
+            flex-direction: column;
+            margin: auto 0;
+            padding: 16px 0;
+        }
+
+        .portal-cabecalho {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .etiqueta-cliente {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.28em;
+            text-indent: 0.28em;
+            text-transform: uppercase;
+            color: var(--creme);
+            margin-bottom: 12px;
+        }
+
+        .portal-descricao {
+            font-size: 14px;
+            font-weight: 300;
+            color: var(--cinza-texto);
+            line-height: 1.6;
+        }
+
+        /* Formulário integrado */
+        .formulario {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .campo {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .campo-label {
+            font-size: 11.5px;
+            font-weight: 500;
+            color: var(--branco);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .input-icone {
+            position: absolute;
+            left: 16px;
+            width: 18px;
+            height: 18px;
+            color: var(--cinza-fraco);
+            pointer-events: none;
+            transition: color var(--transicao);
+        }
+
+        .entrada {
+            width: 100%;
+            padding: 15px 46px;
+            background: var(--campo-fundo);
+            border: 1px solid var(--borda-sutil);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 14.5px;
+            color: var(--branco);
+            outline: none;
+            transition: border-color var(--transicao), background var(--transicao), box-shadow var(--transicao);
+        }
+
+        .entrada:focus {
+            border-color: var(--borda-foco);
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 0 3px rgba(245, 237, 228, 0.12);
+        }
+
+        .entrada:focus ~ .input-icone {
+            color: var(--creme);
+        }
+
+        .btn-toggle-senha {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--cinza-fraco);
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: color var(--transicao);
+        }
+
+        .btn-toggle-senha:hover {
+            color: var(--branco);
+        }
+
+        .btn-toggle-senha svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Alertas: estritamente ocultos e sem ocupar espaço quando vazios */
+        .alerta,
+        .alerta:empty,
+        .alerta[hidden] {
+            display: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            background: none !important;
+        }
+
+        .alerta.visivel {
+            display: flex !important;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 16px !important;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .alerta-erro.visivel {
+            background: rgba(239, 68, 68, 0.12) !important;
+            border: 1px solid rgba(239, 68, 68, 0.3) !important;
+            color: #fca5a5;
+        }
+
+        .alerta-sucesso.visivel {
+            background: rgba(16, 185, 129, 0.12) !important;
+            border: 1px solid rgba(16, 185, 129, 0.3) !important;
+            color: #6ee7b7;
+        }
+
+        /* Botão de envio */
+        .btn-submit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px;
+            border-radius: 999px;
+            background: var(--branco);
+            color: var(--preto);
+            border: none;
+            font-family: inherit;
+            font-size: 14.5px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: transform var(--transicao), background var(--transicao), opacity var(--transicao);
+            margin-top: 8px;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background: var(--creme);
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-submit svg {
+            width: 16px;
+            height: 16px;
+            flex: none;
+        }
+
+        .btn-teste-rapido {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 13px;
+            border-radius: 999px;
+            background: rgba(245, 237, 228, 0.05);
+            border: 1px dashed rgba(245, 237, 228, 0.25);
+            color: var(--creme);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transicao);
+            margin-top: 4px;
+        }
+
+        .btn-teste-rapido:hover {
+            background: rgba(245, 237, 228, 0.12);
+            border-color: var(--creme);
+            color: var(--branco);
+        }
+
+        .spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: girar 0.6s linear infinite;
+        }
+
+        @keyframes girar {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Rodapé com links em texto simples */
+        .login-rodape {
+            margin-top: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 300;
+            color: var(--cinza-texto);
+        }
+
+        .login-rodape p {
+            line-height: 1.5;
+        }
+
+        .login-rodape a {
+            color: var(--creme);
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            transition: opacity var(--transicao), color var(--transicao);
+        }
+
+        .login-rodape a:hover {
+            opacity: 0.8;
+            color: var(--branco);
+        }
+
+        .rodape-voltar a {
+            color: var(--cinza-texto);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13.5px;
+        }
+
+        .rodape-voltar a:hover {
+            color: var(--branco);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Marca superior integrada à tela -->
+    <header class="marca-topo">
+        <span class="marca-nome">Vilma Silva</span>
+        <span class="marca-sub">Fotografia Gastronômica</span>
+    </header>
+
+    <!-- Formulário do portal do cliente -->
+    <main class="portal-principal">
+        <div class="portal-cabecalho">
+            <span class="etiqueta-cliente">Área do Cliente</span>
+            <p class="portal-descricao">
+                Entre com seu e-mail e senha para visualizar, aprovar e baixar todas as fotos produzidas para os seus pratos e produtos.
+            </p>
+        </div>
+
+        <form class="formulario" id="form-login" autocomplete="on">
+            <div id="alerta-erro" class="alerta alerta-erro" role="alert" hidden></div>
+            <div id="alerta-sucesso" class="alerta alerta-sucesso" role="alert" hidden></div>
+
+            <div class="campo">
+                <label for="email" class="campo-label">E-mail do estabelecimento</label>
+                <div class="input-wrapper">
+                    <svg class="input-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
+                    </svg>
+                    <input type="email" id="email" name="email" class="entrada" required
+                        placeholder="contato@seuestabelecimento.com" autocomplete="email">
+                </div>
+            </div>
+
+            <div class="campo">
+                <label for="password" class="campo-label">Senha de acesso</label>
+                <div class="input-wrapper">
+                    <svg class="input-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <input type="password" id="password" name="password" class="entrada" required
+                        placeholder="Digite sua senha" autocomplete="current-password">
+                    <button type="button" class="btn-toggle-senha" id="btn-toggle-senha" aria-label="Mostrar ou ocultar senha">
+                        <svg id="icone-olho" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-submit">
+                <span class="spinner" id="spinner"></span>
+                <span id="btn-texto">Acessar Minhas Fotos</span>
+                <svg id="btn-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+            </button>
+
+            <button type="button" class="btn-teste-rapido" id="btn-teste-rapido">
+                ⚡ Acessar Demonstração (Login de Teste)
+            </button>
+        </form>
+    </main>
+
+    <!-- Rodapé: Suporte e Voltar como links em texto simples -->
+    <footer class="login-rodape">
+        <p>Precisa de suporte? <a href="https://wa.me/5581998370180?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20para%20acessar%20as%20fotos%20do%20meu%20estabelecimento." target="_blank" rel="noopener">Fale direto no WhatsApp</a></p>
+        <p class="rodape-voltar"><a href="./index.html">← Voltar para o início</a></p>
+    </footer>
+
+    <script type="module">
+        import { login, getSession } from './js/api.js';
+
+        const form = document.getElementById('form-login');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const btnToggleSenha = document.getElementById('btn-toggle-senha');
+        const btnSubmit = document.getElementById('btn-submit');
+        const spinner = document.getElementById('spinner');
+        const btnTexto = document.getElementById('btn-texto');
+        const btnIcone = document.getElementById('btn-icone');
+        const alertaErro = document.getElementById('alerta-erro');
+        const alertaSucesso = document.getElementById('alerta-sucesso');
+        function limparAlertas() {
+            alertaErro.textContent = '';
+            alertaErro.classList.remove('visivel');
+            alertaErro.setAttribute('hidden', '');
+
+            alertaSucesso.textContent = '';
+            alertaSucesso.classList.remove('visivel');
+            alertaSucesso.setAttribute('hidden', '');
+        }
+
+        function mostrarErro(mensagem) {
+            limparAlertas();
+            alertaErro.textContent = mensagem;
+            alertaErro.classList.add('visivel');
+            alertaErro.removeAttribute('hidden');
+        }
+
+        function mostrarSucesso(mensagem) {
+            limparAlertas();
+            alertaSucesso.textContent = mensagem;
+            alertaSucesso.classList.add('visivel');
+            alertaSucesso.removeAttribute('hidden');
+        }
+
+        // Carrega e-mail salvo se houver
+        const emailSalvo = localStorage.getItem('vf_login_email');
+        if (emailSalvo) {
+            emailInput.value = emailSalvo;
+            passwordInput.focus();
+        } else {
+            emailInput.focus();
+        }
+
+        // Se veio de um logout explícito, limpa resíduos locais
+        if (window.location.search.includes('sair')) {
+            localStorage.removeItem('vf_session_token');
+            localStorage.removeItem('vf_client_logged_in');
+        }
+
+        // Login de teste com 1 clique
+        const btnTesteRapido = document.getElementById('btn-teste-rapido');
+        if (btnTesteRapido) {
+            btnTesteRapido.addEventListener('click', () => {
+                emailInput.value = 'cliente@teste.com';
+                passwordInput.value = '123456';
+                form.requestSubmit();
+            });
+        }
+
+        // Alternar visualização da senha
+        btnToggleSenha.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            btnToggleSenha.setAttribute('aria-label', isPassword ? 'Ocultar senha' : 'Ver senha');
+            btnToggleSenha.innerHTML = isPassword
+                ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                   </svg>`
+                : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                   </svg>`;
+        });
+
+        // Envio do formulário
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            limparAlertas();
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!email || !password) {
+                mostrarErro('Por favor, preencha o e-mail e a senha de acesso.');
+                return;
+            }
+
+            btnSubmit.disabled = true;
+            spinner.style.display = 'inline-block';
+            btnIcone.style.display = 'none';
+            btnTexto.textContent = 'Verificando...';
+
+            try {
+                await login({ email, password });
+                localStorage.setItem('vf_login_email', email);
+                mostrarSucesso('Acesso liberado! Abrindo catálogo de fotos...');
+
+                setTimeout(() => {
+                    window.location.replace('./catalogo.html');
+                }, 500);
+            } catch (err) {
+                btnSubmit.disabled = false;
+                spinner.style.display = 'none';
+                btnIcone.style.display = 'inline-block';
+                btnTexto.textContent = 'Acessar Minhas Fotos';
+
+                const mensagem = err && err.message ? err.message : 'E-mail ou senha incorretos. Tente novamente.';
+                mostrarErro(mensagem);
+                passwordInput.focus();
+                passwordInput.select();
+            }
+        });
+    </script>
+</body>
+
+</html>

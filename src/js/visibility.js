@@ -11,6 +11,7 @@ import { getContent } from './api.js';
 export const CACHE_KEY = 'siteVisibility';
 
 export const defaultVisibility = {
+  'splash-screen': true,
   navbar: true,
   logo: true,
   'main-menu': true,
@@ -69,6 +70,16 @@ export function writeCache(config) {
 
 export function applyVisibility(config) {
   for (const [tag, visible] of Object.entries(config)) {
+    if (tag === 'splash-screen') {
+      const splash = document.getElementById('splashScreen');
+      if (splash && !visible) {
+        splash.style.display = 'none';
+        splash.classList.add('hidden');
+        splash.setAttribute('hidden', '');
+      }
+      continue;
+    }
+
     for (const element of document.querySelectorAll(`[data-tag="${CSS.escape(tag)}"]`)) {
       element.style.display = visible ? '' : 'none';
     }

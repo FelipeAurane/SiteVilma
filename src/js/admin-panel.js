@@ -31,6 +31,7 @@ import {
 
 /** Nome de cada tag do site, do jeito que a Vilma chamaria. */
 const NOMES = {
+  'splash-screen': 'Tela de abertura (splash screen)',
   navbar: 'Barra de navegação',
   logo: 'Logo',
   'main-menu': 'Menu principal',
@@ -61,6 +62,7 @@ const NOMES = {
 
 /** Ordem de leitura na tela. */
 const GRUPOS = [
+  { id: 'abertura', nome: 'Abertura do site', tags: ['splash-screen'] },
   { id: 'navegacao', nome: 'Navegação', tags: ['navbar', 'logo', 'main-menu', 'menu-inicio', 'menu-galeria', 'menu-sobre', 'menu-servicos', 'menu-duvidas', 'menu-blok', 'overlay-fundo'] },
   { id: 'principal', nome: 'Seção principal', tags: ['hero-section', 'title-name', 'subtitle', 'hero-buttons', 'scroll-button'] },
   { id: 'portfolio', nome: 'Portfólio', tags: ['next-section', 'cardapio-section', 'cardapio-title', 'cardapio-banner', 'banner-title', 'banner-subtitle', 'banner-image', 'cardapio-container', 'video-section'] },
@@ -199,24 +201,34 @@ function atualizarEstatisticas() {
 function atualizarResumo() {
   const hero = conteudo?.hero || defaultData.hero;
 
-  el('resumo-titulo').textContent = String(hero.title || '—');
-  el('resumo-subtitulo').textContent = String(hero.subtitle || '—');
-  el('resumo-categorias').textContent = categorias.length
+  const rTitulo = el('resumo-titulo');
+  if (rTitulo) rTitulo.textContent = String(hero.title || '—');
+
+  const rSub = el('resumo-subtitulo');
+  if (rSub) rSub.textContent = String(hero.subtitle || '—');
+
+  const rCat = el('resumo-categorias');
+  if (rCat) rCat.textContent = categorias.length
     ? `${categorias.length} ${categorias.length === 1 ? 'categoria' : 'categorias'}`
     : 'Nenhuma';
 
-  el('resumo-servicos').textContent = servicos.length
+  const rServ = el('resumo-servicos');
+  if (rServ) rServ.textContent = servicos.length
     ? `${servicos.length} ${servicos.length === 1 ? 'serviço' : 'serviços'}`
     : 'Nenhum';
 
-  el('resumo-duvidas').textContent = duvidas.length
+  const rDuv = el('resumo-duvidas');
+  if (rDuv) rDuv.textContent = duvidas.length
     ? `${duvidas.length} ${duvidas.length === 1 ? 'pergunta' : 'perguntas'}`
     : 'Nenhuma';
 
-  const dias = Object.keys(datas).length;
-  el('resumo-agenda').textContent = dias
-    ? `${dias} ${dias === 1 ? 'dia' : 'dias'}`
-    : 'Nenhum dia';
+  const rAgenda = el('resumo-agenda');
+  const dias = Object.keys(datas || {}).length;
+  if (rAgenda) {
+    rAgenda.textContent = dias
+      ? `${dias} ${dias === 1 ? 'dia' : 'dias'}`
+      : 'Nenhum dia';
+  }
 
   definirEtiqueta('resumo-grade', visibilidade['next-section'] !== false, 'Publicada', 'Oculta');
   definirEtiqueta('resumo-servicos-vis', servicos.length > 0, 'Com conteúdo', 'Vazia');
@@ -243,6 +255,7 @@ function definirTodos(valor) {
 
 function pintarVisibilidade() {
   const grade = el('grade-vis');
+  if (!grade) return;
   grade.replaceChildren();
 
   for (const grupo of gruposCompletos()) {
@@ -462,29 +475,30 @@ function heroVideoEscolhido() {
 // ---------------------------------------------------------------- textos
 
 function pintarTextos() {
-  const hero = conteudo.hero || defaultData.hero;
-  const banner = conteudo.banner || defaultData.banner;
-  const botao = hero.button || defaultData.hero.button;
-  const center = conteudo.center || defaultData.center;
+  const hero = conteudo?.hero || defaultData.hero;
+  const banner = conteudo?.banner || defaultData.banner;
+  const botao = hero?.button || defaultData.hero.button;
 
-  el('hero-etiqueta').value = String(hero.eyebrow ?? '');
-  el('hero-titulo').value = String(hero.title ?? '');
-  el('hero-subtitulo').value = String(hero.subtitle ?? '');
-  el('botao-texto').value = String(botao.text ?? '');
-  el('botao-whatsapp').value = String(botao.whatsapp ?? '');
-  el('botao-mensagem').value = String(botao.message ?? '');
+  if (el('hero-etiqueta')) el('hero-etiqueta').value = String(hero.eyebrow ?? '');
+  if (el('hero-titulo')) el('hero-titulo').value = String(hero.title ?? '');
+  if (el('hero-subtitulo')) el('hero-subtitulo').value = String(hero.subtitle ?? '');
+  if (el('botao-texto')) el('botao-texto').value = String(botao.text ?? '');
+  if (el('botao-whatsapp')) el('botao-whatsapp').value = String(botao.whatsapp ?? '');
+  if (el('botao-mensagem')) el('botao-mensagem').value = String(botao.message ?? '');
 
-  el('banner-titulo-tela').value = String(banner.titleScreen ?? '');
-  el('banner-titulo').value = String(banner.title ?? '');
-  el('banner-subtitulo').value = String(banner.subtitle ?? '');
+  if (el('banner-titulo-tela')) el('banner-titulo-tela').value = String(banner.titleScreen ?? '');
+  if (el('banner-titulo')) el('banner-titulo').value = String(banner.title ?? '');
+  if (el('banner-subtitulo')) el('banner-subtitulo').value = String(banner.subtitle ?? '');
 
   pintarCapa();
 
-  mostrarPrevia(
-    el('banner-previa'), el('banner-previa-vazia'),
-    safeImageSrc(banner.image, defaultData.banner.image),
-    el('banner-imagem-atual'), null
-  );
+  if (el('banner-previa') && el('banner-previa-vazia')) {
+    mostrarPrevia(
+      el('banner-previa'), el('banner-previa-vazia'),
+      safeImageSrc(banner.image, defaultData.banner.image),
+      el('banner-imagem-atual'), null
+    );
+  }
 
   pintarCentro();
 }
@@ -1077,6 +1091,7 @@ function chaveDia(ano, mes, dia) {
 
 function pintarAgenda() {
   const grade = el('agenda');
+  if (!grade) return;
   grade.replaceChildren();
 
   const ano = mesAgenda.getFullYear();
@@ -1171,9 +1186,11 @@ async function salvarAgenda(botao) {
  */
 const SECOES = {
   'visao-geral': 'Visão geral',
+  textos: 'Textos & Capa',
   portfolio: 'Portfólio',
   servicos: 'Serviços',
-  duvidas: 'Dúvidas'
+  duvidas: 'Dúvidas',
+  visibilidade: 'Visibilidade'
 };
 
 const ORDEM = Object.keys(SECOES);
@@ -1196,7 +1213,8 @@ function mostrarSecao(id, { moverHash = true } = {}) {
     if (item) item.setAttribute('aria-current', String(ativa));
   }
 
-  el('topo-titulo').textContent = SECOES[alvo];
+  const tituloEl = el('topo-titulo');
+  if (tituloEl) tituloEl.textContent = SECOES[alvo] || 'Painel';
 
   if (moverHash && window.location.hash.slice(1) !== alvo) {
     history.replaceState(null, '', `#${alvo}`);
@@ -1207,6 +1225,11 @@ function mostrarSecao(id, { moverHash = true } = {}) {
 }
 
 function ligarNavegacao() {
+  const on = (id, evento, handler) => {
+    const elemento = el(id);
+    if (elemento) elemento.addEventListener(evento, handler);
+  };
+
   for (const item of document.querySelectorAll('.trilho-item[data-alvo]')) {
     item.addEventListener('click', (evento) => {
       evento.preventDefault();
@@ -1219,18 +1242,17 @@ function ligarNavegacao() {
     atalho.addEventListener('click', () => mostrarSecao(atalho.dataset.ir));
   }
 
-  // /config#agenda abre direto na seção da agenda.
   window.addEventListener('hashchange', () => {
     mostrarSecao(window.location.hash.slice(1), { moverHash: false });
   });
 
   mostrarSecao(window.location.hash.slice(1));
 
-  el('mostrar-tudo').addEventListener('click', () => definirTodos(true));
-  el('ocultar-tudo').addEventListener('click', () => definirTodos(false));
-  el('filtro-publicados').addEventListener('change', aplicarFiltros);
-  el('filtro-ocultos').addEventListener('change', aplicarFiltros);
-  el('add-categoria').addEventListener('click', () => {
+  on('mostrar-tudo', 'click', () => definirTodos(true));
+  on('ocultar-tudo', 'click', () => definirTodos(false));
+  on('filtro-publicados', 'change', aplicarFiltros);
+  on('filtro-ocultos', 'change', aplicarFiltros);
+  on('add-categoria', 'click', () => {
     // Mesma forma das categorias que já existem, para o site não encontrar
     // um cartão sem os campos que ele espera.
     categorias.push({
@@ -1244,10 +1266,10 @@ function ligarNavegacao() {
       order: categorias.length + 1
     });
     pintarCategorias();
-    el('lista-categorias').querySelector('.categoria:last-child .entrada')?.focus();
+    el('lista-categorias')?.querySelector('.categoria:last-child .entrada')?.focus();
   });
 
-  el('add-servico').addEventListener('click', () => {
+  on('add-servico', 'click', () => {
     // Os mesmos campos que buildServiceCard lê. O que o site não usar
     // (whatsapp próprio) fica vazio e o site cai no número do site.
     servicos.push({
@@ -1262,21 +1284,21 @@ function ligarNavegacao() {
       whatsappMessage: ''
     });
     pintarServicos();
-    el('lista-servicos').querySelector('.servico:last-child .entrada')?.focus();
+    el('lista-servicos')?.querySelector('.servico:last-child .entrada')?.focus();
   });
 
-  el('add-duvida').addEventListener('click', () => {
+  on('add-duvida', 'click', () => {
     duvidas.push({ question: '', answer: '' });
     pintarDuvidas();
-    el('lista-duvidas').querySelector('.duvida:last-child .entrada')?.focus();
+    el('lista-duvidas')?.querySelector('.duvida:last-child .entrada')?.focus();
   });
 
-  el('agenda-mes-antes').addEventListener('click', () => {
+  on('agenda-mes-antes', 'click', () => {
     mesAgenda = new Date(mesAgenda.getFullYear(), mesAgenda.getMonth() - 1, 1);
     pintarAgenda();
   });
 
-  el('agenda-mes-depois').addEventListener('click', () => {
+  on('agenda-mes-depois', 'click', () => {
     mesAgenda = new Date(mesAgenda.getFullYear(), mesAgenda.getMonth() + 1, 1);
     pintarAgenda();
   });
@@ -1289,14 +1311,14 @@ function ligarNavegacao() {
     });
   }
 
-  el('salvar-categorias').addEventListener('click', (evento) => salvarCategorias(evento.currentTarget));
-  el('salvar-servicos').addEventListener('click', (evento) => salvarServicos(evento.currentTarget));
-  el('salvar-duvidas').addEventListener('click', (evento) => salvarDuvidas(evento.currentTarget));
-  el('salvar-agenda').addEventListener('click', (evento) => salvarAgenda(evento.currentTarget));
+  on('salvar-categorias', 'click', (evento) => salvarCategorias(evento.currentTarget));
+  on('salvar-servicos', 'click', (evento) => salvarServicos(evento.currentTarget));
+  on('salvar-duvidas', 'click', (evento) => salvarDuvidas(evento.currentTarget));
+  on('salvar-agenda', 'click', (evento) => salvarAgenda(evento.currentTarget));
 
   // A capa aceita vídeo: a prévia e o aviso de tamanho são os mesmos do
   // campo do meio, e é ela que decide o que mostrar.
-  el('hero-imagem').addEventListener('change', (evento) => {
+  on('hero-imagem', 'change', (evento) => {
     tirarVideoCapa = false;
     const arquivo = evento.target.files?.[0];
     if (arquivo?.type.startsWith('video/') && arquivo.size > LIMITE_VIDEO_BYTES) {
@@ -1309,27 +1331,33 @@ function ligarNavegacao() {
     pintarCapa();
   });
 
-  el('hero-tirar-video').addEventListener('click', () => {
+  on('hero-tirar-video', 'click', () => {
     tirarVideoCapa = true;
-    el('hero-imagem').value = '';
+    const heroImg = el('hero-imagem');
+    if (heroImg) heroImg.value = '';
     pintarCapa();
     avisar('O vídeo sai da capa no próximo Salvar.');
   });
 
   // Prévia imediata do arquivo escolhido, antes de salvar.
-  el('banner-arquivo').addEventListener('change', (evento) => {
+  on('banner-arquivo', 'change', (evento) => {
     const arquivo = evento.target.files?.[0];
     if (!arquivo) return;
-    el('banner-previa').src = URL.createObjectURL(arquivo);
-    el('banner-previa').hidden = false;
-    el('banner-previa-vazia').hidden = true;
-    el('banner-imagem-atual').textContent = `Escolhido: ${arquivo.name}`;
+    const previa = el('banner-previa');
+    const vazia = el('banner-previa-vazia');
+    const txtAtual = el('banner-imagem-atual');
+    if (previa) {
+      previa.src = URL.createObjectURL(arquivo);
+      previa.hidden = false;
+    }
+    if (vazia) vazia.hidden = true;
+    if (txtAtual) txtAtual.textContent = `Escolhido: ${arquivo.name}`;
   });
 
   // O campo do meio aceita vídeo também, então não há miniatura para
   // mostrar: o que importa antes de salvar é o tipo e o tamanho, que é
   // exatamente o que costuma dar erro.
-  el('center-arquivo').addEventListener('change', (evento) => {
+  on('center-arquivo', 'change', (evento) => {
     const arquivo = evento.target.files?.[0];
     if (!arquivo) {
       pintarCentro();
