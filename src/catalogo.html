@@ -138,6 +138,10 @@
             align-items: center;
             justify-content: center;
             isolation: isolate;
+            /* Acima da barra de ações (150) para a capa ficar limpa, sem nada
+               por cima. Ainda abaixo do lightbox (200), do popup (1000000) e do
+               escudo anti-print (999999). */
+            z-index: 160;
         }
 
         .capa-imagem {
@@ -604,16 +608,12 @@
             }
         }
 
+        /* Duas colunas já no celular: é o que mantém o efeito Pinterest na tela
+           pequena. Uma coluna só seria uma lista, não uma galeria. */
         @media (max-width: 780px) {
             .grade-cards {
                 column-count: 2;
-                column-gap: 14px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .grade-cards {
-                column-count: 1;
+                column-gap: 12px;
             }
         }
 
