@@ -111,35 +111,7 @@
             display: flex;
         }
 
-        .escudo-aviso {
-            max-width: 480px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .escudo-aviso h2 {
-            font-size: 22px;
-            font-weight: 600;
-            color: #ef4444;
-            letter-spacing: -0.01em;
-        }
-
-        .escudo-aviso p {
-            font-size: 14px;
-            color: #d1d5db;
-            line-height: 1.6;
-        }
-
-        .aviso-sub {
-            font-size: 12.5px !important;
-            color: var(--azul-brilhante) !important;
-            font-weight: 500;
-        }
-
         .btn-fechar-escudo {
-            margin-top: 12px;
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #ffffff;
@@ -155,65 +127,224 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Topbar de controle do cliente */
-        .topo-catalogo {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(9, 9, 11, 0.88);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--borda);
-            padding: 14px 24px;
+        /* Capa de tela cheia */
+        .capa-galeria {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            min-height: 520px;
+            overflow: hidden;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 16px;
+            justify-content: center;
+            isolation: isolate;
         }
 
-        .marca-bloco {
+        .capa-imagem {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* A picanha fica na metade de baixo da foto; centralizar cortaria
+               o prato. */
+            object-position: center 62%;
+            z-index: -2;
+        }
+
+        /* Véu centralizado: escurece o meio, onde fica o texto, e devolve a
+           foto nas pontas. */
+        .capa-veu {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse 75% 60% at 50% 52%, rgba(5, 5, 7, 0.86) 0%, rgba(5, 5, 7, 0.55) 55%, rgba(5, 5, 7, 0.22) 100%),
+                linear-gradient(to bottom, rgba(5, 5, 7, 0.62) 0%, rgba(5, 5, 7, 0.05) 22%, rgba(5, 5, 7, 0.05) 78%, rgba(5, 5, 7, 0.7) 100%);
+        }
+
+        /* Fios de encadernação: dão o ar de capa física sem pesar. */
+        .capa-moldura {
+            position: absolute;
+            inset: 22px;
+            z-index: -1;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .capa-conteudo {
+            position: relative;
+            width: 100%;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 0;
+        }
+
+        .capa-etiqueta {
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.72);
+            margin-bottom: 22px;
+        }
+
+        .capa-titulo {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            font-size: clamp(34px, 7vw, 62px);
+            font-weight: 300;
+            color: var(--branco);
+            line-height: 1.02;
+            letter-spacing: -0.015em;
+            text-wrap: balance;
+            text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55);
+        }
+
+        /* A linha fina é o elemento mais "álbum" da capa. */
+        .capa-regra {
+            width: 54px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.5);
+            margin: 26px 0 20px;
+        }
+
+        .capa-meta {
+            font-size: 13px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.66);
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .marca-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .marca-nome {
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--branco);
-        }
-
-        .marca-rotulo {
-            font-size: 10px;
+        .capa-meta-destaque {
             color: var(--azul-brilhante);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            font-weight: 500;
         }
 
-        .usuario-controles {
+        .capa-separador {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .capa-botao {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            margin-top: 30px;
+            padding: 13px 28px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.34);
+            color: var(--branco);
+            font-family: inherit;
+            font-size: 13.5px;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all var(--transicao);
+        }
+
+        .capa-botao:hover {
+            background: var(--branco);
+            border-color: var(--branco);
+            color: #09090b;
+            transform: translateY(-2px);
+            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .capa-nota {
+            margin-top: 18px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 0.02em;
+        }
+
+        @media (max-width: 640px) {
+            .capa-conteudo {
+                padding: 0 20px;
+            }
+
+            .capa-moldura {
+                inset: 12px;
+            }
+
+            .capa-regra {
+                margin: 20px 0 16px;
+            }
+
+            .capa-botao {
+                margin-top: 24px;
+            }
+        }
+        /* Barra de acao fixa no rodape. Fica embaixo porque e onde o polegar
+           ja esta: marcar foto e rolar a galeria nao也应该 exigir ir ate o
+           topo da tela. */
+        .barra-inferior {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 150;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 10px 20px;
+            /* O inset seguro evita que o botao fique sob o indicador de home
+               do iPhone. */
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
+            background: rgba(9, 9, 11, 0.92);
+            backdrop-filter: blur(24px) saturate(160%);
+            -webkit-backdrop-filter: blur(24px) saturate(160%);
+            border-top: 1px solid var(--borda);
+        }
+
+        .barra-identidade {
             display: flex;
             align-items: center;
             gap: 12px;
+            min-width: 0;
         }
 
-        .cliente-badge {
+        .barra-marca {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--branco);
+            white-space: nowrap;
+        }
+
+        .barra-divisor {
+            width: 1px;
+            height: 16px;
+            background: rgba(255, 255, 255, 0.16);
+            flex-shrink: 0;
+        }
+
+        .barra-cliente {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 14px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--borda);
-            font-size: 12px;
+            font-size: 12.5px;
             color: var(--cinza-texto);
+            min-width: 0;
+        }
+
+        .barra-cliente #cliente-email-display {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .cliente-ponto {
@@ -222,221 +353,227 @@
             border-radius: 50%;
             background: var(--azul-brilhante);
             box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+            flex-shrink: 0;
         }
 
-        .btn-acao-topo {
+        .barra-acoes {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .barra-btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
+            justify-content: center;
+            gap: 8px;
+            height: 38px;
+            padding: 0 16px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid var(--borda);
-            color: var(--branco);
-            text-decoration: none;
-            font-size: 12.5px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
             cursor: pointer;
+            border: 1px solid transparent;
             transition: all var(--transicao);
         }
 
-        .btn-acao-topo:hover {
+        .barra-btn svg {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+        }
+
+        /* Sair fica como icone: e acao secundaria e nao precisa de rotulo
+           quando o titulo e o aria-label ja dizem o que e. */
+        .barra-btn--sair {
+            width: 38px;
+            padding: 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--borda);
+            color: var(--cinza-texto);
+        }
+
+        .barra-btn--sair:hover {
             background: rgba(255, 255, 255, 0.12);
             border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-acao-topo svg {
-            width: 14px;
-            height: 14px;
-        }
-
-        /* Banner de Apresentação */
-        .banner-cliente {
-            padding: 34px 24px 22px;
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        .banner-header {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .etiqueta-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--azul-brilhante);
-        }
-
-        .banner-titulo {
-            font-size: clamp(22px, 3.5vw, 32px);
-            font-weight: 500;
-            letter-spacing: -0.01em;
-            line-height: 1.25;
             color: var(--branco);
         }
 
-        .banner-descricao {
+        /* A acao principal fica a direita e sempre visivel. */
+        .barra-btn--finalizar {
+            background: var(--azul-selo);
+            border-color: var(--azul-brilhante);
+            color: var(--branco);
+        }
+
+        .barra-btn--finalizar:hover {
+            background: var(--azul-brilhante);
+            box-shadow: 0 0 16px rgba(37, 99, 235, 0.5);
+        }
+
+        .barra-btn--finalizar:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Quantas fotos ja estao marcadas, sem precisar abrir a grade. */
+        .barra-contador {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.22);
+            font-size: 11px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .barra-btn--finalizar:disabled .barra-contador {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        @media (max-width: 560px) {
+            .barra-inferior {
+                gap: 10px;
+                padding: 9px 14px;
+                padding-bottom: calc(9px + env(safe-area-inset-bottom));
+            }
+
+            .barra-marca {
+                display: none;
+            }
+
+            .barra-divisor {
+                display: none;
+            }
+
+            .barra-btn {
+                height: 40px;
+            }
+        }
+        /* Popup de confirmação e tela de encerramento */
+        .popup-finalizar,
+        .tela-encerrada {
+            position: fixed;
+            inset: 0;
+            z-index: 1000000;
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .popup-finalizar.ativo,
+        .tela-encerrada.ativo {
+            display: flex;
+        }
+
+        .popup-cartao,
+        .encerrada-cartao {
+            max-width: 430px;
+            width: 100%;
+            background: var(--preto-card);
+            border: 1px solid var(--borda);
+            border-radius: 18px;
+            padding: 28px 26px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .popup-titulo,
+        .encerrada-cartao h2 {
+            font-size: 19px;
+            font-weight: 600;
+            color: var(--branco);
+            margin: 0;
+            letter-spacing: -0.01em;
+        }
+
+        .popup-texto {
             font-size: 13.5px;
             color: var(--cinza-texto);
             line-height: 1.6;
-            max-width: 760px;
-            font-weight: 300;
+            margin: 0;
         }
 
-        /* Métricas e Estatísticas */
-        .metricas-grade {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
-            margin-top: 16px;
+        .popup-texto strong {
+            color: var(--azul-brilhante);
         }
 
-        .metrica-card {
-            background: var(--preto-card);
-            border: 1px solid var(--borda);
-            border-radius: 12px;
-            padding: 14px 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .metrica-card.destaque-azul {
-            border-color: rgba(59, 130, 246, 0.35);
-            background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), var(--preto-card));
-        }
-
-        .metrica-valor {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--branco);
-            letter-spacing: -0.02em;
-        }
-
-        .metrica-valor.azul {
-            color: #60a5fa;
-        }
-
-        .metrica-rotulo {
-            font-size: 11px;
+        .popup-texto--fraco {
+            font-size: 12px;
             color: var(--cinza-fraco);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
-        /* Barra de Controle e Filtros */
-        .painel-filtros {
-            position: sticky;
-            top: 61px;
-            z-index: 90;
-            background: rgba(9, 9, 11, 0.95);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-top: 1px solid var(--borda);
-            border-bottom: 1px solid var(--borda);
-            padding: 12px 24px;
-        }
-
-        .filtros-conteudo {
-            max-width: 1200px;
-            margin: 0 auto;
+        .popup-acoes {
             display: flex;
+            gap: 10px;
+            margin-top: 8px;
             flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
+            justify-content: center;
         }
 
-        .categorias-lista {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 2px;
-            scrollbar-width: none;
-        }
-
-        .categorias-lista::-webkit-scrollbar {
-            display: none;
-        }
-
-        .btn-categoria {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--borda);
-            color: var(--cinza-texto);
-            padding: 7px 15px;
+        .popup-btn {
+            padding: 10px 18px;
             border-radius: 999px;
             font-family: inherit;
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 13px;
             cursor: pointer;
-            white-space: nowrap;
+            border: 1px solid transparent;
             transition: all var(--transicao);
         }
 
-        .btn-categoria:hover {
+        .popup-btn--cancelar {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--borda);
             color: var(--branco);
-            background: rgba(255, 255, 255, 0.08);
         }
 
-        .btn-categoria.ativa {
+        .popup-btn--cancelar:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .popup-btn--confirmar {
             background: var(--azul-selo);
-            color: var(--branco);
             border-color: var(--azul-brilhante);
+            color: var(--branco);
             font-weight: 500;
         }
 
-        .btn-categoria.aba-selecionadas.ativa {
-            background: #1d4ed8;
-            box-shadow: 0 0 12px rgba(37, 99, 235, 0.5);
+        .popup-btn--confirmar:hover {
+            background: var(--azul-brilhante);
         }
 
-        .busca-e-acoes {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .popup-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        .campo-busca-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
+        .encerrada-cartao svg {
+            color: #22c55e;
         }
 
-        .campo-busca-wrapper svg {
-            position: absolute;
-            left: 12px;
-            width: 14px;
-            height: 14px;
-            color: var(--cinza-fraco);
-            pointer-events: none;
+        .encerrada-cartao p {
+            font-size: 13.5px;
+            color: var(--cinza-texto);
+            line-height: 1.6;
+            margin: 0;
         }
 
-        .campo-busca {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--borda);
-            border-radius: 999px;
-            padding: 7px 14px 7px 32px;
-            font-family: inherit;
-            font-size: 12px;
-            color: var(--branco);
-            outline: none;
-            width: 190px;
-            transition: width var(--transicao), border-color var(--transicao);
-        }
-
-        .campo-busca:focus {
-            width: 230px;
-            border-color: var(--azul-brilhante);
-            background: rgba(255, 255, 255, 0.08);
+        .encerrada-cartao .popup-btn {
+            margin-top: 8px;
         }
 
         /* Grade do Catálogo */
@@ -446,12 +583,38 @@
             margin: 0 auto;
             padding: 28px 24px 60px;
             flex: 1;
+            /* O topo é sticky: sem este offset a primeira fileira fica embaixo
+               do header ao rolar pelo botão "Ver galeria". */
+            scroll-margin-top: 78px;
+            /* A barra de ações é fixed e sai do fluxo: sem esta folga a última
+               fileira de fotos fica escondida atrás dela. */
+            padding-bottom: 104px;
         }
 
+        /* Grade no estilo Pinterest: colunas com altura livre, para cada foto entrar
+           na proporção real dela. O grid uniforme doía. */
         .grade-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-            gap: 22px;
+            column-count: 4;
+            column-gap: 22px;
+        }
+
+        @media (max-width: 1100px) {
+            .grade-cards {
+                column-count: 3;
+            }
+        }
+
+        @media (max-width: 780px) {
+            .grade-cards {
+                column-count: 2;
+                column-gap: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grade-cards {
+                column-count: 1;
+            }
         }
 
         .foto-card {
@@ -459,8 +622,11 @@
             border: 1px solid var(--borda);
             border-radius: 14px;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            display: block;
+            /* Sem isso a coluna corta a foto no meio. */
+            break-inside: avoid;
+            page-break-inside: avoid;
+            margin-bottom: 22px;
             transition: transform var(--transicao), border-color var(--transicao), box-shadow var(--transicao);
             position: relative;
         }
@@ -476,18 +642,21 @@
             box-shadow: 0 0 20px rgba(37, 99, 235, 0.35);
         }
 
+        /* Sem aspect-ratio e sem altura fixa: a imagem ocupa a largura da coluna e
+           mostra a altura que tem. */
         .foto-imagem-wrapper {
             position: relative;
-            aspect-ratio: 4 / 3;
             overflow: hidden;
             background: #111116;
             cursor: pointer;
+            line-height: 0;
         }
 
         .foto-imagem {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            /* object-fit: cover cortava a foto; aqui ela aparece inteira. */
+            height: auto;
+            display: block;
             /* Diminuir a resolução perceptível de prova de seleção */
             filter: contrast(102%) brightness(98%);
             transition: transform 0.4s ease;
@@ -559,7 +728,7 @@
             text-transform: uppercase;
         }
 
-        /* Selo Azul de Seleção no Topo */
+        /* Selo Azul de Seleção no Topo: só o ícone, em círculo. */
         .btn-selo-azul {
             position: absolute;
             top: 10px;
@@ -567,9 +736,11 @@
             z-index: 10;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            padding: 6px 11px;
-            border-radius: 999px;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: 50%;
             background: rgba(9, 9, 11, 0.85);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -603,71 +774,6 @@
             width: 15px;
             height: 15px;
             flex-shrink: 0;
-        }
-
-        .badge-categoria {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 9;
-            padding: 4px 9px;
-            border-radius: 999px;
-            background: rgba(9, 9, 11, 0.75);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 10px;
-            font-weight: 500;
-            color: var(--creme);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-
-        .foto-overlay {
-            position: absolute;
-            inset: 0;
-            z-index: 7;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 60%);
-            opacity: 0;
-            transition: opacity var(--transicao);
-            display: flex;
-            align-items: flex-end;
-            padding: 14px;
-            pointer-events: none;
-        }
-
-        .foto-card:hover .foto-overlay {
-            opacity: 1;
-        }
-
-        .btn-ampliar {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.18);
-            backdrop-filter: blur(8px);
-            color: var(--branco);
-            font-size: 11px;
-            font-weight: 500;
-        }
-
-        .foto-rodape-simples {
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--preto-card);
-            border-top: 1px solid var(--borda);
-        }
-
-        .foto-titulo-limpo {
-            font-size: 13.5px;
-            font-weight: 500;
-            color: var(--branco);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         /* Modal Lightbox com Zoom */
@@ -778,12 +884,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: zoom-in;
-            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .lightbox-zoom-container.em-zoom {
-            cursor: zoom-out;
         }
 
         .lightbox-imagem {
@@ -828,45 +928,6 @@
 
         .btn-nav-lightbox.proxima {
             right: 12px;
-        }
-
-        .lightbox-barra-zoom {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(9, 9, 11, 0.75);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--borda);
-            padding: 6px 14px;
-            border-radius: 999px;
-            z-index: 20;
-        }
-
-        .btn-zoom-controle {
-            background: transparent;
-            border: none;
-            color: var(--branco);
-            font-size: 15px;
-            font-weight: 600;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background var(--transicao);
-        }
-
-        .btn-zoom-controle:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .zoom-valor {
-            font-size: 11px;
-            color: var(--cinza-texto);
-            min-width: 44px;
-            text-align: center;
         }
 
         .lightbox-rodape {
@@ -941,20 +1002,8 @@
         }
 
         @media (max-width: 768px) {
-            .topo-catalogo {
-                padding: 12px 16px;
-            }
-            .banner-cliente {
-                padding: 22px 16px 14px;
-            }
             .catalogo-secao {
                 padding: 16px 16px 40px;
-            }
-            .grade-cards {
-                grid-template-columns: 1fr;
-            }
-            .cliente-badge span:first-child {
-                display: none;
             }
         }
     </style>
@@ -964,96 +1013,77 @@
 
     <!-- Escudo Anti-Print Screen (Tela fica escura quando identifica captura) -->
     <div id="escudo-anti-print" class="escudo-anti-print" aria-hidden="true">
-        <div class="escudo-aviso">
-            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-            <h2>Captura de Tela Bloqueada</h2>
-            <p>Por razões de segurança e direitos autorais, as provas de fotos não podem ser printadas ou baixadas.</p>
-            <p class="aviso-sub">Para selecionar suas fotos, utilize o selo azul de aprovação.</p>
-            <button type="button" class="btn-fechar-escudo" id="btn-fechar-escudo">Voltar para a Seleção</button>
-        </div>
+        <button type="button" class="btn-fechar-escudo" id="btn-fechar-escudo">Voltar para a Seleção</button>
     </div>
 
     <!-- Topo da Área do Cliente -->
-    <header class="topo-catalogo">
-        <div class="marca-bloco">
-            <div class="marca-info">
-                <span class="marca-nome">Vilma Silva</span>
-                <span class="marca-rotulo">Seleção de Fotos</span>
-            </div>
+    <!-- Capa do álbum: a primeira coisa que a cliente vê ao abrir a galeria -->
+    <section class="capa-galeria" id="capa-galeria">
+        <img class="capa-imagem" src="./img/p-steak.jpg"
+            alt="Picanha na frigideira, prato assinatura do ensaio" fetchpriority="high">
+        <div class="capa-veu" aria-hidden="true"></div>
+        <div class="capa-moldura" aria-hidden="true"></div>
+
+        <div class="capa-conteudo">
+            <p class="capa-etiqueta">Ensaio fotográfico</p>
+
+            <h1 class="capa-titulo" id="estabelecimento-nome">
+                <span>Bistrô &amp;</span>
+                <span>Parrilla Jardins</span>
+            </h1>
+
+            <div class="capa-regra" aria-hidden="true"></div>
+
+            <p class="capa-meta">
+                <span id="total-fotos-contador">12</span> fotos
+                <span class="capa-separador" aria-hidden="true">·</span>
+                <span class="capa-meta-destaque"><span id="total-aprovadas-contador">0</span> selecionadas</span>
+            </p>
+
+            <button type="button" class="capa-botao" id="btn-ver-galeria">
+                Ver galeria
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                    stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9" />
+                </svg>
+            </button>
+
+            <p class="capa-nota">Marque com o selo azul para escolher as suas.</p>
+        </div>
+    </section>
+
+    <header class="barra-inferior">
+        <div class="barra-identidade">
+            <span class="barra-marca">Vilma Silva</span>
+            <span class="barra-divisor" aria-hidden="true"></span>
+            <span class="barra-cliente">
+                <span class="cliente-ponto" aria-hidden="true"></span>
+                <span id="cliente-email-display">cliente@teste.com</span>
+            </span>
         </div>
 
-        <div class="usuario-controles">
-            <div class="cliente-badge">
-                <span class="cliente-ponto"></span>
-                <span id="cliente-email-display">cliente@teste.com</span>
-            </div>
-            <button type="button" class="btn-acao-topo" id="btn-logout" title="Encerrar sessão">
+        <div class="barra-acoes">
+            <button type="button" class="barra-btn barra-btn--finalizar" id="btn-finalizar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span>Finalizar seleção</span>
+                <span class="barra-contador" id="barra-contador">0</span>
+            </button>
+            <button type="button" class="barra-btn barra-btn--sair" id="btn-logout"
+                title="Encerrar sessão" aria-label="Encerrar sessão">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                     <polyline points="16 17 21 12 16 7" />
                     <line x1="21" y1="12" x2="9" y2="12" />
                 </svg>
-                <span>Sair</span>
             </button>
         </div>
     </header>
 
     <!-- Banner de Apresentação do Estabelecimento -->
-    <section class="banner-cliente">
-        <div class="banner-header">
-            <span class="etiqueta-status">Seleção de Fotos do Ensaio</span>
-            <h1 class="banner-titulo" id="estabelecimento-nome">Bistrô & Parrilla Jardins</h1>
-            <p class="banner-descricao">
-                Marque com o <strong>selo azul</strong> no topo de cada imagem para selecionar suas fotos. As imagens estão em baixa resolução protegidas com marca d'água exclusivamente para seleção.
-            </p>
-        </div>
-
-        <!-- Métricas Rápidas -->
-        <div class="metricas-grade">
-            <div class="metrica-card">
-                <span class="metrica-valor" id="total-fotos-contador">12</span>
-                <span class="metrica-rotulo">Fotos no Catálogo</span>
-            </div>
-            <div class="metrica-card destaque-azul">
-                <span class="metrica-valor azul" id="total-aprovadas-contador">0</span>
-                <span class="metrica-rotulo">Fotos Selecionadas (Selo Azul)</span>
-            </div>
-            <div class="metrica-card">
-                <span class="metrica-valor">Baixa Resolução</span>
-                <span class="metrica-rotulo">Amostra Protegida</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- Barra de Filtros e Busca -->
-    <nav class="painel-filtros" aria-label="Filtros do Catálogo">
-        <div class="filtros-conteudo">
-            <div class="categorias-lista" id="categorias-container">
-                <button type="button" class="btn-categoria ativa" data-categoria="todas">Todas as Fotos</button>
-                <button type="button" class="btn-categoria" data-categoria="pratos">Pratos Principais</button>
-                <button type="button" class="btn-categoria" data-categoria="lanches">Hambúrgueres & Pizzas</button>
-                <button type="button" class="btn-categoria" data-categoria="sobremesas">Sobremesas</button>
-                <button type="button" class="btn-categoria" data-categoria="drinks">Bebidas & Cafés</button>
-                <button type="button" class="btn-categoria aba-selecionadas" data-categoria="aprovadas">✓ Selecionadas (<span id="aba-aprovadas-contador">0</span>)</button>
-            </div>
-
-            <div class="busca-e-acoes">
-                <div class="campo-busca-wrapper">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
-                    <input type="text" class="campo-busca" id="campo-busca" placeholder="Buscar prato ou item...">
-                </div>
-            </div>
-        </div>
-    </nav>
-
     <!-- Galeria / Grade de Produtos -->
-    <main class="catalogo-secao">
+    <main class="catalogo-secao" id="galeria">
         <div class="grade-cards" id="grade-fotos">
             <!-- Os cards são gerados dinamicamente via JS com os dados fotográficos reais -->
         </div>
@@ -1105,16 +1135,45 @@
             </button>
         </div>
 
-        <div class="lightbox-barra-zoom">
-            <button type="button" class="btn-zoom-controle" id="btn-zoom-menos" title="Diminuir zoom">−</button>
-            <span class="zoom-valor" id="zoom-valor-display">100%</span>
-            <button type="button" class="btn-zoom-controle" id="btn-zoom-mais" title="Aumentar zoom">+</button>
-            <button type="button" class="btn-zoom-controle" id="btn-zoom-reset" title="Resetar zoom" style="font-size: 11px;">↺</button>
-        </div>
-
         <div class="lightbox-rodape">
             <h3 class="lightbox-titulo" id="lightbox-titulo">Nome do Prato</h3>
-            <p class="lightbox-aviso">Clique na imagem para alternar zoom • Marque o selo azul para avançar à próxima</p>
+            <p class="lightbox-aviso">Marque o selo azul para selecionar e avançar à próxima</p>
+        </div>
+    </div>
+
+    <!-- Popup de confirmação ao finalizar a seleção -->
+    <div id="popup-finalizar" class="popup-finalizar" role="dialog" aria-modal="true"
+        aria-labelledby="popup-finalizar-titulo" aria-hidden="true">
+        <div class="popup-cartao">
+            <h2 class="popup-titulo" id="popup-finalizar-titulo">Finalizar a seleção?</h2>
+            <p class="popup-texto">
+                Ao confirmar, as <strong id="popup-quantidade">0</strong> fotos marcadas com o selo azul
+                serão enviadas para a Vilma e a galeria será encerrada.
+            </p>
+            <p class="popup-texto popup-texto--fraco">
+                Depois de enviar não é possível mudar a escolha nem desmarcar fotos.
+            </p>
+            <div class="popup-acoes">
+                <button type="button" class="popup-btn popup-btn--cancelar" id="btn-cancelar-finalizar">
+                    Voltar e revisar
+                </button>
+                <button type="button" class="popup-btn popup-btn--confirmar" id="btn-confirmar-finalizar">
+                    Sim, enviar e encerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aviso de galeria já encerrada -->
+    <div id="tela-encerrada" class="tela-encerrada" aria-hidden="true">
+        <div class="encerrada-cartao">
+            <svg viewBox="0 0 24 24" width="52" height="52" fill="none" stroke="currentColor"
+                stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12" />
+            </svg>
+            <h2>Seleção enviada</h2>
+            <p id="encerrada-texto">Suas fotos foram enviadas para a Vilma. A galeria está encerrada.</p>
+            <button type="button" class="popup-btn popup-btn--confirmar" id="btn-sair-encerrada">Sair</button>
         </div>
     </div>
 
@@ -1133,7 +1192,7 @@
     </footer>
 
     <script type="module">
-        import { getSession, logout } from './js/api.js';
+        import { getSession, logout, enviarSelecao } from './js/api.js';
 
         // 1. Verificação de sessão de acesso
         const temCredencialLocal = localStorage.getItem('vf_client_logged_in') === 'true' || Boolean(localStorage.getItem('vf_session_token'));
@@ -1274,8 +1333,15 @@
         function atualizarContadores() {
             const count = selecionadas.length;
             document.getElementById('total-aprovadas-contador').textContent = count;
-            document.getElementById('aba-aprovadas-contador').textContent = count;
             document.getElementById('total-fotos-contador').textContent = FOTOS_CATALOGO.length;
+
+            const contadorBarra = document.getElementById('barra-contador');
+            if (contadorBarra) {
+                contadorBarra.textContent = count;
+                // Sem foto marcada o botão não tem o que finalizar: Mostrava
+                // "0" e deixava a pessoa descobrir o aviso só depois de clicar.
+                btnFinalizar.disabled = count === 0 || selecaoEncerrada;
+            }
         }
 
         function mostrarToast(msg) {
@@ -1291,7 +1357,6 @@
         // 5. Renderização dos Cards na Grade
         const gradeFotos = document.getElementById('grade-fotos');
         let categoriaAtual = 'todas';
-        let termoBusca = '';
 
         function obterFotosFiltradas() {
             return FOTOS_CATALOGO.filter(item => {
@@ -1301,8 +1366,7 @@
                         ? selecionadas.includes(item.id)
                         : item.categoria === categoriaAtual;
 
-                const bateBusca = !termoBusca || item.titulo.toLowerCase().includes(termoBusca);
-                return bateCategoria && bateBusca;
+                return bateCategoria;
             });
         }
 
@@ -1312,9 +1376,9 @@
 
             if (filtradas.length === 0) {
                 gradeFotos.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--cinza-fraco);">
-                        <p style="font-size: 15px; margin-bottom: 6px;">Nenhuma foto encontrada para esta visualização.</p>
-                        <p style="font-size: 12.5px;">Selecione outra categoria ou limpe o campo de busca.</p>
+                    <div style="break-inside: avoid; text-align: center; padding: 60px 20px; color: var(--cinza-fraco);">
+                        <p style="font-size: 15px; margin-bottom: 6px;">Nenhuma foto para mostrar.</p>
+                        <p style="font-size: 12.5px;">Fale com a Vilma se a seleção não apareceu.</p>
                     </div>
                 `;
                 return;
@@ -1342,25 +1406,12 @@
                         <!-- Escudo transparente anti-salvar -->
                         <div class="escudo-anti-salvar"></div>
 
-                        <!-- Selo Azul no Topo -->
-                        <button type="button" class="btn-selo-azul ${estaSelecionada ? 'ativo' : ''}" data-id="${foto.id}" title="${estaSelecionada ? 'Foto selecionada' : 'Selecionar com selo azul'}">
+                        <!-- Selo Azul no Topo: só o ícone, sem texto. -->
+                        <button type="button" class="btn-selo-azul ${estaSelecionada ? 'ativo' : ''}" data-id="${foto.id}" title="${estaSelecionada ? 'Foto selecionada' : 'Selecionar com selo azul'}" aria-label="${estaSelecionada ? 'Foto selecionada' : 'Selecionar foto'}">
                             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                             </svg>
-                            <span>${estaSelecionada ? 'Selecionada' : 'Selecionar'}</span>
                         </button>
-
-                        <span class="badge-categoria">${foto.categoriaNome}</span>
-
-                        <div class="foto-overlay">
-                            <span class="btn-ampliar">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-                                Zoom & Detalhes
-                            </span>
-                        </div>
-                    </div>
-                    <div class="foto-rodape-simples">
-                        <h3 class="foto-titulo-limpo">${foto.titulo}</h3>
                     </div>
                 `;
 
@@ -1398,55 +1449,9 @@
         const btnNavAnterior = document.getElementById('btn-nav-anterior');
         const btnNavProxima = document.getElementById('btn-nav-proxima');
         const zoomContainer = document.getElementById('zoom-container');
-        const btnZoomMais = document.getElementById('btn-zoom-mais');
-        const btnZoomMenos = document.getElementById('btn-zoom-menos');
-        const btnZoomReset = document.getElementById('btn-zoom-reset');
-        const zoomValorDisplay = document.getElementById('zoom-valor-display');
         const escudoLightbox = document.getElementById('escudo-lightbox');
 
         let fotoAtualIndex = 0;
-        let zoomAtual = 1;
-
-        function atualizarZoom() {
-            zoomContainer.style.transform = `scale(${zoomAtual})`;
-            zoomContainer.classList.toggle('em-zoom', zoomAtual > 1);
-            zoomValorDisplay.textContent = `${Math.round(zoomAtual * 100)}%`;
-        }
-
-        function aplicarZoom(delta) {
-            zoomAtual = Math.min(Math.max(zoomAtual + delta, 1), 3.5);
-            atualizarZoom();
-        }
-
-        function resetarZoom() {
-            zoomAtual = 1;
-            atualizarZoom();
-        }
-
-        btnZoomMais.addEventListener('click', () => aplicarZoom(0.3));
-        btnZoomMenos.addEventListener('click', () => aplicarZoom(-0.3));
-        btnZoomReset.addEventListener('click', resetarZoom);
-
-        // Alternar zoom com clique direto na foto
-        escudoLightbox.addEventListener('click', () => {
-            if (zoomAtual > 1) {
-                resetarZoom();
-            } else {
-                zoomAtual = 2.2;
-                atualizarZoom();
-            }
-        });
-
-        // Zoom com roda do mouse no lightbox
-        lightbox.addEventListener('wheel', (e) => {
-            if (!lightbox.classList.contains('ativo')) return;
-            e.preventDefault();
-            if (e.deltaY < 0) {
-                aplicarZoom(0.2);
-            } else {
-                aplicarZoom(-0.2);
-            }
-        }, { passive: false });
 
         function atualizarEstadoSeloLightbox() {
             const foto = FOTOS_CATALOGO[fotoAtualIndex];
@@ -1460,7 +1465,6 @@
             if (index < 0) index = FOTOS_CATALOGO.length - 1;
             if (index >= FOTOS_CATALOGO.length) index = 0;
             fotoAtualIndex = index;
-            resetarZoom();
 
             const foto = FOTOS_CATALOGO[fotoAtualIndex];
             lightboxImg.src = foto.src;
@@ -1484,7 +1488,6 @@
             lightbox.classList.remove('ativo');
             lightbox.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
-            resetarZoom();
         }
 
         btnFecharLightbox.addEventListener('click', fecharLightbox);
@@ -1517,25 +1520,134 @@
         });
 
         // 7. Filtros de Categoria
-        document.querySelectorAll('.btn-categoria').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.btn-categoria').forEach(b => b.classList.remove('ativa'));
-                btn.classList.add('ativa');
-                categoriaAtual = btn.dataset.categoria;
-                renderizarFotos();
+        // A barra de filtros (categorias e busca) foi removida: a grade renderiza
+        // sempre o catalogo inteiro.
+
+        // ==============================================================
+        // 9. Capa de tela cheia
+        // ==============================================================
+        const btnVerGaleria = document.getElementById('btn-ver-galeria');
+
+        btnVerGaleria.addEventListener('click', () => {
+            document.getElementById('galeria').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
             });
         });
 
-        // 8. Busca em tempo real
-        const campoBusca = document.getElementById('campo-busca');
-        campoBusca.addEventListener('input', (e) => {
-            termoBusca = e.target.value.toLowerCase().trim();
-            renderizarFotos();
+        // ==============================================================
+        // 10. Finalizar Seleção
+        // ==============================================================
+        const btnFinalizar = document.getElementById('btn-finalizar');
+        const popupFinalizar = document.getElementById('popup-finalizar');
+        const btnCancelarFinalizar = document.getElementById('btn-cancelar-finalizar');
+        const btnConfirmarFinalizar = document.getElementById('btn-confirmar-finalizar');
+        const popupQuantidade = document.getElementById('popup-quantidade');
+        const telaEncerrada = document.getElementById('tela-encerrada');
+        const btnSairEncerrada = document.getElementById('btn-sair-encerrada');
+        const encerradaTexto = document.getElementById('encerrada-texto');
+
+        let selecaoEncerrada = localStorage.getItem('vf_selecao_encerrada') === 'true';
+
+        function abrirPopupFinalizar() {
+            if (selecaoEncerrada) return;
+            const total = selecionadas.length;
+            if (total === 0) {
+                mostrarToast('Marque pelo menos uma foto antes de finalizar.');
+                return;
+            }
+            popupQuantidade.textContent = String(total);
+            popupFinalizar.classList.add('ativo');
+            popupFinalizar.setAttribute('aria-hidden', 'false');
+            btnConfirmarFinalizar.focus();
+        }
+
+        function fecharPopupFinalizar() {
+            popupFinalizar.classList.remove('ativo');
+            popupFinalizar.setAttribute('aria-hidden', 'true');
+        }
+
+        async function confirmarFinalizacao() {
+            if (selecaoEncerrada) return;
+
+            const total = selecionadas.length;
+            if (total === 0) {
+                fecharPopupFinalizar();
+                mostrarToast('Marque pelo menos uma foto antes de finalizar.');
+                return;
+            }
+
+            btnConfirmarFinalizar.disabled = true;
+            btnConfirmarFinalizar.textContent = 'Enviando...';
+
+            try {
+                await enviarSelecao({
+                    fotos: [...selecionadas],
+                    cliente: document.getElementById('cliente-email-display').textContent.trim(),
+                    email: document.getElementById('cliente-email-display').textContent.trim()
+                });
+
+                // Só marca como encerrado depois que o servidor confirma: se a
+                // gravação falhar, a visitante ainda precisa revisar e tentar de
+                // novo, e o rascunho continua no localStorage.
+                selecaoEncerrada = true;
+                localStorage.setItem('vf_selecao_encerrada', 'true');
+                localStorage.setItem('vf_selecao_enviada_em', new Date().toISOString());
+
+                fecharPopupFinalizar();
+                encerradaTexto.textContent =
+                    `${total} ${total === 1 ? 'foto foi enviada' : 'fotos foram enviadas'} para a Vilma. A galeria está encerrada.`;
+                telaEncerrada.classList.add('ativo');
+                telaEncerrada.setAttribute('aria-hidden', 'false');
+                btnFinalizar.disabled = true;
+            } catch (erro) {
+                fecharPopupFinalizar();
+                mostrarToast(erro?.message || 'Não foi possível enviar. Tente de novo.');
+            } finally {
+                btnConfirmarFinalizar.disabled = false;
+                btnConfirmarFinalizar.textContent = 'Sim, enviar e encerrar';
+            }
+        }
+
+        btnFinalizar.addEventListener('click', abrirPopupFinalizar);
+        btnCancelarFinalizar.addEventListener('click', fecharPopupFinalizar);
+        btnConfirmarFinalizar.addEventListener('click', confirmarFinalizacao);
+        btnSairEncerrada.addEventListener('click', () => {
+            localStorage.removeItem('vf_selecao_encerrada');
+            window.location.replace('./login.html?sair=1');
         });
 
-        // Inicialização
-        atualizarContadores();
-        renderizarFotos();
+        // Esc fecha o popup; ele é a única decisão reversível da tela.
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && popupFinalizar.classList.contains('ativo')) {
+                fecharPopupFinalizar();
+            }
+        });
+
+        // Encerrada: a galeria não abre mais, mas a página mostra o que aconteceu em
+        // vez de mandar a visitante para a home. Redirect aqui fazia a galeria
+        // parecer um app quebrado — e, como a tela de encerramento nunca
+        // aparecia, não havia como limpar o estado.
+        if (selecaoEncerrada) {
+            btnFinalizar.disabled = true;
+            gradeFotos.innerHTML = '';
+            // A capa mostra os mesmos números; esvaziá-los evita que a
+            // visitante veja a contagem antiga de uma seleção já enviada.
+            ['total-fotos-contador', 'total-aprovadas-contador'].forEach((id) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = '—';
+            });
+            const quando = localStorage.getItem('vf_selecao_enviada_em');
+            const quandoFormatado = quando ? new Date(quando).toLocaleString('pt-BR') : null;
+            encerradaTexto.textContent = quandoFormatado
+                ? `Seleção enviada em ${quandoFormatado}. A galeria está encerrada e não pode mais ser alterada.`
+                : 'Suas fotos foram enviadas para a Vilma. A galeria está encerrada.';
+            telaEncerrada.classList.add('ativo');
+            telaEncerrada.setAttribute('aria-hidden', 'false');
+        } else {
+            atualizarContadores();
+            renderizarFotos();
+        }
     </script>
 </body>
 

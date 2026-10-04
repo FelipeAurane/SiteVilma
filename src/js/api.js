@@ -227,4 +227,19 @@ export async function getSession() {
   return { authenticated: false };
 }
 
+/**
+ * Envia a seleção da visitante para o servidor. A gravação é o momento em que
+ * a escolha deixa de ser rascunho no navegador e passa a existir para a Vilma.
+ */
+export async function enviarSelecao({ fotos, cliente, email } = {}) {
+  return request('/selecao', {
+    method: 'POST',
+    body: {
+      fotos: Array.isArray(fotos) ? fotos : [],
+      cliente: cliente || 'visitante',
+      email: email || null
+    }
+  });
+}
+
 export { ApiError };

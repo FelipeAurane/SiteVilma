@@ -26,3 +26,11 @@ Thumbs.db
 .DS_Store
 
 .env*.local
+
+# Build: os .min são gerados a partir dos fontes. Versioná-los faz cada
+# mudança no CSS virar dois arquivos no diff, e um deles sempre fora de dia.
+*.min.css
+*.min.js
+
+# Ferramenta de teste solta (grava arquivos em src/img)
+gravar-teste.js

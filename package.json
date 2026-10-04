@@ -6,12 +6,15 @@
   "scripts": {
     "dev": "node main.js",
     "start": "node main.js",
-    "build": "npm run minify:css && npm run minify:js",
-    "minify:css": "cleancss -o src/css/styles.min.css src/css/styles.css && cleancss -o src/css/main_config.min.css src/css/main_config.css && cleancss -o src/css/style_desktop.min.css src/css/style_desktop.css && cleancss -o src/css/style_mobile.min.css src/css/style_mobile.css",
-    "minify:js": "terser src/js/content.js -o src/js/content.min.js -c -m && terser src/js/scripts.js -o src/js/scripts.min.js -c -m && terser src/js/visitorTracking.js -o src/js/visitorTracking.min.js -c -m && terser src/js/deviceControl.js -o src/js/deviceControl.min.js -c -m && terser src/js/animation.js -o src/js/animation.min.js -c -m",
+    "build": "node scripts/build.js",
+    "check": "node scripts/verificar.js",
     "secret": "node scripts/gerar-session-secret.js",
     "verificar": "node scripts/verificar.js",
     "semear": "node scripts/semear.js",
+    "app:sync": "npx cap sync android",
+    "app:build": "node scripts/build-app.js",
+    "app:instalar": "node scripts/instalar-app.js",
+    "icones": "node scripts/gerar-icones.js",
     "test": "node tests/autorizacao.test.js && node tests/fluxo.test.js && node tests/frontend.test.js"
   },
   "dependencies": {

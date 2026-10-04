@@ -123,6 +123,26 @@ function safeImageSrc(value, fallback = '') {
 }
 
 /**
+ * Normaliza a lista "includes" de um serviço.
+ *
+ * O site renderiza um item por <li> (uiManager.js buildServiceCard), então o
+ * formato certo é array. Conteúdo salvo por painéis antigos é uma frase com os
+ * itens separados por vírgula — dividir preserva o que já estava escrito em vez
+ * de mostrar um item só. Item em branco é descartado: o site não teria o que
+ * mostrar dele.
+ */
+function normalizarInclui(valor) {
+  if (Array.isArray(valor)) {
+    return valor.map((item) => String(item ?? '').trim()).filter(Boolean);
+  }
+
+  return String(valor ?? '')
+    .split(/[\n;,]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+/**
  * Diz se a mídia do destaque central é vídeo. O painel grava o tipo junto
  * com a URL; quando ele falta (conteúdo antigo, digitado à mão), a
  * extensão do arquivo é o palpite — mas a URL do /api/media é um id puro,
@@ -332,6 +352,7 @@ export {
   defaultData,
   safeImageSrc,
   isVideoMedia,
+  normalizarInclui,
   whatsappUrl,
   text,
   lerSeloPublicacao,

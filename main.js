@@ -14,7 +14,7 @@ const path = require('path');
 const express = require('express');
 
 const app = express();
-const port = 3000;
+const port = Number(process.env.PORT) || 3000;
 const host = '0.0.0.0';
 
 // As requisições recebem o corpo JSON convertido
@@ -27,7 +27,8 @@ const rotas = {
   '/api/media': require('./api/media'),
   '/api/auth/login': require('./api/auth/login'),
   '/api/auth/logout': require('./api/auth/logout'),
-  '/api/auth/session': require('./api/auth/session')
+  '/api/auth/session': require('./api/auth/session'),
+  '/api/selecao': require('./api/selecao')
 };
 
 for (const [rota, handler] of Object.entries(rotas)) {
@@ -73,7 +74,22 @@ app.use((req, res) => {
   res.status(404).type('text/plain').send('Não encontrado');
 });
 
-app.listen(port, host, () => {
+const servidor = app.listen(port, host, () => {
   console.log(`Site disponível em  http://${host}:${port}`);
   console.log(`Painel disponível em http://${host}:${port}/config`);
+
+  // Se caiu para banco em memória, quem salvou precisa saber disso agora —
+  // não no próximo restart, quando o conteúdo já foi perdido.
+  require('./lib/db').avisaSeMock();
 });
+
+/**
+ * Encerramento limpo: sem isso o Ctrl-C no meio de um PUT pode deixar a
+ * conexão do Postgres meio usada e o próximo boot esperar pelo pool.
+ */
+for (const sinal of ['SIGINT', 'SIGTERM']) {
+  process.on(sinal, () => {
+    console.log(`\n${sinal} recebido, encerrando...`);
+    servidor.close(() => process.exit(0));
+  });
+}
