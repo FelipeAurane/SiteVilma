@@ -940,30 +940,6 @@
             color: var(--cinza-fraco);
         }
 
-        /* Rodapé do Catálogo */
-        .rodape-catalogo {
-            margin-top: auto;
-            border-top: 1px solid var(--borda);
-            padding: 28px 24px;
-            background: var(--preto-card);
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            color: var(--cinza-texto);
-        }
-
-        .rodape-catalogo a {
-            color: var(--creme);
-            text-decoration: underline;
-        }
-
-        .rodape-catalogo a:hover {
-            color: var(--branco);
-        }
-
         /* Toast de Notificação */
         .toast-aviso {
             position: fixed;
@@ -1169,12 +1145,6 @@
         </svg>
         <span id="toast-mensagem">Foto selecionada com sucesso!</span>
     </div>
-
-    <!-- Rodapé -->
-    <footer class="rodape-catalogo">
-        <p>Vilma Silva Fotografia Gastronômica • Seleção protegida de ensaio</p>
-        <p><a href="./index.html">← Voltar para o início</a></p>
-    </footer>
 
     <script type="module">
         import { getSession, logout, enviarSelecao } from './js/api.js';
