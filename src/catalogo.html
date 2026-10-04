@@ -127,9 +127,15 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Capa de tela cheia */
+        /* Capa de tela cheia.
+           Fica fixed e a galeria começa 100vh abaixo. Isso deixa a capa
+           deslizar para fora sem mexer no fluxo: se ela estivesse no fluxo,
+           escondê-la deixaria um buraco de 100vh ou causaria um pulo na
+           rolagem. */
         .capa-galeria {
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100vh;
             min-height: 520px;
@@ -142,6 +148,22 @@
                por cima. Ainda abaixo do lightbox (200), do popup (1000000) e do
                escudo anti-print (999999). */
             z-index: 160;
+            transform: translateY(0);
+            transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+        }
+
+        /* Uma vez escondida, não volta: a capa some para o topo ao deslizar e
+           só reaparece recarregando a página. */
+        .capa-galeria.capa-escondida {
+            transform: translateY(-100%);
+            pointer-events: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .capa-galeria {
+                transition: none;
+            }
         }
 
         .capa-imagem {
@@ -587,6 +609,9 @@
             margin: 0 auto;
             padding: 28px 24px 60px;
             flex: 1;
+            /* A capa é fixed e saiu do fluxo: sem esta margem a galeria
+               subiria por baixo dela. */
+            margin-top: 100vh;
             /* O topo é sticky: sem este offset a primeira fileira fica embaixo
                do header ao rolar pelo botão "Ver galeria". */
             scroll-margin-top: 78px;
@@ -1003,7 +1028,7 @@
 
         @media (max-width: 768px) {
             .catalogo-secao {
-                padding: 16px 16px 40px;
+                padding: 16px 16px 104px;
             }
         }
     </style>
@@ -1535,6 +1560,21 @@
             });
         });
 
+        // A capa escorrega para fora uma única vez. Sem isto, quem rolasse para
+        // cima reencontraria a capa no meio da galeria. Guardar a flag é o que
+        // garante que ela não volte: recarregar a página é quem mostra de novo.
+        const capaGaleria = document.getElementById('capa-galeria');
+        const LIMITE_DESLIZE = 90;
+        let capaJaDeslizou = false;
+
+        window.addEventListener('scroll', () => {
+            if (capaJaDeslizou) return;
+            if (window.scrollY > LIMITE_DESLIZE) {
+                capaJaDeslizou = true;
+                capaGaleria.classList.add('capa-escondida');
+            }
+        }, { passive: true });
+
         // ==============================================================
         // 10. Finalizar Seleção
         // ==============================================================
@@ -1648,6 +1688,14 @@
             atualizarContadores();
             renderizarFotos();
         }
+
+        // O navegador guarda a posição da rolagem e abriria a galeria no meio
+        // do caminho, com a capa já escondida. Como a capa só volta recarregando,
+        // recarregar precisa ser sinônimo de voltar ao topo.
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
     </script>
 </body>
 
