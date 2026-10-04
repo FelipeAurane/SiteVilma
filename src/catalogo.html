@@ -93,40 +93,6 @@
             background: radial-gradient(circle at 50% 0%, #131722 0%, var(--preto) 80%);
         }
 
-        /* Escudo Anti-Print Fullscreen */
-        .escudo-anti-print {
-            position: fixed;
-            inset: 0;
-            z-index: 999999;
-            background: #000000;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .escudo-anti-print.ativo {
-            display: flex;
-        }
-
-        .btn-fechar-escudo {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-            padding: 10px 22px;
-            border-radius: 999px;
-            font-family: inherit;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all var(--transicao);
-        }
-
-        .btn-fechar-escudo:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
         /* Capa de tela cheia.
            Fica fixed e a galeria começa 100vh abaixo. Isso deixa a capa
            deslizar para fora sem mexer no fluxo: se ela estivesse no fluxo,
@@ -1036,12 +1002,6 @@
 
 <body>
 
-    <!-- Escudo Anti-Print Screen (Tela fica escura quando identifica captura) -->
-    <div id="escudo-anti-print" class="escudo-anti-print" aria-hidden="true">
-        <button type="button" class="btn-fechar-escudo" id="btn-fechar-escudo">Voltar para a Seleção</button>
-    </div>
-
-    <!-- Topo da Área do Cliente -->
     <!-- Capa do álbum: a primeira coisa que a cliente vê ao abrir a galeria -->
     <section class="capa-galeria" id="capa-galeria">
         <img class="capa-imagem" src="./img/p-steak.jpg"
@@ -1247,55 +1207,22 @@
         });
 
         // ==============================================================
-        // 2. Proteção Anti-Print e Anti-Download
+        // 2. Proteção Anti-Download
+        //
+        // A tela preta de bloqueio de impressão foi removida. Ela não impedia
+        // nada: no celular a captura de tela não passa por PrintScreen nem por
+        // Ctrl+P, e a pessoa levava a prova embora o código existisse. Pior, o
+        // listener de 'blur' disparava a tela preta a qualquer perda de foco —
+        // trocar de aba, abrir o teclado, tocar fora — o que faria a galeria
+        // parecer quebrada. O que fica aqui é o que ainda tem efeito: bloquear
+        // o botão direito, o arrastar e o Ctrl+S.
         // ==============================================================
-        const escudoAntiPrint = document.getElementById('escudo-anti-print');
-        const btnFecharEscudo = document.getElementById('btn-fechar-escudo');
-
-        function dispararBloqueioPrint() {
-            escudoAntiPrint.classList.add('ativo');
-            escudoAntiPrint.setAttribute('aria-hidden', 'false');
-        }
-
-        function fecharBloqueioPrint() {
-            escudoAntiPrint.classList.remove('ativo');
-            escudoAntiPrint.setAttribute('aria-hidden', 'true');
-        }
-
-        btnFecharEscudo.addEventListener('click', fecharBloqueioPrint);
-
-        // Detecta atalhos de PrintScreen e captura
-        window.addEventListener('keyup', (e) => {
-            if (e.key === 'PrintScreen' || e.code === 'PrintScreen' || e.keyCode === 44) {
-                dispararBloqueioPrint();
-            }
-        });
-
         window.addEventListener('keydown', (e) => {
-            // PrintScreen
-            if (e.key === 'PrintScreen' || e.code === 'PrintScreen' || e.keyCode === 44) {
-                dispararBloqueioPrint();
-            }
-            // Ctrl + P ou Cmd + P (Impressão)
-            if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
-                e.preventDefault();
-                dispararBloqueioPrint();
-            }
-            // Cmd + Shift + 3 / 4 / 5 no Mac
-            if (e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === '5')) {
-                dispararBloqueioPrint();
-            }
             // Ctrl + S ou Cmd + S (Salvar página)
             if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
                 e.preventDefault();
                 mostrarToast('Salvar imagens desabilitado na área de prova.');
             }
-        });
-
-        // Quando a janela perde o foco por ativação de ferramenta de captura
-        window.addEventListener('blur', () => {
-            // Protege temporariamente a tela ao perder foco
-            dispararBloqueioPrint();
         });
 
         // Impede clique com botão direito
