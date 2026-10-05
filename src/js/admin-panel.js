@@ -17,7 +17,7 @@
  */
 
 import { exigirLogin } from './admin-auth.js';
-import { getContent, putContent, uploadImage, uploadMedia, LIMITE_VIDEO_BYTES } from './api.js';
+import { getContent, putContent, uploadImage, uploadMedia, LIMITE_VIDEO_BYTES, getSelecoes } from './api.js';
 import { DataManager, defaultData, safeImageSrc, isVideoMedia } from './dataManager.js';
 import {
   defaultVisibility,
@@ -1419,8 +1419,64 @@ async function iniciar() {
   pintarServicos();
   pintarDuvidas();
   pintarAgenda();
+  await pintarSelecoesPainel();
   atualizarEstatisticas();
   marcarEstado('salvo', 'Sincronizado');
+
+  const btnAtt = document.getElementById('btn-atualizar-selecoes');
+  if (btnAtt) {
+    btnAtt.addEventListener('click', async () => {
+      btnAtt.textContent = 'Atualizando...';
+      await pintarSelecoesPainel();
+      setTimeout(() => { btnAtt.textContent = 'Atualizar'; }, 600);
+    });
+  }
+}
+
+async function pintarSelecoesPainel() {
+  const container = document.getElementById('lista-selecoes-painel');
+  if (!container) return;
+
+  try {
+    const res = await getSelecoes();
+    const lista = res && Array.isArray(res.selecoes) ? res.selecoes : [];
+    if (lista.length === 0) {
+      container.innerHTML = '<p style="color: var(--cinza-fraco); font-size: 13px;">Nenhuma seleção enviada até o momento.</p>';
+      return;
+    }
+
+    container.innerHTML = lista.map((item, idx) => {
+      let fotosArr = item.fotos;
+      if (typeof fotosArr === 'string') {
+        try { fotosArr = JSON.parse(fotosArr); } catch { fotosArr = []; }
+      }
+      if (!Array.isArray(fotosArr)) fotosArr = [];
+
+      const nomesFormatados = fotosArr.map(f => typeof f === 'object' ? (f.nome || f.titulo || f.id) : String(f)).join(', ');
+      const dataFormatada = item.created_at ? new Date(item.created_at).toLocaleString('pt-BR') : 'Data não informada';
+      const jsonDownload = encodeURIComponent(JSON.stringify(item, null, 2));
+
+      return `
+        <div style="background: var(--veu-campo); border: 1px solid var(--borda); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
+            <div>
+              <strong style="color: var(--branco); font-size: 14px;">${item.cliente || item.cliente_email || 'Cliente'}</strong>
+              <span style="font-size: 12px; color: var(--cinza-fraco); margin-left: 8px;">${dataFormatada}</span>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span class="etiqueta" data-estado="publicado">${item.total || fotosArr.length} fotos</span>
+              <a href="data:application/json;charset=utf-8,${jsonDownload}" download="selecao-${item.id || idx + 1}.json" class="btn" style="font-size: 11px; padding: 4px 10px; text-decoration: none;">Baixar JSON</a>
+            </div>
+          </div>
+          <div style="font-size: 12.5px; color: var(--cinza-texto); line-height: 1.5;">
+            <strong style="color: var(--azul-brilhante);">Fotos selecionadas:</strong> ${nomesFormatados || 'Nenhuma foto'}
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    container.innerHTML = `<p style="color: var(--cinza-fraco); font-size: 13px;">Aguardando novas seleções.</p>`;
+  }
 }
 
 if (document.readyState === 'loading') {

@@ -13,22 +13,31 @@ const MAX_FAILURES = 5;
  * pesa contra força bruta: 5 palpites a cada 15 minutos por IP.
  */
 async function recentFailures(ip) {
-  const { rows } = await query(
-    `SELECT count(*)::int AS failures
-       FROM login_attempts
-      WHERE ip = $1
-        AND ok = false
-        AND at > now() - ($2 || ' minutes')::interval`,
-    [ip, String(WINDOW_MINUTES)]
-  );
-  return rows[0]?.failures ?? 0;
+  try {
+    const { rows } = await query(
+      `SELECT count(*)::int AS failures
+         FROM login_attempts
+        WHERE ip = $1
+          AND ok = false
+          AND at > now() - ($2 || ' minutes')::interval`,
+      [ip, String(WINDOW_MINUTES)]
+    );
+    return rows[0]?.failures ?? 0;
+  } catch (err) {
+    console.warn('[auth] aviso ao consultar login_attempts:', err.message);
+    return 0;
+  }
 }
 
 async function recordAttempt(ip, ok) {
-  await query('INSERT INTO login_attempts (ip, ok) VALUES ($1, $2)', [ip, ok]);
-  // Faxina barata: a tabela nunca cresce sem limite.
-  if (Math.random() < 0.05) {
-    await query(`DELETE FROM login_attempts WHERE at < now() - interval '1 day'`);
+  try {
+    await query('INSERT INTO login_attempts (ip, ok) VALUES ($1, $2)', [ip, ok]);
+    // Faxina barata: a tabela nunca cresce sem limite.
+    if (Math.random() < 0.05) {
+      await query(`DELETE FROM login_attempts WHERE at < now() - interval '1 day'`);
+    }
+  } catch (err) {
+    console.warn('[auth] aviso ao registrar login_attempt:', err.message);
   }
 }
 

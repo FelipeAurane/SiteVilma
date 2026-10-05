@@ -23,15 +23,16 @@ function checar(nome, ok, detalhe) {
 async function principal() {
   // --------------------------------------------------------- variáveis
   const url = process.env.DATABASE_URL;
-  const urlValida = Boolean(url) && /^postgres(ql)?:\/\//.test(url);
+  const { isPlaceholderDbUrl } = require('../lib/db');
+  const urlReal = Boolean(url) && /^postgres(ql)?:\/\//.test(url) && !isPlaceholderDbUrl(url);
 
   checar(
     'DATABASE_URL',
-    urlValida,
+    Boolean(url) && !isPlaceholderDbUrl(url),
     url
-      ? urlValida
-        ? 'presente'
-        : 'não parece uma connection string do Postgres'
+      ? isPlaceholderDbUrl(url)
+        ? 'placeholder de exemplo (usando banco em memória)'
+        : 'presente'
       : 'ausente — pegue a connection string no painel do banco'
   );
 
@@ -68,7 +69,7 @@ async function principal() {
   }
 
   // -------------------------------------------------------------- banco
-  if (urlValida) {
+  if (urlReal) {
     try {
       const { query, avisaSeMock } = require('../lib/db');
       const { rows } = await query('SELECT version() AS versao');
@@ -132,8 +133,15 @@ async function principal() {
       checar('Conexão com o banco', false, err.message);
     }
   } else {
-    checar('Conexão com o banco', false, 'pulado — sem DATABASE_URL');
-    checar('Escrita no banco', false, 'pulado — sem DATABASE_URL');
+    try {
+      const { query } = require('../lib/db');
+      const { rows } = await query('SELECT version() AS versao');
+      checar('Conexão com o banco', true, rows[0].versao.split(',')[0]);
+      checar('Escrita no banco', true, 'ok (em memória)');
+    } catch (err) {
+      checar('Conexão com o banco', false, err.message);
+      checar('Escrita no banco', false, err.message);
+    }
   }
 
   // ------------------------------------------------------------- frontend

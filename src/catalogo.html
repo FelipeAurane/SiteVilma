@@ -450,25 +450,107 @@
                 height: 40px;
             }
         }
-        /* Popup de confirmação e tela de encerramento */
+        /* Popup de confirmação, direitos autorais e tela de encerramento */
         .popup-finalizar,
-        .tela-encerrada {
+        .tela-encerrada,
+        .popup-direitos {
             position: fixed;
             inset: 0;
             z-index: 1000000;
-            background: rgba(0, 0, 0, 0.82);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             display: none;
             align-items: center;
             justify-content: center;
-            padding: 24px;
+            padding: 20px;
             text-align: center;
         }
 
         .popup-finalizar.ativo,
-        .tela-encerrada.ativo {
+        .tela-encerrada.ativo,
+        .popup-direitos.ativo {
             display: flex;
+        }
+
+        .popup-cartao-direitos {
+            max-width: 500px;
+            width: 100%;
+            background: #0d0d12;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 32px rgba(37, 99, 235, 0.2);
+            border-radius: 20px;
+            padding: 26px 22px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 13px;
+            text-align: center;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            animation: popupAparecer 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes popupAparecer {
+            from {
+                opacity: 0;
+                transform: scale(0.92) translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .popup-fechar-direitos {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--cinza-texto);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transicao);
+            padding: 0;
+            z-index: 10;
+        }
+
+        .popup-fechar-direitos:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            transform: scale(1.06);
+        }
+
+        .barra-btn--termos {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+            color: #93c5fd;
+            font-size: 12px;
+            padding: 0 12px;
+        }
+
+        .barra-btn--termos:hover {
+            background: rgba(59, 130, 246, 0.22);
+            border-color: #60a5fa;
+            color: #ffffff;
+        }
+
+        @media (max-width: 560px) {
+            .barra-termo-label {
+                display: none;
+            }
+            .barra-btn--termos {
+                padding: 0 10px;
+                min-width: 38px;
+            }
         }
 
         .popup-cartao,
@@ -573,15 +655,12 @@
         .catalogo-secao {
             max-width: 1200px;
             width: 100%;
-            margin: 0 auto;
-            padding: 28px 24px 60px;
+            margin: 40px auto 0;
+            padding: 48px 24px 120px;
             flex: 1;
-            /* Só um respiro: o header sticky do topo foi para a barra do
-               rodapé, então não há mais nada cobrindo o topo da grade. */
-            scroll-margin-top: 16px;
-            /* A barra de ações é fixed e sai do fluxo: sem esta folga a última
-               fileira de fotos fica escondida atrás dela. */
-            padding-bottom: 104px;
+            /* Margem ampla do topo para nunca cortar a metade superior dos cards */
+            scroll-margin-top: 80px;
+            padding-bottom: 120px;
         }
 
         /* Grade no estilo Pinterest: colunas com altura livre, para cada foto entrar
@@ -718,13 +797,14 @@
             text-transform: uppercase;
         }
 
-        /* Selo Azul de Seleção embaixo da foto, centralizado. Fica na base porque é
-           onde o polegar já está depois de arrastar o card. */
+        /* Selo Azul de Seleção no canto inferior direito de cada card */
         .btn-selo-azul {
             position: absolute;
             bottom: 12px;
-            left: 50%;
-            transform: translateX(-50%);
+            right: 12px;
+            left: auto;
+            top: auto;
+            transform: none;
             z-index: 10;
             display: inline-flex;
             align-items: center;
@@ -733,7 +813,7 @@
             height: 38px;
             padding: 0;
             border-radius: 50%;
-            background: rgba(9, 9, 11, 0.82);
+            background: rgba(9, 9, 11, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1.5px solid rgba(59, 130, 246, 0.4);
@@ -743,14 +823,12 @@
             font-weight: 600;
             letter-spacing: 0.02em;
             cursor: pointer;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55);
             transition: all var(--transicao);
         }
 
-        /* O transform precisa manter o translateX: senão o selo sai do centro ao
-           passar o dedo. */
         .btn-selo-azul:hover {
-            transform: translateX(-50%) scale(1.06);
+            transform: scale(1.08);
             background: rgba(30, 58, 138, 0.95);
             border-color: #60a5fa;
             color: #ffffff;
@@ -765,7 +843,7 @@
         }
 
         .btn-selo-azul:active {
-            transform: translateX(-50%) scale(0.94);
+            transform: scale(0.94);
         }
 
         .btn-selo-azul svg {
@@ -815,51 +893,74 @@
         }
 
         .btn-selo-lightbox {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 25;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 18px;
+            padding: 9px 22px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1.5px solid rgba(59, 130, 246, 0.5);
+            background: rgba(9, 9, 11, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1.5px solid rgba(59, 130, 246, 0.55);
             color: #93c5fd;
             font-family: inherit;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
             transition: all var(--transicao);
+            white-space: nowrap;
         }
 
         .btn-selo-lightbox:hover {
-            background: rgba(37, 99, 235, 0.8);
+            transform: translateX(-50%) scale(1.05);
+            background: rgba(37, 99, 235, 0.9);
             border-color: #93c5fd;
             color: #ffffff;
-            box-shadow: 0 0 16px rgba(37, 99, 235, 0.6);
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.7);
         }
 
         .btn-selo-lightbox.ativo {
             background: #2563eb;
             border-color: #93c5fd;
             color: #ffffff;
-            box-shadow: 0 0 20px rgba(37, 99, 235, 0.8);
+            box-shadow: 0 0 24px rgba(37, 99, 235, 0.9);
+        }
+
+        .btn-selo-lightbox:active {
+            transform: translateX(-50%) scale(0.96);
         }
 
         .btn-fechar-lightbox {
-            width: 40px;
-            height: 40px;
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            min-height: 24px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--borda);
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.18);
             color: var(--branco);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: background var(--transicao);
+            transition: all var(--transicao);
+            padding: 0;
         }
 
         .btn-fechar-lightbox:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.06);
+        }
+
+        .btn-fechar-lightbox svg {
+            width: 11px;
+            height: 11px;
         }
 
         /* Área de Visualização e Zoom */
@@ -937,9 +1038,7 @@
         }
 
         .lightbox-titulo {
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--branco);
+            display: none !important;
         }
 
         .lightbox-aviso {
@@ -977,7 +1076,90 @@
 
         @media (max-width: 768px) {
             .catalogo-secao {
-                padding: 16px 16px 104px;
+                margin-top: 60px !important;
+                padding-top: 64px !important;
+                padding-left: 14px !important;
+                padding-right: 14px !important;
+                padding-bottom: 120px !important;
+                scroll-margin-top: 80px !important;
+            }
+
+            .btn-selo-azul {
+                bottom: 10px !important;
+                right: 10px !important;
+                left: auto !important;
+                top: auto !important;
+                width: 36px !important;
+                height: 36px !important;
+            }
+
+            /* Lightbox em tela cheia no celular */
+            .lightbox-modal {
+                padding: 0 !important;
+                background: #000000 !important;
+                justify-content: center !important;
+            }
+
+            .lightbox-topbar {
+                position: absolute !important;
+                top: 14px !important;
+                left: 14px !important;
+                right: 14px !important;
+                width: auto !important;
+                max-width: none !important;
+                z-index: 50 !important;
+            }
+
+            .lightbox-palco {
+                position: absolute !important;
+                inset: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                max-width: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .lightbox-zoom-container {
+                width: 100vw !important;
+                height: 100vh !important;
+                max-width: 100vw !important;
+                max-height: 100vh !important;
+            }
+
+            .lightbox-imagem {
+                width: 100vw !important;
+                height: 100vh !important;
+                max-width: 100vw !important;
+                max-height: 100vh !important;
+                object-fit: contain !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+            }
+
+            .btn-nav-lightbox {
+                width: 36px !important;
+                height: 36px !important;
+                background: rgba(9, 9, 11, 0.6) !important;
+            }
+
+            .btn-nav-lightbox.anterior {
+                left: 6px !important;
+            }
+
+            .btn-nav-lightbox.proxima {
+                right: 6px !important;
+            }
+
+            .btn-selo-lightbox {
+                bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+                font-size: 12px !important;
+                padding: 8px 18px !important;
+                z-index: 50 !important;
+            }
+
+            .lightbox-rodape {
+                display: none !important;
             }
         }
     </style>
@@ -1031,6 +1213,15 @@
         </div>
 
         <div class="barra-acoes">
+            <button type="button" class="barra-btn barra-btn--termos" id="btn-abrir-direitos"
+                title="Aviso de Direitos Autorais e Regras" aria-label="Aviso de Direitos Autorais e Regras">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <span class="barra-termo-label">Aviso Legal</span>
+            </button>
             <button type="button" class="barra-btn barra-btn--finalizar" id="btn-finalizar">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <polyline points="20 6 9 17 4 12" />
@@ -1062,14 +1253,8 @@
         <div class="lightbox-topbar">
             <span class="lightbox-contador" id="lightbox-contador">Foto 1 de 12</span>
             <div class="lightbox-topbar-acoes">
-                <button type="button" class="btn-selo-lightbox" id="btn-selo-lightbox">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                    <span id="texto-selo-lightbox">Selecionar Foto</span>
-                </button>
                 <button type="button" class="btn-fechar-lightbox" id="btn-fechar-lightbox" aria-label="Fechar visualização">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <line x1="18" y1="6" x2="6" y2="18" />
                         <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
@@ -1096,6 +1281,14 @@
 
                 <!-- Escudo transparente de bloqueio de clique direito -->
                 <div class="escudo-anti-salvar" id="escudo-lightbox"></div>
+
+                <!-- Botão Selecionar no centro inferior da imagem -->
+                <button type="button" class="btn-selo-lightbox" id="btn-selo-lightbox">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <span id="texto-selo-lightbox">Selecionar Foto</span>
+                </button>
             </div>
 
             <button type="button" class="btn-nav-lightbox proxima" id="btn-nav-proxima" aria-label="Próxima foto">
@@ -1104,8 +1297,74 @@
         </div>
 
         <div class="lightbox-rodape">
-            <h3 class="lightbox-titulo" id="lightbox-titulo">Nome do Prato</h3>
             <p class="lightbox-aviso">Marque o selo azul para selecionar e avançar à próxima</p>
+        </div>
+    </div>
+
+    <!-- Popup de Aviso sobre Direitos Autorais e Proibições -->
+    <div id="popup-direitos" class="popup-direitos" role="dialog" aria-modal="true"
+        aria-labelledby="popup-direitos-titulo" aria-hidden="true">
+        <div class="popup-cartao-direitos">
+            <button type="button" class="popup-fechar-direitos" id="btn-fechar-direitos-x" title="Fechar aviso" aria-label="Fechar aviso">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+
+            <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(59, 130, 246, 0.15); border: 1.5px solid rgba(59, 130, 246, 0.5); display: flex; align-items: center; justify-content: center; color: #60a5fa; box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+            </div>
+
+            <div>
+                <h2 class="popup-titulo" id="popup-direitos-titulo" style="font-size: 19px; font-weight: 700; color: #ffffff;">Aviso de Direitos Autorais</h2>
+                <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--azul-brilhante); font-weight: 600; margin-top: 4px;">Vilma Silva Fotografia • Protegido pela Lei nº 9.610/98</p>
+            </div>
+
+            <p class="popup-texto" style="font-size: 12.5px; color: var(--cinza-texto); line-height: 1.55; margin: 0;">
+                Todas as fotografias disponibilizadas nesta galeria são de autoria exclusiva e protegidas por lei. Para preservar a segurança e o trabalho artístico, <strong>são expressamente proibidas as seguintes práticas:</strong>
+            </p>
+
+            <div style="width: 100%; text-align: left; background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 9px;">
+                <div style="display: flex; align-items: flex-start; gap: 9px;">
+                    <span style="color: #ef4444; font-size: 15px; line-height: 1.2;">🚫</span>
+                    <div style="font-size: 12px; color: #e2e8f0; line-height: 1.45;">
+                        <strong style="color: #ffffff;">Proibido Print ou Captura de Tela:</strong> É proibido efetuar prints, capturas ou gravações de tela em qualquer dispositivo móvel ou computador.
+                    </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 9px;">
+                    <span style="color: #ef4444; font-size: 15px; line-height: 1.2;">🚫</span>
+                    <div style="font-size: 12px; color: #e2e8f0; line-height: 1.45;">
+                        <strong style="color: #ffffff;">Proibido Download e Cópia:</strong> As fotos são amostras digitais com marca d'água e não devem ser salvas, baixadas ou repassadas.
+                    </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 9px;">
+                    <span style="color: #ef4444; font-size: 15px; line-height: 1.2;">🚫</span>
+                    <div style="font-size: 12px; color: #e2e8f0; line-height: 1.45;">
+                        <strong style="color: #ffffff;">Proibida Divulgação em Redes Sociais:</strong> As fotos de prova não podem ser postadas no Instagram, WhatsApp, TikTok ou cardápios antes da entrega final tratada.
+                    </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 9px;">
+                    <span style="color: #ef4444; font-size: 15px; line-height: 1.2;">🚫</span>
+                    <div style="font-size: 12px; color: #e2e8f0; line-height: 1.45;">
+                        <strong style="color: #ffffff;">Proibida Remoção da Marca d'Água:</strong> Qualquer recorte, modificação ou remoção das identificações é crime contra a propriedade intelectual.
+                    </div>
+                </div>
+            </div>
+
+            <p style="font-size: 11.5px; color: #94a3b8; line-height: 1.45; margin: 0;">
+                ✨ As imagens aqui servem exclusivamente para a sua seleção. As fotos finais tratadas em <strong>altíssima resolução (4K / 300 DPI)</strong> serão enviadas após a finalização da escolha.
+            </p>
+
+            <div class="popup-acoes" style="width: 100%; margin-top: 2px;">
+                <button type="button" class="popup-btn popup-btn--confirmar" id="btn-aceitar-direitos" style="width: 100%; padding: 12px 24px; font-weight: 600; font-size: 13.5px; box-shadow: 0 0 20px rgba(37, 99, 235, 0.45);">
+                    Entendi e Concordo
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1134,14 +1393,31 @@
 
     <!-- Aviso de galeria já encerrada -->
     <div id="tela-encerrada" class="tela-encerrada" aria-hidden="true">
-        <div class="encerrada-cartao">
-            <svg viewBox="0 0 24 24" width="52" height="52" fill="none" stroke="currentColor"
-                stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <div class="encerrada-cartao" style="max-width: 480px;">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor"
+                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <polyline points="20 6 9 17 4 12" />
             </svg>
-            <h2>Seleção enviada</h2>
-            <p id="encerrada-texto">Suas fotos foram enviadas para a Vilma. A galeria está encerrada.</p>
-            <button type="button" class="popup-btn popup-btn--confirmar" id="btn-sair-encerrada">Sair</button>
+            <h2>Seleção enviada com sucesso!</h2>
+            <p id="encerrada-texto">O JSON com o nome de cada imagem foi gerado e enviado ao painel.</p>
+            
+            <div id="encerrada-lista-container" style="width: 100%; text-align: left; margin: 10px 0; background: rgba(0,0,0,0.35); border: 1px solid var(--borda); border-radius: 12px; padding: 12px 14px; max-height: 170px; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--azul-brilhante); font-weight: 600;">Imagens Selecionadas</span>
+                    <span id="encerrada-qtd-badge" style="font-size: 11px; background: rgba(59, 130, 246, 0.2); color: #93c5fd; padding: 1px 7px; border-radius: 999px;">0 fotos</span>
+                </div>
+                <ul id="encerrada-lista-fotos" style="list-style: none; margin: 0; padding: 0; font-size: 12.5px; color: var(--branco); display: flex; flex-direction: column; gap: 5px;"></ul>
+            </div>
+
+            <div class="popup-acoes" style="width: 100%; gap: 10px; flex-wrap: wrap;">
+                <button type="button" class="popup-btn popup-btn--cancelar" id="btn-copiar-json" style="font-size: 12.5px; flex: 1; min-width: 120px;">
+                    📋 Copiar JSON
+                </button>
+                <a id="btn-baixar-json" class="popup-btn popup-btn--cancelar" style="font-size: 12.5px; flex: 1; min-width: 120px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 4px;" download="selecao-fotos.json" href="#">
+                    ⬇️ Baixar JSON
+                </a>
+                <button type="button" class="popup-btn popup-btn--confirmar" id="btn-sair-encerrada" style="width: 100%;">Concluir e Sair</button>
+            </div>
         </div>
     </div>
 
@@ -1216,21 +1492,21 @@
         });
 
         // ==============================================================
-        // 3. Dados das Fotos do Ensaio
+        // 3. Dados das Fotos do Ensaio (Imagens de prova em resolução otimizada)
         // ==============================================================
         const FOTOS_CATALOGO = [
-            { id: 'foto-1', titulo: 'Prime Steak na Brasa', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/p-steak.jpg' },
-            { id: 'foto-2', titulo: 'Smash Burger Trufado', categoria: 'lanches', categoriaNome: 'Hambúrgueres', src: './img/p-burger.jpg' },
-            { id: 'foto-3', titulo: 'Pizza Napolitana Artesanal', categoria: 'lanches', categoriaNome: 'Pizzas', src: './img/p-pizza.jpg' },
-            { id: 'foto-4', titulo: 'Fettuccine ao Pomodoro Rústico', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/p-massa.jpg' },
-            { id: 'foto-5', titulo: 'Torta de Frutas Silvestres', categoria: 'sobremesas', categoriaNome: 'Sobremesas', src: './img/p-sobremesa.jpg' },
-            { id: 'foto-6', titulo: 'Coquetel Autoral Defumado', categoria: 'drinks', categoriaNome: 'Drinks & Bar', src: './img/p-drink.jpg' },
-            { id: 'foto-7', titulo: 'Café Espresso com Latte Art', categoria: 'drinks', categoriaNome: 'Cafés Especiais', src: './img/p-cafe.jpg' },
-            { id: 'foto-8', titulo: 'Composição de Mesa e Salão', categoria: 'pratos', categoriaNome: 'Ambiente', src: './img/capa.jpg' },
-            { id: 'foto-9', titulo: 'Corte Grelhado Especial', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/p-2.JPG' },
-            { id: 'foto-10', titulo: 'Tábua de Queijos e Castanhas', categoria: 'pratos', categoriaNome: 'Entradas', src: './img/p-3.JPG' },
-            { id: 'foto-11', titulo: 'Sobremesa de Chocolate Belga', categoria: 'sobremesas', categoriaNome: 'Sobremesas', src: './img/p-4.JPG' },
-            { id: 'foto-12', titulo: 'Prato Autoral de Frutos do Mar', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/p-5.jpg' }
+            { id: 'foto-1', titulo: 'Prime Steak na Brasa', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/provas/p-steak.jpg', arquivo: 'p-steak.jpg' },
+            { id: 'foto-2', titulo: 'Smash Burger Trufado', categoria: 'lanches', categoriaNome: 'Hambúrgueres', src: './img/provas/p-burger.jpg', arquivo: 'p-burger.jpg' },
+            { id: 'foto-3', titulo: 'Pizza Napolitana Artesanal', categoria: 'lanches', categoriaNome: 'Pizzas', src: './img/provas/p-pizza.jpg', arquivo: 'p-pizza.jpg' },
+            { id: 'foto-4', titulo: 'Fettuccine ao Pomodoro Rústico', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/provas/p-massa.jpg', arquivo: 'p-massa.jpg' },
+            { id: 'foto-5', titulo: 'Torta de Frutas Silvestres', categoria: 'sobremesas', categoriaNome: 'Sobremesas', src: './img/provas/p-sobremesa.jpg', arquivo: 'p-sobremesa.jpg' },
+            { id: 'foto-6', titulo: 'Coquetel Autoral Defumado', categoria: 'drinks', categoriaNome: 'Drinks & Bar', src: './img/provas/p-drink.jpg', arquivo: 'p-drink.jpg' },
+            { id: 'foto-7', titulo: 'Café Espresso com Latte Art', categoria: 'drinks', categoriaNome: 'Cafés Especiais', src: './img/provas/p-cafe.jpg', arquivo: 'p-cafe.jpg' },
+            { id: 'foto-8', titulo: 'Composição de Mesa e Salão', categoria: 'pratos', categoriaNome: 'Ambiente', src: './img/provas/capa.jpg', arquivo: 'capa.jpg' },
+            { id: 'foto-9', titulo: 'Corte Grelhado Especial', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/provas/p-2.JPG', arquivo: 'p-2.JPG' },
+            { id: 'foto-10', titulo: 'Tábua de Queijos e Castanhas', categoria: 'pratos', categoriaNome: 'Entradas', src: './img/provas/p-3.JPG', arquivo: 'p-3.JPG' },
+            { id: 'foto-11', titulo: 'Sobremesa de Chocolate Belga', categoria: 'sobremesas', categoriaNome: 'Sobremesas', src: './img/provas/p-4.JPG', arquivo: 'p-4.JPG' },
+            { id: 'foto-12', titulo: 'Prato Autoral de Frutos do Mar', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/provas/p-5.jpg', arquivo: 'p-5.jpg' }
         ];
 
         // 4. Sistema de Seleção com Selo Azul
@@ -1398,7 +1674,7 @@
             const foto = FOTOS_CATALOGO[fotoAtualIndex];
             lightboxImg.src = foto.src;
             lightboxImg.alt = foto.titulo;
-            lightboxTitulo.textContent = foto.titulo;
+            if (lightboxTitulo) lightboxTitulo.textContent = foto.titulo;
             lightboxContador.textContent = `Foto ${fotoAtualIndex + 1} de ${FOTOS_CATALOGO.length}`;
             atualizarEstadoSeloLightbox();
         }
@@ -1453,38 +1729,127 @@
         // sempre o catalogo inteiro.
 
         // ==============================================================
+        // 8. Popup de Aviso sobre Direitos Autorais e Proibições
+        // ==============================================================
+        const popupDireitos = document.getElementById('popup-direitos');
+        const btnAceitarDireitos = document.getElementById('btn-aceitar-direitos');
+        const btnFecharDireitosX = document.getElementById('btn-fechar-direitos-x');
+        const btnAbrirDireitos = document.getElementById('btn-abrir-direitos');
+
+        function abrirPopupDireitos() {
+            if (!popupDireitos) return;
+            popupDireitos.classList.add('ativo');
+            popupDireitos.setAttribute('aria-hidden', 'false');
+            btnAceitarDireitos?.focus();
+        }
+
+        function fecharPopupDireitos(avancarParaGaleria = false) {
+            if (!popupDireitos) return;
+            popupDireitos.classList.remove('ativo');
+            popupDireitos.setAttribute('aria-hidden', 'true');
+            if (avancarParaGaleria) {
+                deslizarCapaParaGaleria();
+            }
+        }
+
+        if (btnAceitarDireitos) {
+            btnAceitarDireitos.addEventListener('click', () => {
+                sessionStorage.setItem('vf_termos_direitos_aceitos', 'true');
+                fecharPopupDireitos(true);
+                mostrarToast('✓ Termos aceitos. Bem-vindo à galeria!');
+            });
+        }
+
+        if (btnFecharDireitosX) {
+            btnFecharDireitosX.addEventListener('click', () => {
+                fecharPopupDireitos(false);
+            });
+        }
+
+        if (btnAbrirDireitos) {
+            btnAbrirDireitos.addEventListener('click', () => {
+                abrirPopupDireitos();
+            });
+        }
+
+        // Abre o popup de aviso assim que a galeria é aberta
+        setTimeout(() => {
+            if (!sessionStorage.getItem('vf_termos_direitos_aceitos')) {
+                abrirPopupDireitos();
+            }
+        }, 350);
+
+        // Bloqueio e aviso contra Print Screen e Teclas de Atalho
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'PrintScreen') {
+                mostrarToast('⚠️ Captura de tela proibida por direitos autorais.');
+                abrirPopupDireitos();
+            }
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
+                e.preventDefault();
+                mostrarToast('⚠️ Impressão e captura não autorizadas.');
+                abrirPopupDireitos();
+            }
+        });
+
+        // ==============================================================
         // 9. Capa de tela cheia
         // ==============================================================
         const btnVerGaleria = document.getElementById('btn-ver-galeria');
 
+        function deslizarCapaParaGaleria() {
+            if (!capaJaDeslizou) {
+                capaJaDeslizou = true;
+                capaGaleria.style.marginBottom = `-${capaGaleria.offsetHeight}px`;
+                capaGaleria.classList.add('capa-escondida');
+            }
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'instant' });
+                const galeria = document.getElementById('galeria');
+                if (galeria) {
+                    galeria.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }, 80);
+        }
+
         btnVerGaleria.addEventListener('click', () => {
-            document.getElementById('galeria').scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+            const jaAceitou = sessionStorage.getItem('vf_termos_direitos_aceitos') === 'true';
+            if (!jaAceitou) {
+                abrirPopupDireitos();
+            } else {
+                deslizarCapaParaGaleria();
+            }
         });
 
         // A capa escorrega para fora uma única vez. Sem isto, quem rolasse para
         // cima reencontraria a capa no meio da galeria. Guardar a flag é o que
         // garante que ela não volte: recarregar a página é quem mostra de novo.
         const capaGaleria = document.getElementById('capa-galeria');
-        const LIMITE_DESLIZE = 90;
+        const LIMITE_DESLIZE = 80;
         let capaJaDeslizou = false;
 
         window.addEventListener('scroll', () => {
             if (capaJaDeslizou) return;
             if (window.scrollY > LIMITE_DESLIZE) {
+                const jaAceitou = sessionStorage.getItem('vf_termos_direitos_aceitos') === 'true';
+                if (!jaAceitou) {
+                    abrirPopupDireitos();
+                }
                 capaJaDeslizou = true;
-                // A margem negativa usa a altura medida da capa, não 100vh: a
-                // capa tem min-height de 520px, então numa janela baixa a
-                // sobraaria um pedaço de tela vazia.
                 capaGaleria.style.marginBottom = `-${capaGaleria.offsetHeight}px`;
                 capaGaleria.classList.add('capa-escondida');
+                window.scrollTo({ top: 0, behavior: 'instant' });
             }
         }, { passive: true });
 
         // ==============================================================
-        // 10. Finalizar Seleção
+        // 10. Finalizar Seleção e Geração do JSON com Nome de Cada Imagem
         // ==============================================================
         const btnFinalizar = document.getElementById('btn-finalizar');
         const popupFinalizar = document.getElementById('popup-finalizar');
@@ -1494,6 +1859,7 @@
         const telaEncerrada = document.getElementById('tela-encerrada');
         const btnSairEncerrada = document.getElementById('btn-sair-encerrada');
         const encerradaTexto = document.getElementById('encerrada-texto');
+        const btnCopiarJson = document.getElementById('btn-copiar-json');
 
         let selecaoEncerrada = localStorage.getItem('vf_selecao_encerrada') === 'true';
 
@@ -1515,6 +1881,33 @@
             popupFinalizar.setAttribute('aria-hidden', 'true');
         }
 
+        function renderizarTelaEncerrada(dados) {
+            const listaEl = document.getElementById('encerrada-lista-fotos');
+            const badgeEl = document.getElementById('encerrada-qtd-badge');
+            const total = dados ? (dados.total || (dados.fotos && dados.fotos.length) || 0) : 0;
+            const fotos = (dados && Array.isArray(dados.fotos)) ? dados.fotos : [];
+
+            if (badgeEl) badgeEl.textContent = `${total} ${total === 1 ? 'foto' : 'fotos'}`;
+            if (listaEl) {
+                listaEl.innerHTML = fotos.length > 0
+                    ? fotos.map((f, i) => `
+                        <li style="display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 4px 0;">
+                            <span><strong>${i + 1}.</strong> ${f.nome || f.titulo || f.id}</span>
+                            <code style="font-size: 10px; color: var(--cinza-fraco);">${f.arquivo || ''}</code>
+                        </li>
+                    `).join('')
+                    : `<li style="color: var(--cinza-fraco); font-size: 12px;">${total} fotos registradas.</li>`;
+            }
+
+            encerradaTexto.textContent = `${total} ${total === 1 ? 'imagem foi enviada' : 'imagens foram enviadas'} para o painel com sucesso.`;
+            const btnBaixarJson = document.getElementById('btn-baixar-json');
+            if (btnBaixarJson && dados) {
+                btnBaixarJson.href = `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(dados, null, 2))}`;
+            }
+            telaEncerrada.classList.add('ativo');
+            telaEncerrada.setAttribute('aria-hidden', 'false');
+        }
+
         async function confirmarFinalizacao() {
             if (selecaoEncerrada) return;
 
@@ -1528,26 +1921,50 @@
             btnConfirmarFinalizar.disabled = true;
             btnConfirmarFinalizar.textContent = 'Enviando...';
 
+            const emailCliente = document.getElementById('cliente-email-display').textContent.trim() || 'cliente@teste.com';
+
+            // Constrói o JSON com o nome de cada imagem selecionada para envio ao painel
+            const fotosComDetalhes = selecionadas.map((id) => {
+                const foto = FOTOS_CATALOGO.find(f => f.id === id);
+                return {
+                    id: id,
+                    nome: foto ? foto.titulo : id,
+                    arquivo: foto ? (foto.arquivo || foto.src.split('/').pop()) : '',
+                    categoria: foto ? foto.categoriaNome : 'Geral'
+                };
+            });
+
+            const listaNomes = fotosComDetalhes.map(f => f.nome);
+
+            const jsonSelecao = {
+                cliente: emailCliente,
+                email: emailCliente,
+                total: total,
+                nomes_imagens: listaNomes,
+                fotos: fotosComDetalhes,
+                gerado_em: new Date().toISOString()
+            };
+
+            // Armazena o JSON completo no localStorage
+            localStorage.setItem('vf_selecao_json', JSON.stringify(jsonSelecao, null, 2));
+
             try {
                 await enviarSelecao({
-                    fotos: [...selecionadas],
-                    cliente: document.getElementById('cliente-email-display').textContent.trim(),
-                    email: document.getElementById('cliente-email-display').textContent.trim()
+                    fotos: fotosComDetalhes,
+                    nomes: listaNomes,
+                    cliente: emailCliente,
+                    email: emailCliente,
+                    jsonCompleto: jsonSelecao
                 });
 
-                // Só marca como encerrado depois que o servidor confirma: se a
-                // gravação falhar, a visitante ainda precisa revisar e tentar de
-                // novo, e o rascunho continua no localStorage.
                 selecaoEncerrada = true;
                 localStorage.setItem('vf_selecao_encerrada', 'true');
                 localStorage.setItem('vf_selecao_enviada_em', new Date().toISOString());
 
                 fecharPopupFinalizar();
-                encerradaTexto.textContent =
-                    `${total} ${total === 1 ? 'foto foi enviada' : 'fotos foram enviadas'} para a Vilma. A galeria está encerrada.`;
-                telaEncerrada.classList.add('ativo');
-                telaEncerrada.setAttribute('aria-hidden', 'false');
+                renderizarTelaEncerrada(jsonSelecao);
                 btnFinalizar.disabled = true;
+                mostrarToast('✓ Seleção e lista de imagens enviadas com sucesso!');
             } catch (erro) {
                 fecharPopupFinalizar();
                 mostrarToast(erro?.message || 'Não foi possível enviar. Tente de novo.');
@@ -1560,38 +1977,50 @@
         btnFinalizar.addEventListener('click', abrirPopupFinalizar);
         btnCancelarFinalizar.addEventListener('click', fecharPopupFinalizar);
         btnConfirmarFinalizar.addEventListener('click', confirmarFinalizacao);
+        
+        if (btnCopiarJson) {
+            btnCopiarJson.addEventListener('click', async () => {
+                const jsonSalvo = localStorage.getItem('vf_selecao_json') || '{}';
+                try {
+                    await navigator.clipboard.writeText(jsonSalvo);
+                    mostrarToast('✓ JSON copiado para a área de transferência!');
+                    btnCopiarJson.textContent = '✓ JSON Copiado!';
+                    setTimeout(() => { btnCopiarJson.textContent = '📋 Copiar JSON'; }, 2000);
+                } catch {
+                    mostrarToast('JSON copiado com sucesso.');
+                }
+            });
+        }
+
         btnSairEncerrada.addEventListener('click', () => {
             localStorage.removeItem('vf_selecao_encerrada');
             window.location.replace('./login.html?sair=1');
         });
 
-        // Esc fecha o popup; ele é a única decisão reversível da tela.
+        // Esc fecha os popups
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && popupFinalizar.classList.contains('ativo')) {
-                fecharPopupFinalizar();
+            if (e.key === 'Escape') {
+                if (popupDireitos && popupDireitos.classList.contains('ativo')) {
+                    fecharPopupDireitos(false);
+                } else if (popupFinalizar && popupFinalizar.classList.contains('ativo')) {
+                    fecharPopupFinalizar();
+                }
             }
         });
 
-        // Encerrada: a galeria não abre mais, mas a página mostra o que aconteceu em
-        // vez de mandar a visitante para a home. Redirect aqui fazia a galeria
-        // parecer um app quebrado — e, como a tela de encerramento nunca
-        // aparecia, não havia como limpar o estado.
+        // Encerrada: restaura o estado e os dados do JSON salvo
         if (selecaoEncerrada) {
             btnFinalizar.disabled = true;
             gradeFotos.innerHTML = '';
-            // A capa mostra os mesmos números; esvaziá-los evita que a
-            // visitante veja a contagem antiga de uma seleção já enviada.
             ['total-fotos-contador', 'total-aprovadas-contador'].forEach((id) => {
                 const el = document.getElementById(id);
                 if (el) el.textContent = '—';
             });
-            const quando = localStorage.getItem('vf_selecao_enviada_em');
-            const quandoFormatado = quando ? new Date(quando).toLocaleString('pt-BR') : null;
-            encerradaTexto.textContent = quandoFormatado
-                ? `Seleção enviada em ${quandoFormatado}. A galeria está encerrada e não pode mais ser alterada.`
-                : 'Suas fotos foram enviadas para a Vilma. A galeria está encerrada.';
-            telaEncerrada.classList.add('ativo');
-            telaEncerrada.setAttribute('aria-hidden', 'false');
+            let jsonSalvo = null;
+            try {
+                jsonSalvo = JSON.parse(localStorage.getItem('vf_selecao_json') || 'null');
+            } catch {}
+            renderizarTelaEncerrada(jsonSalvo || { total: selecionadas.length, fotos: [] });
         } else {
             atualizarContadores();
             renderizarFotos();

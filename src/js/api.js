@@ -231,15 +231,21 @@ export async function getSession() {
  * Envia a seleção da visitante para o servidor. A gravação é o momento em que
  * a escolha deixa de ser rascunho no navegador e passa a existir para a Vilma.
  */
-export async function enviarSelecao({ fotos, cliente, email } = {}) {
+export async function enviarSelecao({ fotos, cliente, email, nomes, jsonCompleto } = {}) {
   return request('/selecao', {
     method: 'POST',
     body: {
       fotos: Array.isArray(fotos) ? fotos : [],
+      nomes: Array.isArray(nomes) ? nomes : [],
       cliente: cliente || 'visitante',
-      email: email || null
+      email: email || null,
+      jsonCompleto: jsonCompleto || null
     }
   });
+}
+
+export async function getSelecoes() {
+  return request('/selecao', { method: 'GET' });
 }
 
 export { ApiError };
