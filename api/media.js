@@ -3,24 +3,20 @@
 const crypto = require('crypto');
 const { query } = require('../lib/db');
 const { json, fail, methodGuard, sameOriginGuard, requireAdmin, withErrorHandling } = require('../lib/http');
+const { getWatermarkConfig, processImageProtection } = require('../lib/imageProtection');
 
 /**
  * Upload de imagem do painel. POST /api/media, só admin.
  *
- * As imagens ficam no nosso Postgres e são servidas pelo nosso endpoint.
- * Uma credencial só, um provedor só — nada de bucket de terceiro com chave
- * no navegador, que era o desenho antigo.
- *
- * Corpo: { "mime": "image/jpeg", "data": "<base64 sem prefixo data:>" }
+ * Implementa o pipeline automático de proteção e separação:
+ * - O original em alta resolução é preservado intacto em área privada.
+ * - Uma prévia otimizada para web com marca-d'água multicamada (Camada 1 visível,
+ *   Camada 2 metadados/hash SHA-256 e Camada 3 perturbação adversarial anti-IA) é gerada.
+ * - Somente a prévia protegida é exposta nas rotas públicas.
  */
 
-/*
- * O corpo trafega em base64, que incha ~33%, e a Vercel corta requisição
- * acima de 4.5MB. Por isso o teto de vídeo é 3MB: acima disso o upload nem
- * chega ao handler. Vídeo de hero tem que ser loop curto e bem comprimido.
- */
 const MAX_BYTES = {
-  imagem: 2.5 * 1024 * 1024,
+  imagem: 15 * 1024 * 1024,
   video: 3 * 1024 * 1024
 };
 
@@ -99,11 +95,65 @@ module.exports = withErrorHandling(async (req, res) => {
   }
 
   const id = crypto.randomUUID();
+  const sha256 = crypto.createHash('sha256').update(buffer).digest('hex');
+
+  let previewBytes = buffer;
+  let previewMime = actualMime;
+  let width = null;
+  let height = null;
+  let metadata = {
+    id,
+    ownerId: 'vilma-silva-fotografia',
+    publishedAt: new Date().toISOString(),
+    originalSha256: sha256,
+    originalSize: buffer.length,
+    watermarkApplied: false
+  };
+
+  // Aplicação do pipeline multicamada para fotografias
+  if (!ehVideo(actualMime)) {
+    try {
+      const config = await getWatermarkConfig();
+      const processed = await processImageProtection(buffer, config, { id });
+      previewBytes = processed.previewBytes;
+      previewMime = processed.previewMime;
+      width = processed.width;
+      height = processed.height;
+      metadata = processed.metadata;
+    } catch (procErr) {
+      console.warn('[api/media] processamento com fallback para o buffer:', procErr.message);
+    }
+  }
 
   await query(
-    'INSERT INTO media (id, mime, bytes, byte_size) VALUES ($1, $2, $3, $4)',
-    [id, actualMime, buffer, buffer.length]
+    `INSERT INTO media (id, mime, bytes, byte_size, original_bytes, original_mime, original_size, sha256, meta, width, height)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+    [
+      id,
+      previewMime,
+      previewBytes,
+      previewBytes.length,
+      buffer,
+      actualMime,
+      buffer.length,
+      sha256,
+      JSON.stringify(metadata),
+      width,
+      height
+    ]
   );
 
-  json(res, 201, { id, url: `/api/media/${id}`, bytes: buffer.length }, { 'Cache-Control': 'no-store' });
+  json(
+    res,
+    201,
+    {
+      id,
+      url: `/api/media/${id}`,
+      bytes: previewBytes.length,
+      originalSize: buffer.length,
+      sha256,
+      watermarkApplied: Boolean(metadata.watermarkApplied)
+    },
+    { 'Cache-Control': 'no-store' }
+  );
 });

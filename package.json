@@ -15,7 +15,7 @@
     "app:build": "node scripts/build-app.js",
     "app:instalar": "node scripts/instalar-app.js",
     "icones": "node scripts/gerar-icones.js",
-    "test": "node tests/autorizacao.test.js && node tests/fluxo.test.js && node tests/frontend.test.js"
+    "test": "node tests/autorizacao.test.js && node tests/fluxo.test.js && node tests/frontend.test.js && node tests/protecao.test.js"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.2",
@@ -24,7 +24,8 @@
     "@capgo/capacitor-native-biometric": "^8.7.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "clean-css-cli": "^5.6.3",

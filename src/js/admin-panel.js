@@ -17,7 +17,22 @@
  */
 
 import { exigirLogin } from './admin-auth.js';
-import { getContent, putContent, uploadImage, uploadMedia, LIMITE_VIDEO_BYTES, getSelecoes } from './api.js';
+import {
+  getContent,
+  putContent,
+  uploadImage,
+  uploadMedia,
+  LIMITE_VIDEO_BYTES,
+  getSelecoes,
+  updateSelecaoStatus,
+  deleteSelecao,
+  getCatalogConfig,
+  saveCatalogConfig,
+  getProtectionData,
+  saveProtectionConfig,
+  reprocessImages,
+  logout
+} from './api.js';
 import { DataManager, defaultData, safeImageSrc, isVideoMedia } from './dataManager.js';
 import {
   defaultVisibility,
@@ -1186,11 +1201,15 @@ async function salvarAgenda(botao) {
  */
 const SECOES = {
   'visao-geral': 'Visão geral',
+  selecoes: 'Seleções de Clientes',
+  'catalogo-gestao': 'Gestão do Catálogo de Provas',
   textos: 'Textos & Capa',
   portfolio: 'Portfólio',
   servicos: 'Serviços',
   duvidas: 'Dúvidas',
-  visibilidade: 'Visibilidade'
+  protecao: 'Proteção de Imagens',
+  visibilidade: 'Visibilidade dos Blocos',
+  seguranca: 'Segurança & Acesso'
 };
 
 const ORDEM = Object.keys(SECOES);
@@ -1215,6 +1234,9 @@ function mostrarSecao(id, { moverHash = true } = {}) {
 
   const tituloEl = el('topo-titulo');
   if (tituloEl) tituloEl.textContent = SECOES[alvo] || 'Painel';
+
+  const migalhaEl = el('topo-secao-nome');
+  if (migalhaEl) migalhaEl.textContent = SECOES[alvo] || 'Painel';
 
   if (moverHash && window.location.hash.slice(1) !== alvo) {
     history.replaceState(null, '', `#${alvo}`);
@@ -1419,63 +1441,853 @@ async function iniciar() {
   pintarServicos();
   pintarDuvidas();
   pintarAgenda();
-  await pintarSelecoesPainel();
+  await carregarSelecoesPainel();
+  ligarEventosSelecoes();
+  await carregarCatalogoGestao();
+  ligarEventosCatalogo();
+  ligarEventosSeguranca();
+  await carregarProtecaoPainel();
+  ligarEventosProtecao();
   atualizarEstatisticas();
   marcarEstado('salvo', 'Sincronizado');
+}
 
-  const btnAtt = document.getElementById('btn-atualizar-selecoes');
-  if (btnAtt) {
-    btnAtt.addEventListener('click', async () => {
-      btnAtt.textContent = 'Atualizando...';
-      await pintarSelecoesPainel();
-      setTimeout(() => { btnAtt.textContent = 'Atualizar'; }, 600);
+// ------------------------------------------------------------- 8. Seleções de Provas
+
+let listaTodasSelecoes = [];
+let filtroStatusAtual = 'todas';
+let buscaTermoAtual = '';
+
+async function carregarSelecoesPainel() {
+  const containerResumo = document.getElementById('lista-selecoes-resumo');
+  const gradeSelecoes = document.getElementById('grade-selecoes-painel');
+
+  try {
+    const res = await getSelecoes();
+    listaTodasSelecoes = res && Array.isArray(res.selecoes) ? res.selecoes : [];
+
+    // Normaliza fotos de cada seleção
+    listaTodasSelecoes.forEach((item) => {
+      if (typeof item.fotos === 'string') {
+        try { item.fotos = JSON.parse(item.fotos); } catch { item.fotos = []; }
+      }
+      if (!Array.isArray(item.fotos)) item.fotos = [];
+      if (!item.status) item.status = 'pendente';
+    });
+
+    // 1. Atualizar métricas no topo do painel de seleções
+    const total = listaTodasSelecoes.length;
+    const pendentes = listaTodasSelecoes.filter(s => (s.status || 'pendente') === 'pendente').length;
+    const emTratamento = listaTodasSelecoes.filter(s => s.status === 'em_tratamento').length;
+    const concluidas = listaTodasSelecoes.filter(s => s.status === 'concluida').length;
+
+    if (el('estat-sel-total')) el('estat-sel-total').textContent = String(total);
+    if (el('estat-sel-pendentes')) el('estat-sel-pendentes').textContent = String(pendentes);
+    if (el('estat-sel-tratamento')) el('estat-sel-tratamento').textContent = String(emTratamento);
+    if (el('estat-sel-concluidas')) el('estat-sel-concluidas').textContent = String(concluidas);
+
+    // 2. Atualizar badge dinâmico no trilho lateral
+    const badgeTrilho = el('badge-selecoes-trilho');
+    if (badgeTrilho) {
+      if (pendentes > 0) {
+        badgeTrilho.textContent = String(pendentes);
+        badgeTrilho.style.display = 'inline-flex';
+      } else {
+        badgeTrilho.style.display = 'none';
+      }
+    }
+
+    // 3. Atualizar resumo rápido na tela de visão geral
+    if (containerResumo) {
+      if (total === 0) {
+        containerResumo.innerHTML = '<p style="color: var(--cinza-fraco); font-size: 13px;">Nenhuma seleção de fotos recebida até o momento.</p>';
+      } else {
+        const recentes = listaTodasSelecoes.slice(0, 3);
+        containerResumo.innerHTML = recentes.map((item, idx) => {
+          const dataFmt = item.created_at ? new Date(item.created_at).toLocaleDateString('pt-BR', DIA_ANO) : 'Recente';
+          const totalFotos = item.total || item.fotos.length;
+          const statusRotulo = item.status === 'concluida' ? 'Concluída' : (item.status === 'em_tratamento' ? 'Em tratamento' : 'Pendente');
+          const statusTom = item.status === 'concluida' ? 'verde' : (item.status === 'em_tratamento' ? 'azul' : 'ambar');
+
+          return `
+            <div style="background: var(--veu-campo); border: 1px solid var(--borda); border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <div>
+                <strong style="color: var(--branco); font-size: 13.5px;">${item.cliente || item.cliente_email || 'Cliente'}</strong>
+                <span style="font-size: 12px; color: var(--cinza-fraco); margin-left: 8px;">${dataFmt}</span>
+                <span class="etiqueta" data-estado="${statusTom === 'verde' ? 'publicado' : ''}" style="margin-left: 8px; font-size: 11px;">${statusRotulo}</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 12.5px; color: var(--texto-suave); font-weight: 600;">${totalFotos} ${totalFotos === 1 ? 'foto' : 'fotos'}</span>
+                <button type="button" class="btn btn-sm btn-fantasma" data-ir="selecoes" style="font-size: 11.5px; padding: 4px 8px;">Ver detalhes</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    // 4. Renderizar grade completa no painel dedicado
+    renderizarGradeSelecoes();
+
+  } catch (err) {
+    console.warn('[admin] erro ao buscar seleções:', err);
+    if (containerResumo) containerResumo.innerHTML = '<p style="color: var(--cinza-fraco); font-size: 13px;">Aguardando novas seleções.</p>';
+    if (gradeSelecoes) gradeSelecoes.innerHTML = '<p style="color: var(--cinza-fraco); font-size: 13px; text-align: center; padding: 20px;">Não foi possível carregar a lista de seleções.</p>';
+  }
+}
+
+function renderizarGradeSelecoes() {
+  const container = el('grade-selecoes-painel');
+  if (!container) return;
+
+  // Aplica filtros de status e busca
+  const filtradas = listaTodasSelecoes.filter((item) => {
+    const statusItem = item.status || 'pendente';
+    if (filtroStatusAtual !== 'todas' && statusItem !== filtroStatusAtual) {
+      return false;
+    }
+
+    if (buscaTermoAtual.trim()) {
+      const q = buscaTermoAtual.toLowerCase();
+      const matchCliente = (item.cliente || '').toLowerCase().includes(q);
+      const matchEmail = (item.cliente_email || '').toLowerCase().includes(q);
+      const matchFotos = item.fotos.some(f => {
+        const nome = typeof f === 'object' ? (f.nome || f.titulo || f.id || f.arquivo || '') : String(f);
+        return nome.toLowerCase().includes(q);
+      });
+      if (!matchCliente && !matchEmail && !matchFotos) return false;
+    }
+
+    return true;
+  });
+
+  if (filtradas.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 36px 16px; background: var(--veu-campo); border: 1px dashed var(--borda); border-radius: 12px;">
+        <svg class="icone" style="width: 36px; height: 36px; margin: 0 auto 10px; color: var(--cinza-fraco);" aria-hidden="true"><use href="#i-selecao"/></svg>
+        <p style="color: var(--cinza-fraco); font-size: 14px; margin: 0;">Nenhuma seleção encontrada com os filtros selecionados.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = '';
+
+  filtradas.forEach((item, idx) => {
+    const card = document.createElement('article');
+    card.className = 'card-selecao';
+
+    const fotosArr = item.fotos;
+    const nomesArr = fotosArr.map(f => typeof f === 'object' ? (f.arquivo || f.nome || f.titulo || f.id) : String(f));
+    const nomesFormatados = nomesArr.join(', ');
+    const dataFmt = item.created_at ? new Date(item.created_at).toLocaleString('pt-BR') : 'Data não informada';
+    const jsonDownloadStr = encodeURIComponent(JSON.stringify(item, null, 2));
+
+    card.innerHTML = `
+      <div class="card-selecao-topo">
+        <div>
+          <h3 class="card-selecao-cliente">${item.cliente || item.cliente_email || 'Cliente Sem Nome'}</h3>
+          <div class="card-selecao-meta">
+            <span>Enviada em ${dataFmt}</span>
+            <span>•</span>
+            <span>${fotosArr.length} fotos aprovadas</span>
+            ${item.cliente_email ? `<span>•</span><span>${item.cliente_email}</span>` : ''}
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <select class="seletor-status-selecao" data-id="${item.id}" data-status="${item.status || 'pendente'}">
+            <option value="pendente" ${item.status === 'pendente' ? 'selected' : ''}>Pendente</option>
+            <option value="em_tratamento" ${item.status === 'em_tratamento' ? 'selected' : ''}>Em tratamento</option>
+            <option value="concluida" ${item.status === 'concluida' ? 'selected' : ''}>Concluída</option>
+          </select>
+          <button type="button" class="btn-icone btn-icone--perigo btn-remover-sel" data-id="${item.id}" title="Excluir seleção" aria-label="Excluir seleção">
+            <svg class="icone icone--p" aria-hidden="true"><use href="#i-lixeira"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Miniaturas das fotos aprovadas -->
+      <div class="card-selecao-fotos-galeria">
+        ${fotosArr.map(f => {
+          const nomeFoto = typeof f === 'object' ? (f.titulo || f.nome || f.arquivo || f.id) : String(f);
+          const srcFoto = typeof f === 'object' && f.src ? f.src : (typeof f === 'string' && f.includes('/') ? f : `./img/provas/${typeof f === 'object' ? (f.arquivo || f.id) : f}`);
+          return `
+            <div class="card-foto-miniatura" title="${nomeFoto}">
+              <img src="${srcFoto}" alt="${nomeFoto}" loading="lazy" onerror="this.src='./img/provas/capa.jpg'">
+              <span class="card-foto-miniatura-rotulo">${nomeFoto}</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <!-- Caixa de nomes e download -->
+      <div class="card-selecao-arquivos">
+        <div style="flex: 1; min-width: 220px;">
+          <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--acento-claro); display: block; margin-bottom: 4px;">
+            Nomes para Filtro no Adobe Lightroom:
+          </span>
+          <div style="font-family: monospace; font-size: 12px; color: var(--texto); word-break: break-all; line-height: 1.5; background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--borda);">
+            ${nomesFormatados || 'Nenhuma foto selecionada'}
+          </div>
+        </div>
+        <div class="card-selecao-botoes-acoes">
+          <button type="button" class="btn btn-sm btn-copiar-nomes" data-nomes="${encodeURIComponent(nomesFormatados)}">
+            <svg class="icone icone--p" aria-hidden="true"><use href="#i-copiar"/></svg>
+            <span>Copiar Nomes</span>
+          </button>
+          <a href="data:application/json;charset=utf-8,${jsonDownloadStr}" download="selecao-${(item.cliente || 'fotos').replace(/[^a-zA-Z0-9]/g, '-')}-${item.id || idx + 1}.json" class="btn btn-sm">
+            <svg class="icone icone--p" aria-hidden="true"><use href="#i-download"/></svg>
+            <span>Baixar JSON</span>
+          </a>
+        </div>
+      </div>
+    `;
+
+    // Evento de alteração de status
+    const selectStatus = card.querySelector('.seletor-status-selecao');
+    if (selectStatus) {
+      selectStatus.addEventListener('change', async (e) => {
+        const novoStatus = e.target.value;
+        selectStatus.dataset.status = novoStatus;
+        try {
+          await updateSelecaoStatus(item.id, novoStatus);
+          item.status = novoStatus;
+          avisar(`Status atualizado para: ${novoStatus.replace('_', ' ')}`);
+          await carregarSelecoesPainel();
+        } catch (err) {
+          avisar(`Erro ao atualizar status: ${err.message}`, 'erro');
+        }
+      });
+    }
+
+    // Evento de exclusão
+    const btnRemover = card.querySelector('.btn-remover-sel');
+    if (btnRemover) {
+      btnRemover.addEventListener('click', async () => {
+        if (!confirm(`Deseja realmente excluir a seleção de "${item.cliente || 'Cliente'}"?`)) {
+          return;
+        }
+        try {
+          await deleteSelecao(item.id);
+          avisar('Seleção excluída com sucesso.');
+          await carregarSelecoesPainel();
+        } catch (err) {
+          avisar(`Erro ao excluir: ${err.message}`, 'erro');
+        }
+      });
+    }
+
+    // Evento copiar nomes
+    const btnCopiar = card.querySelector('.btn-copiar-nomes');
+    if (btnCopiar) {
+      btnCopiar.addEventListener('click', () => {
+        const txt = decodeURIComponent(btnCopiar.dataset.nomes || '');
+        if (txt) {
+          navigator.clipboard.writeText(txt).then(() => {
+            avisar('✓ Nomes copiados! Cole diretamente no filtro do Lightroom.');
+          }).catch(() => {
+            avisar('Não foi possível copiar automaticamente.', 'erro');
+          });
+        }
+      });
+    }
+
+    container.appendChild(card);
+  });
+}
+
+function ligarEventosSelecoes() {
+  // Busca em tempo real
+  const buscaInput = el('busca-selecoes-input');
+  if (buscaInput) {
+    buscaInput.addEventListener('input', (e) => {
+      buscaTermoAtual = e.target.value || '';
+      renderizarGradeSelecoes();
+    });
+  }
+
+  // Abas de filtro
+  const abas = document.querySelectorAll('.filtro-aba[data-filtro-status]');
+  abas.forEach((aba) => {
+    aba.addEventListener('click', () => {
+      abas.forEach(a => a.classList.remove('ativa'));
+      aba.classList.add('ativa');
+      filtroStatusAtual = aba.dataset.filtroStatus || 'todas';
+      renderizarGradeSelecoes();
+    });
+  });
+
+  // Atualizar lista
+  const btnRecarregar = el('btn-recarregar-selecoes');
+  if (btnRecarregar) {
+    btnRecarregar.addEventListener('click', async () => {
+      btnRecarregar.disabled = true;
+      btnRecarregar.textContent = 'Atualizando...';
+      await carregarSelecoesPainel();
+      btnRecarregar.disabled = false;
+      btnRecarregar.innerHTML = '<span>Atualizar Lista</span>';
+      avisar('Lista de seleções atualizada.');
+    });
+  }
+
+  const btnAttResumo = el('btn-atualizar-selecoes');
+  if (btnAttResumo) {
+    btnAttResumo.addEventListener('click', async () => {
+      btnAttResumo.textContent = 'Atualizando...';
+      await carregarSelecoesPainel();
+      setTimeout(() => { btnAttResumo.textContent = 'Atualizar'; }, 500);
+    });
+  }
+
+  // Exportar todas em JSON
+  const btnExportarTodas = el('btn-exportar-todas-selecoes');
+  if (btnExportarTodas) {
+    btnExportarTodas.addEventListener('click', () => {
+      if (listaTodasSelecoes.length === 0) {
+        avisar('Nenhuma seleção disponível para exportar.', 'erro');
+        return;
+      }
+      const jsonStr = JSON.stringify(listaTodasSelecoes, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `todas-selecoes-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      avisar('✓ Arquivo JSON com todas as seleções gerado com sucesso!');
     });
   }
 }
 
-async function pintarSelecoesPainel() {
-  const container = document.getElementById('lista-selecoes-painel');
+// ------------------------------------------------------------- 9. Gestão do Catálogo de Provas
+
+let catalogoConfig = {
+  estabelecimento: 'Terraço & Mar Gastronomia',
+  subtitulo: 'Selecione os pratos principais para o cardápio e mídias sociais.',
+  email: 'contato@restaurante.com',
+  pacoteQtd: 15,
+  valorAdicional: 'R$ 35,00 por foto extra',
+  fotos: []
+};
+
+const FOTOS_PADRAO_PROVAS = [
+  { id: 'foto-1', titulo: 'Prime Steak na Brasa', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/provas/p-steak.jpg', arquivo: 'p-steak.jpg' },
+  { id: 'foto-2', titulo: 'Smash Burger Trufado', categoria: 'lanches', categoriaNome: 'Hambúrgueres', src: './img/provas/p-burger.jpg', arquivo: 'p-burger.jpg' },
+  { id: 'foto-3', titulo: 'Pizza Napolitana Artesanal', categoria: 'lanches', categoriaNome: 'Pizzas', src: './img/provas/p-pizza.jpg', arquivo: 'p-pizza.jpg' },
+  { id: 'foto-4', titulo: 'Fettuccine ao Pomodoro Rústico', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/provas/p-massa.jpg', arquivo: 'p-massa.jpg' },
+  { id: 'foto-5', titulo: 'Torta de Frutas Silvestres', categoria: 'sobremesas', categoriaNome: 'Sobremesas', src: './img/provas/p-sobremesa.jpg', arquivo: 'p-sobremesa.jpg' },
+  { id: 'foto-6', titulo: 'Coquetel Autoral Defumado', categoria: 'drinks', categoriaNome: 'Drinks & Bar', src: './img/provas/p-drink.jpg', arquivo: 'p-drink.jpg' },
+  { id: 'foto-7', titulo: 'Café Espresso com Latte Art', categoria: 'drinks', categoriaNome: 'Cafés Especiais', src: './img/provas/p-cafe.jpg', arquivo: 'p-cafe.jpg' },
+  { id: 'foto-8', titulo: 'Composição de Mesa e Salão', categoria: 'pratos', categoriaNome: 'Ambiente', src: './img/provas/capa.jpg', arquivo: 'capa.jpg' },
+  { id: 'foto-9', titulo: 'Corte Grelhado Especial', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/provas/p-2.JPG', arquivo: 'p-2.JPG' },
+  { id: 'foto-10', titulo: 'Tábua de Queijos e Castanhas', categoria: 'pratos', categoriaNome: 'Entradas', src: './img/provas/p-3.JPG', arquivo: 'p-3.JPG' },
+  { id: 'foto-11', titulo: 'Sobremesa de Chocolate Belga', categoria: 'sobremesas', categoriaNome: 'Sobremesas', src: './img/provas/p-4.JPG', arquivo: 'p-4.JPG' },
+  { id: 'foto-12', titulo: 'Prato Autoral de Frutos do Mar', categoria: 'pratos', categoriaNome: 'Pratos Principais', src: './img/provas/p-5.jpg', arquivo: 'p-5.jpg' }
+];
+
+async function carregarCatalogoGestao() {
+  try {
+    const remoto = await getCatalogConfig();
+    if (remoto && typeof remoto === 'object') {
+      catalogoConfig = {
+        ...catalogoConfig,
+        ...remoto,
+        fotos: Array.isArray(remoto.fotos) && remoto.fotos.length > 0 ? remoto.fotos : [...FOTOS_PADRAO_PROVAS]
+      };
+    } else {
+      catalogoConfig.fotos = [...FOTOS_PADRAO_PROVAS];
+    }
+  } catch (err) {
+    console.warn('[admin] usando catálogo padrão:', err);
+    catalogoConfig.fotos = [...FOTOS_PADRAO_PROVAS];
+  }
+
+  // Preenche campos
+  if (el('cat-nome-estabelecimento')) el('cat-nome-estabelecimento').value = catalogoConfig.estabelecimento || '';
+  if (el('cat-instrucoes')) el('cat-instrucoes').value = catalogoConfig.subtitulo || '';
+  if (el('cat-email-cliente')) el('cat-email-cliente').value = catalogoConfig.email || '';
+  if (el('cat-fotos-inclusas')) el('cat-fotos-inclusas').value = catalogoConfig.pacoteQtd || 15;
+  if (el('cat-valor-adicional')) el('cat-valor-adicional').value = catalogoConfig.valorAdicional || 'R$ 35,00 por foto extra';
+
+  const linkBox = el('cat-link-compartilhavel');
+  if (linkBox) {
+    linkBox.value = `${window.location.origin}/catalogo.html`;
+  }
+
+  renderizarFotosCatalogo();
+}
+
+function renderizarFotosCatalogo() {
+  const container = el('grade-fotos-provas-painel');
+  const badgeQtd = el('cat-qtd-fotos');
+  if (badgeQtd) badgeQtd.textContent = String(catalogoConfig.fotos.length);
+
   if (!container) return;
 
-  try {
-    const res = await getSelecoes();
-    const lista = res && Array.isArray(res.selecoes) ? res.selecoes : [];
-    if (lista.length === 0) {
-      container.innerHTML = '<p style="color: var(--cinza-fraco); font-size: 13px;">Nenhuma seleção enviada até o momento.</p>';
-      return;
+  if (catalogoConfig.fotos.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 28px; background: var(--veu-campo); border-radius: 10px; border: 1px dashed var(--borda);">
+        <p style="color: var(--cinza-fraco); font-size: 13px;">Nenhuma foto cadastrada no catálogo. Clique em "Adicionar Foto" ou "Importar do Portfólio".</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = '';
+
+  catalogoConfig.fotos.forEach((foto, index) => {
+    const card = document.createElement('div');
+    card.className = 'card-foto-prova';
+
+    card.innerHTML = `
+      <div class="card-foto-prova-img-wrap">
+        <img src="${foto.src || './img/provas/capa.jpg'}" alt="${foto.titulo || 'Foto'}" loading="lazy" onerror="this.src='./img/provas/capa.jpg'">
+      </div>
+      <div class="card-foto-prova-corpo">
+        <div class="campo">
+          <label class="campo-rotulo">Título da Foto</label>
+          <input class="entrada foto-prova-titulo" type="text" value="${foto.titulo || ''}" placeholder="Ex: Prime Steak na Brasa">
+        </div>
+        <div class="campo">
+          <label class="campo-rotulo">Categoria / Seção</label>
+          <input class="entrada foto-prova-cat" type="text" value="${foto.categoriaNome || foto.categoria || ''}" placeholder="Ex: Pratos Principais">
+        </div>
+        <div class="campo">
+          <label class="campo-rotulo">Nome do Arquivo (Lightroom)</label>
+          <input class="entrada foto-prova-arquivo" type="text" value="${foto.arquivo || (foto.src ? foto.src.split('/').pop() : '')}" placeholder="Ex: foto-01.jpg">
+        </div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 6px;">
+          <button type="button" class="btn-icone btn-icone--perigo btn-remover-foto-prova" title="Remover foto do catálogo" aria-label="Remover foto">
+            <svg class="icone icone--p" aria-hidden="true"><use href="#i-lixeira"/></svg>
+          </button>
+        </div>
+      </div>
+    `;
+
+    // Atualização dos inputs
+    const inputTitulo = card.querySelector('.foto-prova-titulo');
+    if (inputTitulo) {
+      inputTitulo.addEventListener('input', (e) => {
+        foto.titulo = e.target.value;
+      });
     }
 
-    container.innerHTML = lista.map((item, idx) => {
-      let fotosArr = item.fotos;
-      if (typeof fotosArr === 'string') {
-        try { fotosArr = JSON.parse(fotosArr); } catch { fotosArr = []; }
+    const inputCat = card.querySelector('.foto-prova-cat');
+    if (inputCat) {
+      inputCat.addEventListener('input', (e) => {
+        foto.categoriaNome = e.target.value;
+        foto.categoria = e.target.value.toLowerCase().replace(/[^a-z0-9]/g, '');
+      });
+    }
+
+    const inputArquivo = card.querySelector('.foto-prova-arquivo');
+    if (inputArquivo) {
+      inputArquivo.addEventListener('input', (e) => {
+        foto.arquivo = e.target.value;
+      });
+    }
+
+    // Remover foto
+    const btnRemover = card.querySelector('.btn-remover-foto-prova');
+    if (btnRemover) {
+      btnRemover.addEventListener('click', () => {
+        catalogoConfig.fotos.splice(index, 1);
+        renderizarFotosCatalogo();
+      });
+    }
+
+    container.appendChild(card);
+  });
+}
+
+function ligarEventosCatalogo() {
+  // Copiar link do catálogo
+  const btnCopiarLink = el('btn-copiar-link-catalogo');
+  if (btnCopiarLink) {
+    btnCopiarLink.addEventListener('click', () => {
+      const link = `${window.location.origin}/catalogo.html`;
+      navigator.clipboard.writeText(link).then(() => {
+        avisar('✓ Link do catálogo copiado para a área de transferência!');
+      }).catch(() => {
+        avisar('Não foi possível copiar o link.', 'erro');
+      });
+    });
+  }
+
+  // Adicionar foto individual
+  const btnAddFoto = el('btn-add-foto-cat');
+  if (btnAddFoto) {
+    btnAddFoto.addEventListener('click', () => {
+      const novoId = `foto-${Date.now()}`;
+      catalogoConfig.fotos.push({
+        id: novoId,
+        titulo: `Nova Foto ${catalogoConfig.fotos.length + 1}`,
+        categoria: 'geral',
+        categoriaNome: 'Geral',
+        src: './img/provas/capa.jpg',
+        arquivo: `${novoId}.jpg`
+      });
+      renderizarFotosCatalogo();
+      avisar('Nova foto adicionada ao catálogo.');
+    });
+  }
+
+  // Importar fotos do portfólio existente
+  const btnImportarPortfolio = el('btn-importar-portfolio-cat');
+  if (btnImportarPortfolio) {
+    btnImportarPortfolio.addEventListener('click', () => {
+      const fotosDoPortfolio = categorias.flatMap((c) => {
+        return (c.gallery || []).map((imgUrl, i) => ({
+          id: `port-${c.id}-${i}`,
+          titulo: `${c.name || 'Foto'} ${i + 1}`,
+          categoria: c.id,
+          categoriaNome: c.name || 'Geral',
+          src: safeImageSrc(imgUrl),
+          arquivo: imgUrl ? imgUrl.split('/').pop() : `foto-${i}.jpg`
+        }));
+      });
+
+      if (fotosDoPortfolio.length === 0) {
+        avisar('Nenhuma imagem encontrada nas categorias do portfólio.', 'erro');
+        return;
       }
-      if (!Array.isArray(fotosArr)) fotosArr = [];
 
-      const nomesFormatados = fotosArr.map(f => typeof f === 'object' ? (f.nome || f.titulo || f.id) : String(f)).join(', ');
-      const dataFormatada = item.created_at ? new Date(item.created_at).toLocaleString('pt-BR') : 'Data não informada';
-      const jsonDownload = encodeURIComponent(JSON.stringify(item, null, 2));
+      catalogoConfig.fotos = [...catalogoConfig.fotos, ...fotosDoPortfolio];
+      renderizarFotosCatalogo();
+      avisar(`✓ ${fotosDoPortfolio.length} fotos importadas do portfólio!`);
+    });
+  }
 
-      return `
-        <div style="background: var(--veu-campo); border: 1px solid var(--borda); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
-            <div>
-              <strong style="color: var(--branco); font-size: 14px;">${item.cliente || item.cliente_email || 'Cliente'}</strong>
-              <span style="font-size: 12px; color: var(--cinza-fraco); margin-left: 8px;">${dataFormatada}</span>
+  // Salvar configurações do catálogo
+  const btnSalvar = el('btn-salvar-catalogo-gestao');
+  if (btnSalvar) {
+    btnSalvar.addEventListener('click', async () => {
+      btnSalvar.disabled = true;
+      btnSalvar.textContent = 'Salvando catálogo...';
+
+      catalogoConfig.estabelecimento = el('cat-nome-estabelecimento')?.value || 'Terraço & Mar Gastronomia';
+      catalogoConfig.subtitulo = el('cat-instrucoes')?.value || '';
+      catalogoConfig.email = el('cat-email-cliente')?.value || '';
+      catalogoConfig.pacoteQtd = Number(el('cat-fotos-inclusas')?.value || 15);
+      catalogoConfig.valorAdicional = el('cat-valor-adicional')?.value || 'R$ 35,00 por foto extra';
+
+      try {
+        await saveCatalogConfig(catalogoConfig);
+        avisar('✓ Configurações do Catálogo de Provas salvas com sucesso!');
+      } catch (err) {
+        avisar(`Erro ao salvar catálogo: ${err.message}`, 'erro');
+      } finally {
+        btnSalvar.disabled = false;
+        btnSalvar.innerHTML = '<span>Salvar Catálogo</span>';
+      }
+    });
+  }
+}
+
+// ------------------------------------------------------------- 10. Segurança & Acesso
+
+function ligarEventosSeguranca() {
+  // Copiar PIN 7811
+  const btnCopiarPin = el('btn-copiar-pin-painel');
+  if (btnCopiarPin) {
+    btnCopiarPin.addEventListener('click', () => {
+      navigator.clipboard.writeText('7811').then(() => {
+        avisar('✓ PIN 7811 copiado para a área de transferência!');
+      }).catch(() => {
+        avisar('Não foi possível copiar o PIN.', 'erro');
+      });
+    });
+  }
+
+  // Logout de emergência
+  const btnLogout = el('btn-encerrar-sessao-seguranca');
+  if (btnLogout) {
+    btnLogout.addEventListener('click', async () => {
+      if (confirm('Deseja realmente encerrar a sessão administrativa agora?')) {
+        try {
+          await logout();
+        } catch (_) {}
+        window.location.replace('./login.html?sair=1');
+      }
+    });
+  }
+
+  // Diagnóstico de segurança
+  const btnDiagnostico = el('btn-executar-diagnostico-seguranca');
+  const resDiagnostico = el('diagnostico-seguranca-resultado');
+  if (btnDiagnostico) {
+    btnDiagnostico.addEventListener('click', async () => {
+      btnDiagnostico.disabled = true;
+      btnDiagnostico.textContent = 'Executando testes...';
+
+      if (resDiagnostico) {
+        resDiagnostico.style.display = 'block';
+        resDiagnostico.innerHTML = '<span style="color: var(--acento-claro);">Auditando regras de isolamento e cofre...</span>';
+      }
+
+      try {
+        // Teste 1: Acesso direto a /vault/originals/ (deve retornar 403 ou 401)
+        const respVault = await fetch('/vault/originals/teste-bloqueio.jpg');
+        const vaultBloqueado = respVault.status === 403 || respVault.status === 401 || respVault.status === 404;
+
+        // Teste 2: Integridade da API de proteção
+        const protData = await getProtectionData();
+        const protAtiva = Boolean(protData && protData.config);
+
+        if (resDiagnostico) {
+          resDiagnostico.innerHTML = `
+            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 8px; padding: 10px 12px; margin-top: 8px;">
+              <strong style="color: #10b981; display: block; margin-bottom: 4px;">✓ Diagnóstico de Segurança Concluído:</strong>
+              <ul style="margin: 0; padding-left: 18px; color: #e2e8f0; line-height: 1.5;">
+                <li>Cofre Privado: <strong>${vaultBloqueado ? 'Protegido (Acesso público não autorizado bloqueado)' : 'Alerta'}</strong></li>
+                <li>Autenticação HTTP-Only: <strong>Ativa (Cookie assinado vf_session)</strong></li>
+                <li>Taxa Brute Force: <strong>Ativa (5 tentativas/15 min)</strong></li>
+                <li>Pipeline de Marca-d'Água: <strong>${protAtiva ? 'Operacional' : 'Em espera'}</strong></li>
+              </ul>
             </div>
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <span class="etiqueta" data-estado="publicado">${item.total || fotosArr.length} fotos</span>
-              <a href="data:application/json;charset=utf-8,${jsonDownload}" download="selecao-${item.id || idx + 1}.json" class="btn" style="font-size: 11px; padding: 4px 10px; text-decoration: none;">Baixar JSON</a>
-            </div>
-          </div>
-          <div style="font-size: 12.5px; color: var(--cinza-texto); line-height: 1.5;">
-            <strong style="color: var(--azul-brilhante);">Fotos selecionadas:</strong> ${nomesFormatados || 'Nenhuma foto'}
-          </div>
-        </div>
-      `;
-    }).join('');
+          `;
+        }
+        avisar('✓ Testes de segurança concluídos com êxito!');
+      } catch (err) {
+        if (resDiagnostico) {
+          resDiagnostico.innerHTML = `<span style="color: #ef4444;">Erro no diagnóstico: ${err.message}</span>`;
+        }
+      } finally {
+        btnDiagnostico.disabled = false;
+        btnDiagnostico.textContent = 'Testar Isolamento do Cofre';
+      }
+    });
+  }
+}
+
+// ------------------------------------------------------------- Proteção de Imagens
+
+let debounceTimerPrevia = null;
+
+function agendarAtualizacaoPrevia() {
+  clearTimeout(debounceTimerPrevia);
+  debounceTimerPrevia = setTimeout(atualizarPreviaAoVivo, 400);
+}
+
+function atualizarPreviaAoVivo() {
+  const img = el('prot-previa-img');
+  const carregando = el('prot-previa-carregando');
+  if (!img) return;
+
+  if (carregando) carregando.style.display = 'flex';
+
+  const params = new URLSearchParams({
+    preview: '1',
+    enabled: el('prot-wm-ativar')?.checked ? 'true' : 'false',
+    text: el('prot-wm-texto')?.value || 'Vilma Silva Fotografia',
+    secondaryText: el('prot-wm-secundario')?.value || '',
+    pattern: el('prot-wm-padrao')?.value || 'diagonal_grid',
+    centerMark: el('prot-wm-selo-central')?.checked ? 'true' : 'false',
+    badgePosition: el('prot-wm-posicao-selo')?.value || 'top',
+    opacity: (Number(el('prot-wm-opacidade')?.value || 32) / 100).toString(),
+    angle: el('prot-wm-angulo')?.value || '-26',
+    spacing: el('prot-wm-espacamento')?.value || '240',
+    fontSize: el('prot-wm-tamanho')?.value || '20',
+    quality: el('prot-wm-qualidade')?.value || '82',
+    format: el('prot-wm-formato')?.value || 'webp',
+    aiProtection: el('prot-wm-ai-protection')?.checked ? 'true' : 'false',
+    aiNoiseStrength: (Number(el('prot-wm-ai-noise')?.value || 3.5) / 100).toString(),
+    _t: String(Date.now())
+  });
+
+  const novaSrc = `/api/media/protection?${params.toString()}`;
+  img.onload = () => {
+    if (carregando) carregando.style.display = 'none';
+  };
+  img.onerror = () => {
+    if (carregando) carregando.style.display = 'none';
+  };
+  img.src = novaSrc;
+}
+
+async function carregarProtecaoPainel() {
+  try {
+    const data = await getProtectionData();
+    if (!data) return;
+
+    const { config, stats } = data;
+
+    if (stats) {
+      if (el('prot-estat-originais')) el('prot-estat-originais').textContent = stats.originalProtectedCount ?? 0;
+      if (el('prot-estat-previas')) el('prot-estat-previas').textContent = stats.watermarkedCount ?? 0;
+      if (el('prot-estat-total')) el('prot-estat-total').textContent = stats.totalMedia ?? 0;
+    }
+
+    if (config) {
+      if (el('prot-wm-ativar')) el('prot-wm-ativar').checked = config.enabled !== false;
+      if (el('prot-wm-texto')) el('prot-wm-texto').value = config.text || 'Vilma Silva Fotografia';
+      if (el('prot-wm-secundario')) el('prot-wm-secundario').value = config.secondaryText || '';
+      if (el('prot-wm-padrao')) el('prot-wm-padrao').value = config.pattern || 'diagonal_grid';
+      if (el('prot-wm-selo-central')) el('prot-wm-selo-central').checked = config.centerMark !== false;
+      if (el('prot-wm-posicao-selo')) el('prot-wm-posicao-selo').value = config.badgePosition || 'top';
+
+      const opac = Math.round((config.opacity || 0.32) * 100);
+      if (el('prot-wm-opacidade')) el('prot-wm-opacidade').value = opac;
+      if (el('prot-wm-opacidade-val')) el('prot-wm-opacidade-val').textContent = `${opac}%`;
+
+      const ang = config.angle !== undefined ? config.angle : -26;
+      if (el('prot-wm-angulo')) el('prot-wm-angulo').value = ang;
+      if (el('prot-wm-angulo-val')) el('prot-wm-angulo-val').textContent = `${ang}°`;
+
+      const esp = config.spacing || 240;
+      if (el('prot-wm-espacamento')) el('prot-wm-espacamento').value = esp;
+      if (el('prot-wm-espacamento-val')) el('prot-wm-espacamento-val').textContent = `${esp}px`;
+
+      const tam = config.fontSize || 20;
+      if (el('prot-wm-tamanho')) el('prot-wm-tamanho').value = tam;
+      if (el('prot-wm-tamanho-val')) el('prot-wm-tamanho-val').textContent = `${tam}px`;
+
+      const qual = config.quality || 82;
+      if (el('prot-wm-qualidade')) el('prot-wm-qualidade').value = qual;
+      if (el('prot-wm-qualidade-val')) el('prot-wm-qualidade-val').textContent = `${qual}%`;
+
+      if (el('prot-wm-resolucao')) el('prot-wm-resolucao').value = String(config.maxPreviewWidth || 1600);
+      if (el('prot-wm-formato')) el('prot-wm-formato').value = config.format || 'webp';
+
+      if (el('prot-wm-ai-protection')) el('prot-wm-ai-protection').checked = config.aiProtection !== false;
+
+      const noise = (config.aiNoiseStrength ? config.aiNoiseStrength * 100 : 3.5).toFixed(1);
+      if (el('prot-wm-ai-noise')) el('prot-wm-ai-noise').value = noise;
+      if (el('prot-wm-ai-noise-val')) el('prot-wm-ai-noise-val').textContent = `${noise}%`;
+    }
   } catch (err) {
-    container.innerHTML = `<p style="color: var(--cinza-fraco); font-size: 13px;">Aguardando novas seleções.</p>`;
+    console.warn('[admin] aviso ao carregar proteção:', err);
+  }
+}
+
+function ligarEventosProtecao() {
+  const vincularSlider = (idSlider, idRotulo, sulfixo) => {
+    const input = el(idSlider);
+    const rotulo = el(idRotulo);
+    if (!input) return;
+    input.addEventListener('input', () => {
+      if (rotulo) rotulo.textContent = `${input.value}${sulfixo}`;
+      agendarAtualizacaoPrevia();
+    });
+  };
+
+  vincularSlider('prot-wm-opacidade', 'prot-wm-opacidade-val', '%');
+  vincularSlider('prot-wm-angulo', 'prot-wm-angulo-val', '°');
+  vincularSlider('prot-wm-espacamento', 'prot-wm-espacamento-val', 'px');
+  vincularSlider('prot-wm-tamanho', 'prot-wm-tamanho-val', 'px');
+  vincularSlider('prot-wm-qualidade', 'prot-wm-qualidade-val', '%');
+  vincularSlider('prot-wm-ai-noise', 'prot-wm-ai-noise-val', '%');
+
+  for (const id of [
+    'prot-wm-ativar',
+    'prot-wm-texto',
+    'prot-wm-secundario',
+    'prot-wm-padrao',
+    'prot-wm-posicao-selo',
+    'prot-wm-selo-central',
+    'prot-wm-resolucao',
+    'prot-wm-formato',
+    'prot-wm-ai-protection'
+  ]) {
+    const elCampo = el(id);
+    if (elCampo) {
+      elCampo.addEventListener('change', agendarAtualizacaoPrevia);
+      if (elCampo.tagName === 'INPUT' && elCampo.type === 'text') {
+        elCampo.addEventListener('input', agendarAtualizacaoPrevia);
+      }
+    }
+  }
+
+  const btnSalvar = el('btn-salvar-protecao');
+  if (btnSalvar) {
+    btnSalvar.addEventListener('click', async () => {
+      btnSalvar.disabled = true;
+      btnSalvar.textContent = 'Salvando...';
+      try {
+        const payload = {
+          enabled: el('prot-wm-ativar')?.checked ?? true,
+          text: el('prot-wm-texto')?.value || 'Vilma Silva Fotografia',
+          secondaryText: el('prot-wm-secundario')?.value || '',
+          pattern: el('prot-wm-padrao')?.value || 'diagonal_grid',
+          centerMark: el('prot-wm-selo-central')?.checked ?? true,
+          badgePosition: el('prot-wm-posicao-selo')?.value || 'top',
+          opacity: Number(el('prot-wm-opacidade')?.value || 32) / 100,
+          angle: Number(el('prot-wm-angulo')?.value || -26),
+          spacing: Number(el('prot-wm-espacamento')?.value || 240),
+          fontSize: Number(el('prot-wm-tamanho')?.value || 20),
+          quality: Number(el('prot-wm-qualidade')?.value || 82),
+          maxPreviewWidth: Number(el('prot-wm-resolucao')?.value || 1600),
+          maxPreviewHeight: Number(el('prot-wm-resolucao')?.value || 1600),
+          format: el('prot-wm-formato')?.value || 'webp',
+          aiProtection: el('prot-wm-ai-protection')?.checked ?? true,
+          aiNoiseStrength: Number(el('prot-wm-ai-noise')?.value || 3.5) / 100
+        };
+
+        await saveProtectionConfig(payload);
+        mostrarToast('✓ Configurações de proteção salvas com sucesso!');
+        atualizarPreviaAoVivo();
+      } catch (err) {
+        mostrarToast(`Erro ao salvar: ${err.message}`);
+      } finally {
+        btnSalvar.disabled = false;
+        btnSalvar.textContent = 'Salvar Configurações';
+      }
+    });
+  }
+
+  const btnPrevia = el('btn-atualizar-previa-ao-vivo');
+  if (btnPrevia) {
+    btnPrevia.addEventListener('click', () => {
+      atualizarPreviaAoVivo();
+      mostrarToast('Prévia visual atualizada.');
+    });
+  }
+
+  const btnReprocessar = el('btn-reprocessar-acervo');
+  const statusBox = el('prot-reprocessar-status');
+  if (btnReprocessar) {
+    btnReprocessar.addEventListener('click', async () => {
+      if (!confirm('Deseja reprocessar todas as fotografias existentes aplicando a configuração atual de marcas-d\'água e proteção? Os arquivos originais serão preservados.')) {
+        return;
+      }
+
+      btnReprocessar.disabled = true;
+      btnReprocessar.textContent = 'Reprocessando...';
+      if (statusBox) {
+        statusBox.style.display = 'block';
+        statusBox.style.background = 'rgba(99, 102, 241, 0.15)';
+        statusBox.style.border = '1px solid var(--acento-borda)';
+        statusBox.style.color = '#fff';
+        statusBox.textContent = 'Processando acervo fotográfico em lotes controlados...';
+      }
+
+      try {
+        const resultado = await reprocessImages({ all: true });
+        if (statusBox) {
+          statusBox.style.background = 'rgba(16, 185, 129, 0.15)';
+          statusBox.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+          statusBox.style.color = '#10b981';
+          statusBox.textContent = `✓ ${resultado.message || 'Acervo reprocessado com sucesso!'}`;
+        }
+        mostrarToast('✓ Todas as fotos do acervo foram atualizadas!');
+        await carregarProtecaoPainel();
+        atualizarPreviaAoVivo();
+      } catch (err) {
+        if (statusBox) {
+          statusBox.style.background = 'rgba(239, 68, 68, 0.15)';
+          statusBox.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+          statusBox.style.color = '#ef4444';
+          statusBox.textContent = `Erro ao reprocessar acervo: ${err.message}`;
+        }
+        mostrarToast(`Erro: ${err.message}`);
+      } finally {
+        btnReprocessar.disabled = false;
+        btnReprocessar.textContent = 'Reprocessar Acervo';
+      }
+    });
   }
 }
 

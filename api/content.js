@@ -15,7 +15,7 @@ const { json, fail, methodGuard, sameOriginGuard, handleCors, requireAdmin, with
 
 // Chaves conhecidas. Impede que a API vire um armazenamento genérico para
 // quem descobrir o endpoint.
-const ALLOWED_KEYS = new Set(['siteData', 'faqs', 'availableDates', 'visibility']);
+const ALLOWED_KEYS = new Set(['siteData', 'faqs', 'availableDates', 'visibility', 'watermarkConfig', 'catalogConfig']);
 
 const MAX_DOCUMENT_BYTES = 512 * 1024;
 

@@ -191,6 +191,102 @@
       transform: scale(1.035);
     }
 
+    /* Marca d'água de proteção fotográfica multicamada */
+    .marca-dagua-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: inherit;
+    }
+
+    /* Marca d'água espalhada por toda a imagem em padrão diagonal repetido */
+    .marca-dagua-repetida {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='160' viewBox='0 0 280 160'%3E%3Cg transform='rotate(-25 140 80)'%3E%3Ctext x='140' y='52' text-anchor='middle' fill='%23ffffff' fill-opacity='0.28' stroke='%23000000' stroke-width='0.4' stroke-opacity='0.6' font-family='Montserrat, sans-serif' font-size='11' font-weight='700' letter-spacing='0.22em'%3EVILMA SILVA FOTOGRAFIA%3C/text%3E%3Ctext x='140' y='78' text-anchor='middle' fill='%2393c5fd' fill-opacity='0.36' stroke='%23000000' stroke-width='0.4' stroke-opacity='0.6' font-family='Montserrat, sans-serif' font-size='8.5' font-weight='700' letter-spacing='0.26em'%3EAMOSTRA PROTEGIDA %E2%80%A2 PROVA DE SELE%C3%87%C3%83O%3C/text%3E%3Ctext x='140' y='102' text-anchor='middle' fill='%23ffffff' fill-opacity='0.20' stroke='%23000000' stroke-width='0.3' stroke-opacity='0.45' font-family='Montserrat, sans-serif' font-size='7.5' font-weight='600' letter-spacing='0.2em'%3EPROIBIDO PRINT E DOWNLOAD %E2%80%A2 LEI 9.610/98%3C/text%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-position: 0 0;
+      font-size: 0;
+      line-height: 0;
+      color: transparent;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    /* Card de identificação: posicionado no topo ou na parte de baixo para não cobrir o centro da foto */
+    .marca-dagua-card {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background: rgba(9, 9, 13, 0.84);
+      padding: 5px 14px;
+      border-radius: 999px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(147, 197, 253, 0.4);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7), 0 0 12px rgba(37, 99, 235, 0.25);
+      z-index: 7;
+      pointer-events: auto;
+      max-width: calc(100% - 24px);
+      white-space: nowrap;
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+
+    .marca-dagua-card.posicao-baixo {
+      top: auto !important;
+      bottom: 12px !important;
+    }
+
+    .marca-dagua-nome {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #ffffff;
+      line-height: 1.25;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    }
+
+    .marca-dagua-aviso {
+      font-size: 8px;
+      letter-spacing: 0.08em;
+      color: #93c5fd;
+      text-transform: uppercase;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .lightbox-content .marca-dagua-overlay {
+      z-index: 8;
+    }
+
+    .lightbox-content .marca-dagua-card {
+      top: 18px;
+      padding: 7px 20px;
+      background: rgba(9, 9, 14, 0.88);
+      border: 1.5px solid rgba(147, 197, 253, 0.5);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 16px rgba(59, 130, 246, 0.3);
+      cursor: pointer;
+    }
+
+    .lightbox-content .marca-dagua-card.posicao-baixo {
+      top: auto !important;
+      bottom: 24px !important;
+    }
+
     /* Lightbox Modal para ampliar a imagem ao clicar */
     .lightbox {
       display: none;
@@ -456,8 +552,15 @@
       <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Fechar">&times;</button>
       <button type="button" class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Anterior">&#10094;</button>
 
-      <div class="lightbox-content">
+      <div class="lightbox-content" style="position: relative;">
         <img id="lightbox-img" src="" alt="Foto em alta resolução">
+        <div class="marca-dagua-overlay" aria-hidden="true">
+          <span class="marca-dagua-repetida"></span>
+          <div class="marca-dagua-card" id="marca-dagua-card-lightbox-galeria" title="Clique para alternar entre topo e parte de baixo">
+            <span class="marca-dagua-nome">Vilma Silva Fotografia</span>
+            <span class="marca-dagua-aviso">Amostra Protegida • Prova de Seleção</span>
+          </div>
+        </div>
       </div>
 
       <button type="button" class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Próxima">&#10095;</button>
@@ -509,7 +612,7 @@
         <div style="display: flex; align-items: flex-start; gap: 9px;">
           <span style="color: #ef4444; font-size: 15px; line-height: 1.2;">🚫</span>
           <div style="font-size: 12px; color: #e2e8f0; line-height: 1.45;">
-            <strong style="color: #ffffff;">Proibida Veiculação Externa:</strong> As imagens não podem ser reproduzidas comercialmente sem licença prévia e autorização da fotógrafa.
+            <strong style="color: #ffffff;">Proibida Remoção da Marca d'Água:</strong> Qualquer recorte, modificação ou remoção das marcas d'água é proibida por lei.
           </div>
         </div>
       </div>
@@ -723,6 +826,13 @@
 
           pin.appendChild(img);
 
+          var overlay = document.createElement('div');
+          overlay.className = 'marca-dagua-overlay';
+          overlay.setAttribute('aria-hidden', 'true');
+          overlay.innerHTML = '<span class="marca-dagua-repetida"></span>' +
+            '<div class="marca-dagua-card"><span class="marca-dagua-nome">Vilma Silva Fotografia</span><span class="marca-dagua-aviso">Amostra Protegida</span></div>';
+          pin.appendChild(overlay);
+
           pin.addEventListener('click', function() {
             abrirLightbox(index);
           });
@@ -770,6 +880,14 @@
       if (lightboxClose) lightboxClose.addEventListener('click', fecharLightbox);
       if (lightboxPrev) lightboxPrev.addEventListener('click', function(e) { e.stopPropagation(); lightboxNav(-1); });
       if (lightboxNext) lightboxNext.addEventListener('click', function(e) { e.stopPropagation(); lightboxNav(1); });
+
+      var cardGaleriaEl = document.getElementById('marca-dagua-card-lightbox-galeria');
+      if (cardGaleriaEl) {
+        cardGaleriaEl.addEventListener('click', function(e) {
+          e.stopPropagation();
+          cardGaleriaEl.classList.toggle('posicao-baixo');
+        });
+      }
 
       if (lightbox) {
         lightbox.addEventListener('click', function(e) {

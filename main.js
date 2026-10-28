@@ -17,14 +17,17 @@ const app = express();
 const port = Number(process.env.PORT) || 3000;
 const host = '0.0.0.0';
 
-// As requisições recebem o corpo JSON convertido
-app.use(express.json({ limit: '5mb' }));
+// As requisições recebem o corpo JSON convertido (limite expandido para suportar uploads de fotos originais em alta resolução)
+app.use(express.json({ limit: '30mb' }));
 
 // ------------------------------------------------------------------ API
 
 const rotas = {
   '/api/content': require('./api/content'),
   '/api/media': require('./api/media'),
+  '/api/media/protection': require('./api/media/protection'),
+  '/api/media/reprocess': require('./api/media/reprocess'),
+  '/api/media/signed-url': require('./api/media/signed-url'),
   '/api/auth/login': require('./api/auth/login'),
   '/api/auth/logout': require('./api/auth/logout'),
   '/api/auth/session': require('./api/auth/session'),
@@ -37,6 +40,14 @@ for (const [rota, handler] of Object.entries(rotas)) {
 
 // Rota dinâmica: entrega o :id em req.query
 const servirMidia = require('./api/media/[id]');
+app.all('/api/media/:id/original', (req, res) => {
+  req.query = { ...req.query, id: req.params.id, action: 'original' };
+  return servirMidia(req, res);
+});
+app.all('/api/media/:id/download', (req, res) => {
+  req.query = { ...req.query, id: req.params.id, action: 'download' };
+  return servirMidia(req, res);
+});
 app.all('/api/media/:id', (req, res) => {
   req.query = { ...req.query, id: req.params.id };
   return servirMidia(req, res);
@@ -55,7 +66,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'src', 'index.html'));
 });
 
-app.get(['/config', '/admin', '/painel'], (req, res) => {
+app.get(['/config', '/admin', '/painel', '/dashboard', '/dashboard.html'], (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   res.sendFile(path.join(__dirname, 'src', 'config.html'));
 });

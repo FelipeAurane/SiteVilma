@@ -144,12 +144,40 @@ function blobToBase64(blob) {
   });
 }
 
-/** Envia a imagem e devolve a URL servida pelo nosso domínio. */
+/** Envia a imagem e devolve a URL servida pelo nosso domínio com proteção e separação de original. */
 export async function uploadImage(file) {
-  const blob = await compressImage(file);
+  if (!file) throw new Error('Nenhum arquivo de imagem fornecido.');
+
+  let blob = file;
+  let mime = file.type || 'image/jpeg';
+
+  // Se o arquivo for maior que 14MB, reduz suavemente para 4K para caber no limite
+  if (file.size > 14 * 1024 * 1024) {
+    blob = await compressImage(file, { maxSize: 3840, quality: 0.90 });
+    mime = 'image/jpeg';
+  }
+
   const data = await blobToBase64(blob);
-  const payload = await request('/media', { method: 'POST', body: { mime: 'image/jpeg', data } });
+  const payload = await request('/media', { method: 'POST', body: { mime, data } });
   return payload.url;
+}
+
+// ------------------------------------------------------------- proteção de imagens
+
+export async function getProtectionData() {
+  return request('/media/protection');
+}
+
+export async function saveProtectionConfig(config) {
+  return request('/media/protection', { method: 'PUT', body: config });
+}
+
+export async function reprocessImages(options = {}) {
+  return request('/media/reprocess', { method: 'POST', body: options });
+}
+
+export async function getSignedDownloadUrl(id, expiresInSeconds = 3600) {
+  return request('/media/signed-url', { method: 'POST', body: { id, expiresInSeconds } });
 }
 
 const VIDEOS_ACEITOS = { 'video/mp4': true, 'video/webm': true };
@@ -246,6 +274,22 @@ export async function enviarSelecao({ fotos, cliente, email, nomes, jsonCompleto
 
 export async function getSelecoes() {
   return request('/selecao', { method: 'GET' });
+}
+
+export async function updateSelecaoStatus(id, status) {
+  return request('/selecao', { method: 'PATCH', body: { id, status } });
+}
+
+export async function deleteSelecao(id) {
+  return request(`/selecao?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+}
+
+export async function getCatalogConfig() {
+  return getContent('catalogConfig');
+}
+
+export async function saveCatalogConfig(value) {
+  return putContent('catalogConfig', value);
 }
 
 export { ApiError };

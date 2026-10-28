@@ -46,7 +46,7 @@ class FakePool {
       return { rows: [] };
     }
 
-    if (sql.includes('SELECT value, version, updated_at FROM content')) {
+    if (sql.includes('FROM content WHERE key = $1') || sql.includes('SELECT value, version, updated_at FROM content') || sql.includes('SELECT value FROM content')) {
       const linha = store.content.get(params[0]);
       return { rows: linha ? [linha] : [] };
     }

@@ -110,6 +110,28 @@
         <symbol id="i-x" viewBox="0 0 24 24">
             <path d="M18 6 6 18M6 6l12 12"/>
         </symbol>
+        <symbol id="i-escudo" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </symbol>
+        <symbol id="i-selecao" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="m9 12 2 2 4-4"/>
+        </symbol>
+        <symbol id="i-copiar" viewBox="0 0 24 24">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </symbol>
+        <symbol id="i-link" viewBox="0 0 24 24">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        </symbol>
+        <symbol id="i-download" viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+        </symbol>
+        <symbol id="i-seguranca" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </symbol>
     </svg>
 
     <div class="app">
@@ -123,35 +145,68 @@
             </a>
 
             <nav class="trilho" aria-label="Seções do painel">
+                <!-- GRUPO 1: GERAL & OPERAÇÃO -->
+                <span class="trilho-grupo-rotulo">Geral</span>
                 <button class="trilho-item" type="button" data-alvo="visao-geral"
                     aria-label="Visão geral" aria-current="true">
                     <svg class="icone" aria-hidden="true"><use href="#i-visao-geral"/></svg>
                     <span class="trilho-rotulo" aria-hidden="true">Visão geral</span>
                 </button>
+                <button class="trilho-item" type="button" data-alvo="selecoes"
+                    aria-label="Seleções de Clientes" aria-current="false">
+                    <svg class="icone" aria-hidden="true"><use href="#i-selecao"/></svg>
+                    <span class="trilho-rotulo" aria-hidden="true">Seleções dos Clientes</span>
+                    <span class="trilho-badge" id="badge-selecoes-trilho" style="display: none;">0</span>
+                </button>
+                <button class="trilho-item" type="button" data-alvo="catalogo-gestao"
+                    aria-label="Catálogo de Provas" aria-current="false">
+                    <svg class="icone" aria-hidden="true"><use href="#i-grade"/></svg>
+                    <span class="trilho-rotulo" aria-hidden="true">Catálogo de Provas</span>
+                </button>
+
+                <div class="trilho-divisor" aria-hidden="true"></div>
+
+                <!-- GRUPO 2: CONTEÚDO DO SITE -->
+                <span class="trilho-grupo-rotulo">Site</span>
                 <button class="trilho-item" type="button" data-alvo="textos"
                     aria-label="Textos & Capa" aria-current="false">
                     <svg class="icone" aria-hidden="true"><use href="#i-camadas"/></svg>
-                    <span class="trilho-rotulo" aria-hidden="true">Textos</span>
+                    <span class="trilho-rotulo" aria-hidden="true">Textos & Capa</span>
                 </button>
                 <button class="trilho-item" type="button" data-alvo="portfolio"
-                    aria-label="Portfólio" aria-current="false">
+                    aria-label="Portfólio & Galerias" aria-current="false">
                     <svg class="icone" aria-hidden="true"><use href="#i-portfolio"/></svg>
-                    <span class="trilho-rotulo" aria-hidden="true">Portfólio</span>
+                    <span class="trilho-rotulo" aria-hidden="true">Portfólio & Galerias</span>
                 </button>
                 <button class="trilho-item" type="button" data-alvo="servicos"
-                    aria-label="Serviços" aria-current="false">
+                    aria-label="Serviços & Pacotes" aria-current="false">
                     <svg class="icone" aria-hidden="true"><use href="#i-servicos"/></svg>
-                    <span class="trilho-rotulo" aria-hidden="true">Serviços</span>
+                    <span class="trilho-rotulo" aria-hidden="true">Serviços & Pacotes</span>
                 </button>
                 <button class="trilho-item" type="button" data-alvo="duvidas"
-                    aria-label="Dúvidas" aria-current="false">
+                    aria-label="Dúvidas Frequentes" aria-current="false">
                     <svg class="icone" aria-hidden="true"><use href="#i-duvidas"/></svg>
-                    <span class="trilho-rotulo" aria-hidden="true">Dúvidas</span>
+                    <span class="trilho-rotulo" aria-hidden="true">Dúvidas (FAQ)</span>
+                </button>
+
+                <div class="trilho-divisor" aria-hidden="true"></div>
+
+                <!-- GRUPO 3: SISTEMA & SEGURANÇA -->
+                <span class="trilho-grupo-rotulo">Sistema</span>
+                <button class="trilho-item" type="button" data-alvo="protecao"
+                    aria-label="Proteção de imagens" aria-current="false">
+                    <svg class="icone" aria-hidden="true"><use href="#i-escudo"/></svg>
+                    <span class="trilho-rotulo" aria-hidden="true">Proteção de Imagens</span>
                 </button>
                 <button class="trilho-item" type="button" data-alvo="visibilidade"
-                    aria-label="Visibilidade" aria-current="false">
+                    aria-label="Visibilidade dos Blocos" aria-current="false">
                     <svg class="icone" aria-hidden="true"><use href="#i-olho"/></svg>
                     <span class="trilho-rotulo" aria-hidden="true">Visibilidade</span>
+                </button>
+                <button class="trilho-item" type="button" data-alvo="seguranca"
+                    aria-label="Segurança & PIN" aria-current="false">
+                    <svg class="icone" aria-hidden="true"><use href="#i-seguranca"/></svg>
+                    <span class="trilho-rotulo" aria-hidden="true">Segurança & PIN</span>
                 </button>
             </nav>
 
@@ -166,6 +221,10 @@
                     <svg class="icone" aria-hidden="true"><use href="#i-externo"/></svg>
                     <span class="trilho-rotulo" aria-hidden="true">Ver o site</span>
                 </a>
+                <a class="trilho-item" href="/catalogo.html" target="_blank" rel="noopener" aria-label="Catálogo do cliente">
+                    <svg class="icone" aria-hidden="true"><use href="#i-grade"/></svg>
+                    <span class="trilho-rotulo" aria-hidden="true">Catálogo de Provas</span>
+                </a>
                 <span id="slot-sair"></span>
             </div>
         </aside>
@@ -174,9 +233,29 @@
         <div class="principal">
 
             <header class="topo">
-                <h1 id="topo-titulo">Visão geral</h1>
-                <div class="topo-estado">
-                    <span id="estado">Tudo sincronizado</span>
+                <div class="topo-esquerda">
+                    <nav class="topo-migalha" aria-label="Navegação estrutural">
+                        <span>Painel</span>
+                        <span class="topo-separador">/</span>
+                        <span id="topo-secao-nome">Visão Geral</span>
+                    </nav>
+                    <h1 id="topo-titulo">Visão geral</h1>
+                </div>
+                <div class="topo-direita">
+                    <div class="topo-estado">
+                        <span class="ponto-pulso" aria-hidden="true"></span>
+                        <span id="estado">Tudo sincronizado</span>
+                    </div>
+                    <div class="topo-atalhos-header">
+                        <a href="/" target="_blank" rel="noopener" class="btn btn-sm btn-fantasma" title="Visualizar site principal">
+                            <svg class="icone icone--p" aria-hidden="true"><use href="#i-externo"/></svg>
+                            <span>Site</span>
+                        </a>
+                        <a href="/catalogo.html" target="_blank" rel="noopener" class="btn btn-sm btn-fantasma" title="Abrir catálogo do cliente">
+                            <svg class="icone icone--p" aria-hidden="true"><use href="#i-grade"/></svg>
+                            <span>Catálogo Provas</span>
+                        </a>
+                    </div>
                 </div>
             </header>
 
@@ -311,17 +390,23 @@
                         </div>
                     </div>
 
-                    <!-- Seleções dos Clientes Recebidas -->
+                    <!-- Seleções dos Clientes Recebidas (Resumo Rápido) -->
                     <div class="cartao" style="margin-top: 24px;">
-                        <div class="cartao-topo" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="cartao-topo" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                             <div>
-                                <h3 class="cartao-titulo">Seleções de Fotos dos Clientes</h3>
-                                <p class="painel-desc" style="margin-top: 4px; font-size: 13px;">Lista de imagens aprovadas e JSONs enviados pelos estabelecimentos.</p>
+                                <h3 class="cartao-titulo">Últimas Seleções de Fotos Recebidas</h3>
+                                <p class="painel-desc" style="margin-top: 4px; font-size: 13px;">Provas aprovadas e listas de imagens prontas para tratamento.</p>
                             </div>
-                            <button class="btn" type="button" id="btn-atualizar-selecoes" style="font-size: 12px; padding: 6px 12px;">Atualizar</button>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-sm" type="button" id="btn-atualizar-selecoes">Atualizar</button>
+                                <button class="btn btn-sm btn-primario" type="button" data-ir="selecoes">
+                                    <svg class="icone icone--p" aria-hidden="true"><use href="#i-selecao"/></svg>
+                                    <span>Gerenciar Todas</span>
+                                </button>
+                            </div>
                         </div>
                         <div class="cartao-corpo">
-                            <div id="lista-selecoes-painel" style="display: flex; flex-direction: column; gap: 12px;">
+                            <div id="lista-selecoes-resumo" style="display: flex; flex-direction: column; gap: 12px;">
                                 <p style="color: var(--cinza-fraco); font-size: 13px;">Carregando seleções...</p>
                             </div>
                         </div>
@@ -526,6 +611,466 @@
                     </div>
 
                     <div class="grade-vis" id="grade-vis"></div>
+                </section>
+
+                <!-- ------------------------------------------ 7. proteção de imagens -->
+                <section class="painel" id="painel-protecao" tabindex="-1" hidden>
+
+                    <div class="painel-topo">
+                        <div>
+                            <h2 class="painel-titulo">Proteção de Imagens</h2>
+                            <p class="painel-desc">Sistema multicamada de marcas-d'água, separação de arquivos originais privados e proteção contra raspagem e IA.</p>
+                        </div>
+                        <div class="painel-acoes">
+                            <button class="btn btn-primario" type="button" id="btn-salvar-protecao">Salvar Configurações</button>
+                            <button class="btn" type="button" id="btn-reprocessar-acervo">Reprocessar Acervo</button>
+                        </div>
+                    </div>
+
+                    <!-- Métricas de segurança -->
+                    <div class="grade-estat" style="margin-bottom: 24px;">
+                        <div class="cartao-estat">
+                            <span class="estat-icone" data-tom="verde"><svg class="icone" aria-hidden="true"><use href="#i-escudo"/></svg></span>
+                            <div class="estat-valor" id="prot-estat-originais" data-tom="verde">0</div>
+                            <div class="estat-rotulo">Originais no cofre privado</div>
+                        </div>
+                        <div class="cartao-estat">
+                            <span class="estat-icone" data-tom="verde"><svg class="icone" aria-hidden="true"><use href="#i-check"/></svg></span>
+                            <div class="estat-valor" id="prot-estat-previas" data-tom="verde">0</div>
+                            <div class="estat-rotulo">Prévias com marca nos pixels</div>
+                        </div>
+                        <div class="cartao-estat">
+                            <span class="estat-icone"><svg class="icone" aria-hidden="true"><use href="#i-camadas"/></svg></span>
+                            <div class="estat-valor" id="prot-estat-total">0</div>
+                            <div class="estat-rotulo">Fotos no acervo</div>
+                        </div>
+                        <div class="cartao-estat">
+                            <span class="estat-icone" data-tom="verde"><svg class="icone" aria-hidden="true"><use href="#i-olho"/></svg></span>
+                            <div class="estat-valor estat-valor--texto" style="font-size: 15px; font-weight: 700; color: #10b981;">Ativo</div>
+                            <div class="estat-rotulo">Bloqueio a originais públicos</div>
+                        </div>
+                    </div>
+
+                    <div class="dois-quadros" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
+                        <!-- Coluna 1: Parâmetros visuais -->
+                        <div class="cartao">
+                            <div class="cartao-topo">
+                                <h3 class="cartao-titulo">Camada 1: Marca-d'Água Visível</h3>
+                            </div>
+                            <div class="cartao-corpo">
+                                <div class="campo" style="margin-bottom: 16px;">
+                                    <label class="filtro" style="cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600;">
+                                        <input type="checkbox" id="prot-wm-ativar" checked>
+                                        <span>Ativar marca-d'água visível nas prévias públicas</span>
+                                    </label>
+                                    <span class="campo-dica">A marca é gravada diretamente nos pixels do arquivo e não depende de HTML ou CSS.</span>
+                                </div>
+
+                                <div class="campo" style="margin-bottom: 14px;">
+                                    <label class="campo-rotulo" for="prot-wm-texto">Texto principal</label>
+                                    <input class="entrada" id="prot-wm-texto" type="text" value="Vilma Silva Fotografia" placeholder="Ex: Vilma Silva Fotografia">
+                                </div>
+
+                                <div class="campo" style="margin-bottom: 14px;">
+                                    <label class="campo-rotulo" for="prot-wm-secundario">Texto secundário / Advertência legal</label>
+                                    <input class="entrada" id="prot-wm-secundario" type="text" value="Prova de Seleção • Todos os direitos reservados" placeholder="Ex: Prova de Seleção">
+                                </div>
+
+                                <div class="grade-campos">
+                                    <div class="campo">
+                                        <label class="campo-rotulo" for="prot-wm-padrao">Padrão de repetição</label>
+                                        <select class="entrada" id="prot-wm-padrao">
+                                            <option value="diagonal_grid">Grade diagonal (mosaico completo em toda a foto)</option>
+                                            <option value="center_only">Apenas selo proeminente</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label class="campo-rotulo" for="prot-wm-posicao-selo">Posição do selo / card</label>
+                                        <select class="entrada" id="prot-wm-posicao-selo">
+                                            <option value="top" selected>Topo (preserva assunto central)</option>
+                                            <option value="bottom">Parte de baixo (inferior)</option>
+                                            <option value="center">Centro da fotografia</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="campo" style="margin-top: 10px;">
+                                    <label class="filtro" style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                                        <input type="checkbox" id="prot-wm-selo-central" checked>
+                                        <span style="font-size: 13px;">Exibir selo de autoria (Vilma Silva Fotografia • Amostra Protegida)</span>
+                                    </label>
+                                </div>
+
+                                <div class="grade-campos" style="margin-top: 14px;">
+                                    <div class="campo">
+                                        <label class="campo-rotulo" for="prot-wm-opacidade">
+                                            Opacidade: <span id="prot-wm-opacidade-val" style="color: var(--acento-claro); font-weight: 700;">32%</span>
+                                        </label>
+                                        <input type="range" id="prot-wm-opacidade" min="10" max="90" value="32" step="2" style="width: 100%;">
+                                    </div>
+                                    <div class="campo">
+                                        <label class="campo-rotulo" for="prot-wm-angulo">
+                                            Ângulo: <span id="prot-wm-angulo-val" style="color: var(--acento-claro); font-weight: 700;">-26°</span>
+                                        </label>
+                                        <input type="range" id="prot-wm-angulo" min="-60" max="60" value="-26" step="2" style="width: 100%;">
+                                    </div>
+                                </div>
+
+                                <div class="grade-campos" style="margin-top: 14px;">
+                                    <div class="campo">
+                                        <label class="campo-rotulo" for="prot-wm-espacamento">
+                                            Espaçamento: <span id="prot-wm-espacamento-val" style="color: var(--acento-claro); font-weight: 700;">240px</span>
+                                        </label>
+                                        <input type="range" id="prot-wm-espacamento" min="120" max="450" value="240" step="10" style="width: 100%;">
+                                    </div>
+                                    <div class="campo">
+                                        <label class="campo-rotulo" for="prot-wm-tamanho">
+                                            Tamanho da fonte: <span id="prot-wm-tamanho-val" style="color: var(--acento-claro); font-weight: 700;">20px</span>
+                                        </label>
+                                        <input type="range" id="prot-wm-tamanho" min="12" max="36" value="20" step="1" style="width: 100%;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Coluna 2: Qualidade, Otimização e Anti-IA -->
+                        <div class="cartao">
+                            <div class="cartao-topo">
+                                <h3 class="cartao-titulo">Camadas 2 & 3: Resolução, Autoria & Anti-IA</h3>
+                            </div>
+                            <div class="cartao-corpo">
+                                <div class="grade-campos">
+                                    <div class="campo">
+                                        <label class="campo-rotulo" for="prot-wm-resolucao">Resolução máx. das prévias</label>
+                                        <select class="entrada" id="prot-wm-resolucao">
+                                            <option value="1280">1280px (Otimizada para mobile)</option>
+                                            <option value="1600" selected>1600px (Padrão de alta nitidez)</option>
+                                            <option value="1920">1920px (Full HD)</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label class="campo-rotulo" for="prot-wm-formato">Formato da prévia</label>
+                                        <select class="entrada" id="prot-wm-formato">
+                                            <option value="webp" selected>WebP (Mais leve e protegido)</option>
+                                            <option value="jpeg">JPEG (MozJPEG)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="campo" style="margin-top: 14px;">
+                                    <label class="campo-rotulo" for="prot-wm-qualidade">
+                                        Qualidade da compressão: <span id="prot-wm-qualidade-val" style="color: var(--acento-claro); font-weight: 700;">82%</span>
+                                    </label>
+                                    <input type="range" id="prot-wm-qualidade" min="60" max="95" value="82" step="1" style="width: 100%;">
+                                </div>
+
+                                <div class="campo" style="margin-top: 20px; padding: 14px; background: rgba(99, 102, 241, 0.08); border: 1px solid var(--acento-borda); border-radius: 12px;">
+                                    <label class="filtro" style="cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600;">
+                                        <input type="checkbox" id="prot-wm-ai-protection" checked>
+                                        <span>Proteção contra reconstrução por IA (Experimental)</span>
+                                    </label>
+                                    <p style="font-size: 12px; color: var(--texto-suave); margin-top: 6px; line-height: 1.45;">
+                                        Insere uma micro-textura adversarial de alta frequência no espectro de cores da imagem. Preserva a nitidez fotográfica para o cliente, mas dificulta interpolações automáticas de modelos de inpainting por IA.
+                                    </p>
+                                    <div style="margin-top: 10px;">
+                                        <label class="campo-rotulo" for="prot-wm-ai-noise" style="font-size: 11.5px;">
+                                            Sensibilidade do ruído: <span id="prot-wm-ai-noise-val" style="color: var(--acento-claro); font-weight: 700;">3.5%</span>
+                                        </label>
+                                        <input type="range" id="prot-wm-ai-noise" min="1" max="8" value="3.5" step="0.5" style="width: 100%;">
+                                    </div>
+                                </div>
+
+                                <div class="campo" style="margin-top: 14px; padding: 12px; background: rgba(0, 0, 0, 0.35); border-radius: 10px; border: 1px solid var(--borda);">
+                                    <span style="font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--acento-claro);">Rastreabilidade & Autoria (Camada 2)</span>
+                                    <p style="font-size: 12px; color: var(--texto-suave); margin-top: 4px; line-height: 1.4;">
+                                        Cada foto processada possui hash SHA-256 persistido no banco e metadados EXIF/XMP embutidos no binário. Os arquivos originais em alta resolução ficam guardados na área privada do servidor.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visualização ao vivo & Reprocessamento -->
+                    <div class="cartao" style="margin-top: 24px;">
+                        <div class="cartao-topo" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <h3 class="cartao-titulo">Visualização Prévia ao Vivo</h3>
+                                <p class="painel-desc" style="margin: 0; font-size: 12px;">Como as fotografias aparecerão para clientes e visitantes com as configurações atuais.</p>
+                            </div>
+                            <button class="btn" type="button" id="btn-atualizar-previa-ao-vivo">Atualizar Prévia</button>
+                        </div>
+                        <div class="cartao-corpo" style="display: flex; flex-direction: column; align-items: center; gap: 14px;">
+                            <div style="width: 100%; max-width: 680px; aspect-ratio: 16/10; border-radius: 12px; overflow: hidden; background: #07070a; border: 1px solid var(--borda-forte); display: flex; align-items: center; justify-content: center; position: relative;">
+                                <img id="prot-previa-img" src="/api/media/protection?preview=1" alt="Amostra com marca-d'água" style="width: 100%; height: 100%; object-fit: cover;">
+                                <div id="prot-previa-carregando" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #fff;">
+                                    Renderizando prévia...
+                                </div>
+                            </div>
+
+                            <div id="prot-reprocessar-status" style="width: 100%; max-width: 680px; display: none; padding: 12px 16px; border-radius: 10px; font-size: 13px; line-height: 1.4;"></div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ------------------------------------------ 8. Seleções de Provas -->
+                <section class="painel" id="painel-selecoes" tabindex="-1" hidden>
+                    <div class="painel-topo">
+                        <div>
+                            <h2 class="painel-titulo">Seleções de Fotos dos Clientes</h2>
+                            <p class="painel-desc">Gerencie as imagens aprovadas pelos estabelecimentos, acompanhe o fluxo de tratamento e exporte nomes e JSONs.</p>
+                        </div>
+                        <div class="painel-acoes">
+                            <button class="btn" type="button" id="btn-exportar-todas-selecoes">
+                                <svg class="icone icone--p" aria-hidden="true"><use href="#i-download"/></svg>
+                                <span>Exportar Todas (JSON)</span>
+                            </button>
+                            <button class="btn btn-primario" type="button" id="btn-recarregar-selecoes">
+                                <span>Atualizar Lista</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Métricas de Seleção -->
+                    <div class="grade-estat" style="margin-bottom: 24px;">
+                        <div class="cartao-estat">
+                            <span class="estat-icone"><svg class="icone" aria-hidden="true"><use href="#i-selecao"/></svg></span>
+                            <div class="estat-valor" id="estat-sel-total">0</div>
+                            <div class="estat-rotulo">Total de seleções</div>
+                        </div>
+                        <div class="cartao-estat">
+                            <span class="estat-icone" data-tom="ambar"><svg class="icone" aria-hidden="true"><use href="#i-relogio"/></svg></span>
+                            <div class="estat-valor" id="estat-sel-pendentes" data-tom="ambar">0</div>
+                            <div class="estat-rotulo">Pendentes</div>
+                        </div>
+                        <div class="cartao-estat">
+                            <span class="estat-icone" data-tom="azul"><svg class="icone" aria-hidden="true"><use href="#i-camera"/></svg></span>
+                            <div class="estat-valor" id="estat-sel-tratamento" data-tom="azul">0</div>
+                            <div class="estat-rotulo">Em tratamento</div>
+                        </div>
+                        <div class="cartao-estat">
+                            <span class="estat-icone" data-tom="verde"><svg class="icone" aria-hidden="true"><use href="#i-olho"/></svg></span>
+                            <div class="estat-valor" id="estat-sel-concluidas" data-tom="verde">0</div>
+                            <div class="estat-rotulo">Concluídas</div>
+                        </div>
+                    </div>
+
+                    <!-- Barra de Busca & Filtros de Status -->
+                    <div class="cartao" style="margin-bottom: 20px;">
+                        <div class="cartao-corpo" style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+                            <div style="flex: 1; min-width: 240px; position: relative;">
+                                <input class="entrada" type="search" id="busca-selecoes-input" placeholder="Buscar por cliente, restaurante, e-mail ou nome da foto...">
+                            </div>
+                            <div class="filtros-abas" style="display: flex; gap: 6px;" role="tablist" aria-label="Filtro de status de seleções">
+                                <button class="btn btn-sm filtro-aba ativa" type="button" data-filtro-status="todas">Todas</button>
+                                <button class="btn btn-sm filtro-aba" type="button" data-filtro-status="pendente">Pendentes</button>
+                                <button class="btn btn-sm filtro-aba" type="button" data-filtro-status="em_tratamento">Em tratamento</button>
+                                <button class="btn btn-sm filtro-aba" type="button" data-filtro-status="concluida">Concluídas</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Cards de Seleção -->
+                    <div id="grade-selecoes-painel" style="display: flex; flex-direction: column; gap: 16px;">
+                        <p style="color: var(--cinza-fraco); font-size: 13.5px; padding: 20px; text-align: center;">Carregando seleções de fotos...</p>
+                    </div>
+                </section>
+
+                <!-- ------------------------------------------ 9. Gestão do Catálogo de Provas -->
+                <section class="painel" id="painel-catalogo-gestao" tabindex="-1" hidden>
+                    <div class="painel-topo">
+                        <div>
+                            <h2 class="painel-titulo">Gestão do Catálogo de Provas</h2>
+                            <p class="painel-desc">Defina o cliente, regras do pacote e fotos disponíveis para seleção em <code>/catalogo.html</code>.</p>
+                        </div>
+                        <div class="painel-acoes">
+                            <button class="btn btn-primario" type="button" id="btn-salvar-catalogo-gestao">
+                                <span>Salvar Catálogo</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Caixa de Compartilhamento -->
+                    <div class="cartao caixa-link-compartilhavel" style="margin-bottom: 24px;">
+                        <div class="cartao-corpo" style="display: flex; flex-direction: column; gap: 10px;">
+                            <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--acento-claro);">
+                                Link Exclusivo do Cliente para Aprovação
+                            </span>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <input class="entrada" type="text" id="cat-link-compartilhavel" readonly style="flex: 1; min-width: 260px; font-family: monospace; font-size: 13px;" value="">
+                                <button class="btn" type="button" id="btn-copiar-link-catalogo">
+                                    <svg class="icone icone--p" aria-hidden="true"><use href="#i-copiar"/></svg>
+                                    <span>Copiar Link</span>
+                                </button>
+                                <a href="/catalogo.html" target="_blank" rel="noopener" class="btn btn-primario">
+                                    <svg class="icone icone--p" aria-hidden="true"><use href="#i-externo"/></svg>
+                                    <span>Abrir Catálogo</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dois-quadros">
+                        <!-- Configurações do Cliente & Sessão -->
+                        <div class="cartao">
+                            <div class="cartao-topo">
+                                <h3 class="cartao-titulo">Dados da Sessão & Contrato</h3>
+                            </div>
+                            <div class="cartao-corpo">
+                                <div class="grade-campos">
+                                    <div class="campo campo--largo">
+                                        <label class="campo-rotulo" for="cat-nome-estabelecimento">Nome do Restaurante / Cliente</label>
+                                        <input class="entrada" id="cat-nome-estabelecimento" type="text" placeholder="Ex: Terraço & Mar Gastronomia">
+                                    </div>
+                                    <div class="campo campo--largo">
+                                        <label class="campo-rotulo" for="cat-instrucoes">Subtítulo / Instruções para o cliente</label>
+                                        <textarea class="area" id="cat-instrucoes" rows="2" placeholder="Ex: Selecione os pratos principais para o cardápio e mídias sociais."></textarea>
+                                    </div>
+                                    <div class="campo">
+                                        <label class="campo-rotulo" for="cat-email-cliente">E-mail para confirmação</label>
+                                        <input class="entrada" id="cat-email-cliente" type="email" placeholder="cliente@restaurante.com">
+                                    </div>
+                                    <div class="campo">
+                                        <label class="campo-rotulo" for="cat-fotos-inclusas">Fotos inclusas no pacote</label>
+                                        <input class="entrada" id="cat-fotos-inclusas" type="number" min="1" max="500" value="15">
+                                    </div>
+                                    <div class="campo campo--largo">
+                                        <label class="campo-rotulo" for="cat-valor-adicional">Valor por foto adicional</label>
+                                        <input class="entrada" id="cat-valor-adicional" type="text" placeholder="Ex: R$ 35,00 por foto extra">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Informações de Proteção no Catálogo -->
+                        <div class="cartao">
+                            <div class="cartao-topo">
+                                <h3 class="cartao-titulo">Proteção Automática de Provas</h3>
+                            </div>
+                            <div class="cartao-corpo" style="display: flex; flex-direction: column; gap: 14px;">
+                                <div style="padding: 14px; background: rgba(99, 102, 241, 0.08); border: 1px solid var(--acento-borda); border-radius: 12px;">
+                                    <span style="font-weight: 700; font-size: 13px; color: var(--acento-claro);">Marca-d'Água Ativa no Catálogo</span>
+                                    <p style="font-size: 12.5px; color: var(--texto-suave); margin-top: 6px; line-height: 1.45;">
+                                        Todas as fotos exibidas no catálogo de provas utilizam automaticamente o selo de proteção "Vilma Silva Fotografia - Amostra Protegida", grade diagonal e resolução controlada configurados na seção de Proteção.
+                                    </p>
+                                </div>
+                                <div style="padding: 14px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--borda); border-radius: 12px;">
+                                    <span style="font-weight: 700; font-size: 13px;">Entrega Após Aprovação</span>
+                                    <p style="font-size: 12.5px; color: var(--texto-suave); margin-top: 6px; line-height: 1.45;">
+                                        Quando o cliente finaliza a seleção, você recebe a lista com os nomes exatos de arquivo para filtrar rapidamente no Adobe Lightroom e exportar os arquivos de alta resolução.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Fotos da Galeria de Provas -->
+                    <div class="cartao" style="margin-top: 24px;">
+                        <div class="cartao-topo" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <h3 class="cartao-titulo">Fotos do Catálogo de Provas (<span id="cat-qtd-fotos">0</span> fotos)</h3>
+                                <p class="painel-desc" style="margin: 0; font-size: 12px;">Gerencie as fotografias disponíveis nesta sessão de provas.</p>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-sm" type="button" id="btn-importar-portfolio-cat">Importar do Portfólio</button>
+                                <button class="btn btn-sm btn-primario" type="button" id="btn-add-foto-cat">
+                                    <svg class="icone icone--p" aria-hidden="true"><use href="#i-mais"/></svg>
+                                    <span>Adicionar Foto</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="cartao-corpo">
+                            <div id="grade-fotos-provas-painel" class="grade-fotos-provas">
+                                <!-- Cards dinâmicos das fotos do catálogo -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ------------------------------------------ 10. Segurança & Acesso -->
+                <section class="painel" id="painel-seguranca" tabindex="-1" hidden>
+                    <div class="painel-topo">
+                        <div>
+                            <h2 class="painel-titulo">Segurança & Controle de Acesso</h2>
+                            <p class="painel-desc">Monitore credenciais administrativas, integridade do cofre de arquivos originais e proteção de endpoints.</p>
+                        </div>
+                    </div>
+
+                    <div class="dois-quadros">
+                        <!-- Card 1: PIN Administrativo & Sessão -->
+                        <div class="cartao">
+                            <div class="cartao-topo">
+                                <h3 class="cartao-titulo">Credenciais Administrativas</h3>
+                            </div>
+                            <div class="cartao-corpo" style="display: flex; flex-direction: column; gap: 16px;">
+                                <div>
+                                    <label class="campo-rotulo">PIN de Acesso Atual</label>
+                                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 6px;">
+                                        <code style="font-family: monospace; font-size: 18px; font-weight: 700; letter-spacing: 4px; background: var(--veu-campo); padding: 8px 16px; border-radius: 8px; border: 1px solid var(--borda-forte); color: var(--acento-claro);">7811</code>
+                                        <button class="btn btn-sm" type="button" id="btn-copiar-pin-painel">
+                                            <svg class="icone icone--p" aria-hidden="true"><use href="#i-copiar"/></svg>
+                                            <span>Copiar PIN</span>
+                                        </button>
+                                    </div>
+                                    <span class="campo-dica" style="margin-top: 6px; display: block;">
+                                        O PIN é verificado via hash constante no backend com cookie assinado HTTP-Only (<code>vf_session</code>).
+                                    </span>
+                                </div>
+
+                                <div style="padding: 12px; background: rgba(0, 0, 0, 0.3); border-radius: 10px; border: 1px solid var(--borda);">
+                                    <span style="font-size: 12px; font-weight: 700; color: #fff;">Proteção Anti-Brute Force Ativa</span>
+                                    <p style="font-size: 12px; color: var(--texto-suave); margin-top: 4px; line-height: 1.45;">
+                                        Tentativas incorretas de autenticação são limitadas a <strong>5 tentativas por IP a cada 15 minutos</strong>. Falhas consecutivas ativam bloqueio progressivo automático.
+                                    </p>
+                                </div>
+
+                                <div style="display: flex; justify-content: flex-end; padding-top: 10px; border-top: 1px solid var(--borda);">
+                                    <button class="btn btn-sm btn-perigo" type="button" id="btn-encerrar-sessao-seguranca">
+                                        Encerrar Sessão Agora
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Cofre Privado de Arquivos Originais -->
+                        <div class="cartao">
+                            <div class="cartao-topo">
+                                <h3 class="cartao-titulo">Cofre de Arquivos Originais (Vault)</h3>
+                            </div>
+                            <div class="cartao-corpo" style="display: flex; flex-direction: column; gap: 14px;">
+                                <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                    <span class="estat-icone" data-tom="verde" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(34, 197, 94, 0.15); color: #22c55e;">
+                                        <svg class="icone" aria-hidden="true"><use href="#i-seguranca"/></svg>
+                                    </span>
+                                    <div>
+                                        <strong style="color: #fff; font-size: 13.5px;">Separação de Privilégios Ativa</strong>
+                                        <p style="font-size: 12px; color: var(--texto-suave); margin-top: 3px; line-height: 1.4;">
+                                            Arquivos originais ficam em <code>/vault/originals/</code> e nunca são servidos em rotas estáticas públicas. Todas as requisições exigem token HMAC assinado.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                    <span class="estat-icone" data-tom="azul" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(99, 102, 241, 0.15); color: var(--acento-claro);">
+                                        <svg class="icone" aria-hidden="true"><use href="#i-escudo"/></svg>
+                                    </span>
+                                    <div>
+                                        <strong style="color: #fff; font-size: 13.5px;">Hashes de Integridade SHA-256</strong>
+                                        <p style="font-size: 12px; color: var(--texto-suave); margin-top: 3px; line-height: 1.4;">
+                                            Cada imagem processada possui seu hash criptográfico SHA-256 salvo na tabela de mídia para comprovação incontestável de autoria.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div style="margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--borda);">
+                                    <button class="btn btn-sm" type="button" id="btn-executar-diagnostico-seguranca">
+                                        Testar Isolamento do Cofre
+                                    </button>
+                                    <div id="diagnostico-seguranca-resultado" style="margin-top: 10px; font-size: 12px; color: var(--texto-suave); display: none;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
             </main>

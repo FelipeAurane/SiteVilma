@@ -22,7 +22,7 @@ const LIMITE_FOTOS = 500;
  */
 module.exports = withErrorHandling(async (req, res) => {
   if (!handleCors(req, res)) return;
-  if (!methodGuard(req, res, ['GET', 'POST', 'OPTIONS'])) return;
+  if (!methodGuard(req, res, ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'])) return;
 
   // GET: Lista as seleções salvas para o painel administrativo
   if (req.method === 'GET') {
@@ -43,6 +43,33 @@ module.exports = withErrorHandling(async (req, res) => {
   if (!sameOriginGuard(req, res)) return;
 
   const session = getSession(req);
+
+  // PATCH: Atualiza o status de uma seleção (ex: "pendente", "em_tratamento", "concluida")
+  if (req.method === 'PATCH') {
+    if (!session || !session.sub) return fail(res, 401, 'Autenticação necessária');
+    const { id, status } = req.body || {};
+    if (!id) return fail(res, 400, 'ID da seleção não informado');
+    const statusValido = String(status || 'pendente').slice(0, 50);
+    try {
+      await query(`UPDATE selecoes SET status = $1 WHERE id = $2`, [statusValido, id]);
+      return json(res, 200, { sucesso: true, id, status: statusValido });
+    } catch (err) {
+      return fail(res, 500, 'Erro ao atualizar status: ' + err.message);
+    }
+  }
+
+  // DELETE: Remove uma seleção (apenas admin)
+  if (req.method === 'DELETE') {
+    if (!session || !session.sub) return fail(res, 401, 'Autenticação necessária');
+    const id = req.query?.id || req.body?.id;
+    if (!id) return fail(res, 400, 'ID da seleção não informado');
+    try {
+      await query(`DELETE FROM selecoes WHERE id = $1`, [id]);
+      return json(res, 200, { sucesso: true, id });
+    } catch (err) {
+      return fail(res, 500, 'Erro ao excluir seleção: ' + err.message);
+    }
+  }
   // Aceita sessão ativa de cliente ou admin, ou autorização válida
   const body = req.body && typeof req.body === 'object' ? req.body : {};
   const fotos = Array.isArray(body.fotos) ? body.fotos : null;
