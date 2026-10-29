@@ -132,6 +132,46 @@
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
         </symbol>
+        <symbol id="i-monograma" viewBox="0 0 24 24">
+            <path d="M4 4h3.5l7 11.5V4H19v16h-3.5L8.5 8.5V20H4V4z" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-lupa" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="m21 21-4.35-4.35"/>
+        </symbol>
+        <symbol id="i-transfer" viewBox="0 0 24 24">
+            <path d="M7 10h14l-4-4M17 14H3l4 4"/>
+        </symbol>
+        <symbol id="i-utility" viewBox="0 0 24 24">
+            <rect x="4" y="4" width="16" height="16" rx="3"/>
+            <path d="M8 9h8M8 13h8M8 17h5"/>
+        </symbol>
+        <symbol id="i-taxes" viewBox="0 0 24 24">
+            <path d="M3 21h18M5 10v7M19 10v7M9 10v7M15 10v7M12 2l10 6H2l10-6z"/>
+        </symbol>
+        <symbol id="i-transport" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"/>
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 3v6M12 15v6M3 12h6M15 12h6"/>
+        </symbol>
+        <symbol id="i-chevron-baixo" viewBox="0 0 24 24">
+            <path d="m6 9 6 6 6-6"/>
+        </symbol>
+        <symbol id="i-spotify" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" fill="currentColor"/>
+            <path d="M7 9c3.5-1 7.5-.5 10.5 1.5M7.5 12.5c3-.8 6.5-.4 9 1.2M8 16c2.5-.6 5.5-.3 7.5 1" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </symbol>
+        <symbol id="i-apple" viewBox="0 0 24 24">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.85c.66-.8 1.11-1.92.99-3.04-.96.04-2.12.64-2.8 1.44-.6.7.13 1.83.13.98 2.96 1.78.11 2.76-.08.13-1.08-.94" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-bitcoin" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" fill="currentColor"/>
+            <path d="M9 7h4a2.5 2.5 0 0 1 0 5H9m0 0h5a2.5 2.5 0 0 1 0 5H9m0-10v10m2-12v2m2-2v2m-2 10v2m2-2v2" stroke="#fff" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        </symbol>
+        <symbol id="i-binance" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" fill="currentColor"/>
+            <path d="m12 6.5 2.2 2.2-2.2 2.2-2.2-2.2zm0 6.6 2.2 2.2-2.2 2.2-2.2-2.2zm-4.4-2.2 2.2 2.2-2.2 2.2-2.2-2.2zm8.8 0 2.2 2.2-2.2 2.2-2.2-2.2z" fill="#f0b90b"/>
+        </symbol>
     </svg>
 
     <div class="app">
@@ -140,7 +180,7 @@
         <aside class="lateral">
             <a class="marca" href="#visao-geral" data-alvo="visao-geral" aria-label="Visão geral">
                 <span class="marca-selo">
-                    <svg class="icone" aria-hidden="true"><use href="#i-painel"/></svg>
+                    <svg class="icone" aria-hidden="true"><use href="#i-monograma"/></svg>
                 </span>
             </a>
 
@@ -234,27 +274,47 @@
 
             <header class="topo">
                 <div class="topo-esquerda">
-                    <nav class="topo-migalha" aria-label="Navegação estrutural">
-                        <span>Painel</span>
-                        <span class="topo-separador">/</span>
-                        <span id="topo-secao-nome">Visão Geral</span>
-                    </nav>
-                    <h1 id="topo-titulo">Visão geral</h1>
-                </div>
-                <div class="topo-direita">
-                    <div class="topo-estado">
-                        <span class="ponto-pulso" aria-hidden="true"></span>
-                        <span id="estado">Tudo sincronizado</span>
+                    <div class="dash-greeting-wrap">
+                        <div class="dash-avatar-circle">
+                            <span class="dash-avatar-emoji">👨‍💼</span>
+                            <span class="dash-avatar-badge">👋</span>
+                        </div>
+                        <div class="dash-greeting-texts">
+                            <h2 class="dash-greeting-title">Greetings! 👋</h2>
+                            <p class="dash-greeting-sub">Start your day with NIKITIN</p>
+                        </div>
                     </div>
-                    <div class="topo-atalhos-header">
-                        <a href="/" target="_blank" rel="noopener" class="btn btn-sm btn-fantasma" title="Visualizar site principal">
-                            <svg class="icone icone--p" aria-hidden="true"><use href="#i-externo"/></svg>
-                            <span>Site</span>
-                        </a>
-                        <a href="/catalogo.html" target="_blank" rel="noopener" class="btn btn-sm btn-fantasma" title="Abrir catálogo do cliente">
-                            <svg class="icone icone--p" aria-hidden="true"><use href="#i-grade"/></svg>
-                            <span>Catálogo Provas</span>
-                        </a>
+                    <!-- Indicador discreto da seção atual -->
+                    <span id="topo-titulo" style="display: none;">Visão geral</span>
+                    <span id="topo-secao-nome" style="display: none;">Visão Geral</span>
+                </div>
+
+                <div class="topo-meio">
+                    <div class="topo-busca-dash">
+                        <svg class="icone icone--p" aria-hidden="true"><use href="#i-lupa"/></svg>
+                        <input type="search" id="dash-busca-rapida" placeholder="Search..." autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="topo-direita">
+                    <!-- Alternador de Tema: White (☀️) / Dark (🌙) -->
+                    <button type="button" class="btn-tema-switch-pill" id="btn-alternar-tema-topo" title="Alternar entre tema White e Dark" aria-label="Alternar tema White e Dark">
+                        <span class="switch-ball" aria-hidden="true"></span>
+                        <span class="switch-opt switch-light"><svg class="icone icone--p" aria-hidden="true"><use href="#i-sol"/></svg> White</span>
+                        <span class="switch-opt switch-dark"><svg class="icone icone--p" aria-hidden="true"><use href="#i-lua"/></svg> Dark</span>
+                    </button>
+
+                    <!-- My Account Pill -->
+                    <button type="button" class="btn-minha-conta-pill" id="btn-conta-header" data-ir="seguranca" title="Sessão & Segurança">
+                        <span class="conta-avatar-mini">
+                            <svg class="icone icone--p" aria-hidden="true"><use href="#i-seguranca"/></svg>
+                        </span>
+                        <span>My account</span>
+                        <svg class="icone icone--p chevron" aria-hidden="true"><use href="#i-chevron-baixo"/></svg>
+                    </button>
+
+                    <div class="topo-estado" style="display: none;">
+                        <span id="estado">Tudo sincronizado</span>
                     </div>
                 </div>
             </header>
@@ -264,153 +324,288 @@
                 <!-- ------------------------------------------ 1. visão geral -->
                 <section class="painel" id="painel-visao-geral" tabindex="-1">
 
-                    <div class="boas-vindas">
-                        <div>
-                            <p class="boas-vindas-rotulo">Bem-vinda de volta</p>
-                            <h2 class="painel-titulo">Painel do site</h2>
-                            <p class="painel-desc">Tudo que você mudar aqui aparece no site assim que salvar.</p>
-                        </div>
+                    <div class="dash-main-grid">
 
-                        <div class="grade-estat">
-                            <div class="cartao-estat">
-                                <span class="estat-icone"><svg class="icone" aria-hidden="true"><use href="#i-camadas"/></svg></span>
-                                <div class="estat-valor" id="estat-total">0</div>
-                                <div class="estat-rotulo">Blocos no total</div>
-                            </div>
-                            <div class="cartao-estat">
-                                <span class="estat-icone" data-tom="verde"><svg class="icone" aria-hidden="true"><use href="#i-olho"/></svg></span>
-                                <div class="estat-valor" id="estat-visiveis" data-tom="verde">0</div>
-                                <div class="estat-rotulo">Publicados no site</div>
-                            </div>
-                            <div class="cartao-estat">
-                                <span class="estat-icone" data-tom="ambar"><svg class="icone" aria-hidden="true"><use href="#i-olho-fechado"/></svg></span>
-                                <div class="estat-valor" id="estat-ocultos" data-tom="ambar">0</div>
-                                <div class="estat-rotulo">Ocultos</div>
-                            </div>
-                            <div class="cartao-estat">
-                                <span class="estat-icone"><svg class="icone" aria-hidden="true"><use href="#i-relogio"/></svg></span>
-                                <div class="estat-valor estat-valor--texto" id="estat-sync">—</div>
-                                <div class="estat-rotulo">Última alteração</div>
-                            </div>
-                        </div>
-                    </div>
+                        <!-- COLUNA ESQUERDA: Cards, Action Pills, Recent Sales -->
+                        <div class="dash-col-left">
 
-                    <div class="dois-quadros">
-                        <div class="cartao">
-                            <div class="cartao-topo">
-                                <h3 class="cartao-titulo">Resumo do site</h3>
+                            <!-- Seção Cards -->
+                            <div class="dash-cards-header">
+                                <h3 class="dash-section-title">Cards</h3>
+                                <button type="button" class="dash-link-see-all" data-ir="selecoes">See all</button>
                             </div>
-                            <div class="cartao-corpo">
-                                <dl class="resumo">
-                                    <div class="resumo-linha">
-                                        <dt>Título da página inicial</dt>
-                                        <dd id="resumo-titulo">—</dd>
-                                    </div>
-                                    <div class="resumo-linha">
-                                        <dt>Legenda</dt>
-                                        <dd id="resumo-subtitulo">—</dd>
-                                    </div>
-                                    <div class="resumo-linha">
-                                        <dt>Categorias no portfólio</dt>
-                                        <dd id="resumo-categorias">—</dd>
-                                    </div>
-                                    <div class="resumo-linha">
-                                        <dt>Página de serviços</dt>
-                                        <dd>
-                                            <span id="resumo-servicos">—</span>
-                                            <span class="etiqueta" id="resumo-servicos-vis" data-estado="">—</span>
-                                        </dd>
-                                    </div>
-                                    <div class="resumo-linha">
-                                        <dt>Página de dúvidas</dt>
-                                        <dd id="resumo-duvidas">—</dd>
-                                    </div>
-                                    <div class="resumo-linha">
-                                        <dt>Grade do portfólio</dt>
-                                        <dd>
-                                            <span class="etiqueta" id="resumo-grade" data-estado="publicado">Publicada</span>
-                                        </dd>
-                                    </div>
-                                    <div class="resumo-linha">
-                                        <dt>PIN de Acesso</dt>
-                                        <dd><code style="font-family: monospace; font-size: 13px; background: var(--veu-campo); padding: 3px 8px; border-radius: 6px; letter-spacing: 2px;">7811</code></dd>
-                                    </div>
-                                </dl>
-                            </div>
-                        </div>
 
-                        <div class="cartao">
-                            <div class="cartao-topo">
-                                <h3 class="cartao-titulo">Atalhos rápidos</h3>
-                            </div>
-                            <div class="cartao-corpo">
-                                <div class="atalhos">
-                                    <button class="atalho" type="button" data-ir="textos">
-                                        <span class="atalho-icone"><svg class="icone" aria-hidden="true"><use href="#i-camadas"/></svg></span>
-                                        <span class="atalho-textos">
-                                            <span class="atalho-nome">Textos & Capa</span>
-                                            <span class="atalho-desc">Títulos, mídias e WhatsApp</span>
-                                        </span>
-                                        <svg class="icone icone--p" aria-hidden="true"><use href="#i-seta-dir"/></svg>
-                                    </button>
-                                    <button class="atalho" type="button" data-ir="portfolio">
-                                        <span class="atalho-icone"><svg class="icone" aria-hidden="true"><use href="#i-portfolio"/></svg></span>
-                                        <span class="atalho-textos">
-                                            <span class="atalho-nome">Portfólio</span>
-                                            <span class="atalho-desc">Categorias e imagens</span>
-                                        </span>
-                                        <svg class="icone icone--p" aria-hidden="true"><use href="#i-seta-dir"/></svg>
-                                    </button>
-                                    <button class="atalho" type="button" data-ir="servicos">
-                                        <span class="atalho-icone"><svg class="icone" aria-hidden="true"><use href="#i-servicos"/></svg></span>
-                                        <span class="atalho-textos">
-                                            <span class="atalho-nome">Serviços</span>
-                                            <span class="atalho-desc">Preços e descrições</span>
-                                        </span>
-                                        <svg class="icone icone--p" aria-hidden="true"><use href="#i-seta-dir"/></svg>
-                                    </button>
-                                    <button class="atalho" type="button" data-ir="duvidas">
-                                        <span class="atalho-icone"><svg class="icone" aria-hidden="true"><use href="#i-duvidas"/></svg></span>
-                                        <span class="atalho-textos">
-                                            <span class="atalho-nome">Dúvidas</span>
-                                            <span class="atalho-desc">Perguntas frequentes</span>
-                                        </span>
-                                        <svg class="icone icone--p" aria-hidden="true"><use href="#i-seta-dir"/></svg>
-                                    </button>
-                                    <button class="atalho" type="button" data-ir="visibilidade">
-                                        <span class="atalho-icone"><svg class="icone" aria-hidden="true"><use href="#i-olho"/></svg></span>
-                                        <span class="atalho-textos">
-                                            <span class="atalho-nome">Visibilidade</span>
-                                            <span class="atalho-desc">Ligar e desligar blocos</span>
-                                        </span>
-                                        <svg class="icone icone--p" aria-hidden="true"><use href="#i-seta-dir"/></svg>
-                                    </button>
+                            <div class="dash-cards-row">
+                                <!-- Card 1: Black Card -->
+                                <div class="dash-card-credit dash-card-dark" data-ir="portfolio" title="Portfólio & Fotos do Estúdio">
+                                    <div class="dash-card-bg-dots" aria-hidden="true"></div>
+                                    <div class="dash-card-credit-top">
+                                        <button type="button" class="dash-card-more" aria-label="Mais opções">⋮</button>
+                                    </div>
+                                    <div class="dash-card-credit-middle">
+                                        <div class="dash-card-val-row">
+                                            <span class="dash-card-curr">$</span>
+                                            <span class="dash-card-amount">15,780.0</span>
+                                        </div>
+                                    </div>
+                                    <div class="dash-card-credit-bottom">
+                                        <div class="dash-card-digits">•••• 1810 <span class="dash-card-eye">👁</span></div>
+                                        <div class="dash-card-expiry">10/24</div>
+                                        <div class="dash-card-brand-visa">VISA</div>
+                                    </div>
+                                </div>
+
+                                <!-- Card 2: White Card -->
+                                <div class="dash-card-credit dash-card-white" data-ir="catalogo-gestao" title="Catálogo de Provas & Clientes">
+                                    <div class="dash-card-bg-sphere" aria-hidden="true"></div>
+                                    <div class="dash-card-credit-top">
+                                        <button type="button" class="dash-card-more" aria-label="Mais opções">⋮</button>
+                                    </div>
+                                    <div class="dash-card-credit-middle">
+                                        <div class="dash-card-val-row">
+                                            <span class="dash-card-curr dash-card-curr-crypto">☱</span>
+                                            <span class="dash-card-amount">123,424.0</span>
+                                        </div>
+                                    </div>
+                                    <div class="dash-card-credit-bottom">
+                                        <div class="dash-card-digits">•••• 1423 <span class="dash-card-eye">👁</span></div>
+                                        <div class="dash-card-expiry">10/24</div>
+                                        <div class="dash-card-brand-circles" aria-hidden="true">
+                                            <span class="circle-c1"></span>
+                                            <span class="circle-c2"></span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Seleções dos Clientes Recebidas (Resumo Rápido) -->
-                    <div class="cartao" style="margin-top: 24px;">
-                        <div class="cartao-topo" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                            <div>
-                                <h3 class="cartao-titulo">Últimas Seleções de Fotos Recebidas</h3>
-                                <p class="painel-desc" style="margin-top: 4px; font-size: 13px;">Provas aprovadas e listas de imagens prontas para tratamento.</p>
-                            </div>
-                            <div style="display: flex; gap: 8px;">
-                                <button class="btn btn-sm" type="button" id="btn-atualizar-selecoes">Atualizar</button>
-                                <button class="btn btn-sm btn-primario" type="button" data-ir="selecoes">
-                                    <svg class="icone icone--p" aria-hidden="true"><use href="#i-selecao"/></svg>
-                                    <span>Gerenciar Todas</span>
+                            <!-- Botões Pill de Ação -->
+                            <div class="dash-pills-row">
+                                <button type="button" class="dash-pill-btn active" data-ir="selecoes">
+                                    <span class="dash-pill-icon"><svg class="icone" aria-hidden="true"><use href="#i-transfer"/></svg></span>
+                                    <span>Transfer</span>
+                                </button>
+                                <button type="button" class="dash-pill-btn" data-ir="catalogo-gestao">
+                                    <span class="dash-pill-icon"><svg class="icone" aria-hidden="true"><use href="#i-utility"/></svg></span>
+                                    <span>Utility</span>
+                                </button>
+                                <button type="button" class="dash-pill-btn" data-ir="protecao">
+                                    <span class="dash-pill-icon"><svg class="icone" aria-hidden="true"><use href="#i-taxes"/></svg></span>
+                                    <span>Taxes</span>
+                                </button>
+                                <button type="button" class="dash-pill-btn" data-ir="portfolio">
+                                    <span class="dash-pill-icon"><svg class="icone" aria-hidden="true"><use href="#i-transport"/></svg></span>
+                                    <span>Transport</span>
                                 </button>
                             </div>
+
+                            <!-- Seção Recent Sales -->
+                            <div class="dash-recent-sales-box">
+                                <div class="dash-recent-header">
+                                    <h3 class="dash-section-title">Recent Sales</h3>
+                                </div>
+
+                                <div class="dash-table-wrap">
+                                    <div class="dash-table-head">
+                                        <span>Sender</span>
+                                        <span>Date</span>
+                                        <span>Status</span>
+                                        <span class="text-right">Amount</span>
+                                    </div>
+
+                                    <div class="dash-table-rows" id="dash-recent-sales-list">
+                                        <!-- Row 1 -->
+                                        <div class="dash-table-row" data-ir="selecoes">
+                                            <div class="dash-sender-cell">
+                                                <div class="dash-sender-avatar">
+                                                    <img src="./img/provas/p-steak.jpg" alt="James Smith" onerror="this.src='./img/provas/capa.jpg'">
+                                                </div>
+                                                <span class="dash-sender-name">James Smith</span>
+                                            </div>
+                                            <div class="dash-date-cell">Mar 18, 2026</div>
+                                            <div class="dash-status-cell">
+                                                <span class="dash-status-pill status-success">
+                                                    <span class="dash-status-dot"></span> Success
+                                                </span>
+                                            </div>
+                                            <div class="dash-amount-cell">-$1,980.0</div>
+                                        </div>
+
+                                        <!-- Row 2 -->
+                                        <div class="dash-table-row" data-ir="selecoes">
+                                            <div class="dash-sender-cell">
+                                                <div class="dash-sender-avatar">
+                                                    <img src="./img/provas/p-burger.jpg" alt="George Holoster" onerror="this.src='./img/provas/capa.jpg'">
+                                                </div>
+                                                <span class="dash-sender-name">George Holoster</span>
+                                            </div>
+                                            <div class="dash-date-cell">Mar 10, 2026</div>
+                                            <div class="dash-status-cell">
+                                                <span class="dash-status-pill status-process">
+                                                    <span class="dash-status-dot"></span> Process
+                                                </span>
+                                            </div>
+                                            <div class="dash-amount-cell">-$880.0</div>
+                                        </div>
+
+                                        <!-- Row 3 -->
+                                        <div class="dash-table-row" data-ir="selecoes">
+                                            <div class="dash-sender-cell">
+                                                <div class="dash-sender-avatar">
+                                                    <img src="./img/provas/p-sobremesa.jpg" alt="Daniela Gordienko" onerror="this.src='./img/provas/capa.jpg'">
+                                                </div>
+                                                <span class="dash-sender-name">Daniela Gordienko</span>
+                                            </div>
+                                            <div class="dash-date-cell">Mar 21, 2026</div>
+                                            <div class="dash-status-cell">
+                                                <span class="dash-status-pill status-failed">
+                                                    <span class="dash-status-dot"></span> Failed
+                                                </span>
+                                            </div>
+                                            <div class="dash-amount-cell">-$1,240.0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
-                        <div class="cartao-corpo">
-                            <div id="lista-selecoes-resumo" style="display: flex; flex-direction: column; gap: 12px;">
-                                <p style="color: var(--cinza-fraco); font-size: 13px;">Carregando seleções...</p>
+
+                        <!-- COLUNA DIREITA: Statistic Card com Donut Chart e Activity list -->
+                        <div class="dash-col-right">
+                            <div class="dash-statistic-card">
+                                <div class="dash-statistic-header">
+                                    <div class="dash-statistic-title-wrap">
+                                        <h3 class="dash-section-title">Statistic</h3>
+                                        <button type="button" class="dash-info-btn" title="Estatísticas gerais de conversão e aprovação">ⓘ</button>
+                                    </div>
+                                    <div class="dash-filter-dropdown-pill">
+                                        <span>This week</span>
+                                        <svg class="icone icone--p" aria-hidden="true"><use href="#i-chevron-baixo"/></svg>
+                                    </div>
+                                </div>
+
+                                <!-- Donut Chart Widget -->
+                                <div class="dash-donut-container">
+                                    <div class="dash-donut-svg-wrap">
+                                        <svg viewBox="0 0 160 160" class="dash-donut-chart" aria-hidden="true">
+                                            <!-- Dark segment -->
+                                            <circle cx="80" cy="80" r="58" fill="none" class="donut-dark-circle" stroke-width="16" stroke-dasharray="364" stroke-dashoffset="120" stroke-linecap="round"/>
+                                            <!-- Blue segment -->
+                                            <circle cx="80" cy="80" r="58" fill="none" stroke="#73a9f8" stroke-width="16" stroke-dasharray="364" stroke-dashoffset="244" stroke-linecap="round" transform="rotate(-70 80 80)"/>
+                                        </svg>
+                                        <div class="dash-donut-center">
+                                            <span class="dash-donut-label">Total</span>
+                                            <strong class="dash-donut-val">$14,810.0</strong>
+                                        </div>
+                                        <div class="dash-donut-floating-pill">$9,560.0</div>
+                                    </div>
+
+                                    <div class="dash-donut-legend">
+                                        <div class="dash-legend-item">
+                                            <span class="legend-color-box blue"></span>
+                                            <span>Payment at the store</span>
+                                        </div>
+                                        <div class="dash-legend-item">
+                                            <span class="legend-color-box dark"></span>
+                                            <span>Money transaction</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Activity / Transactions Stream -->
+                                <div class="dash-activity-list">
+                                    <div class="dash-activity-item">
+                                        <div class="dash-activity-icon light-blue">
+                                            <svg class="icone" aria-hidden="true"><use href="#i-spotify"/></svg>
+                                        </div>
+                                        <div class="dash-activity-details">
+                                            <div class="dash-activity-name-row">
+                                                <strong class="dash-activity-name">Spotify</strong>
+                                                <span class="dash-activity-sub">Payment at the store</span>
+                                            </div>
+                                            <span class="dash-activity-time">11 minuets ago</span>
+                                        </div>
+                                        <div class="dash-activity-amount">-$321$</div>
+                                    </div>
+
+                                    <div class="dash-activity-item">
+                                        <div class="dash-activity-icon light-blue">
+                                            <svg class="icone" aria-hidden="true"><use href="#i-apple"/></svg>
+                                        </div>
+                                        <div class="dash-activity-details">
+                                            <div class="dash-activity-name-row">
+                                                <strong class="dash-activity-name">Apple</strong>
+                                                <span class="dash-activity-sub">Payment at the store</span>
+                                            </div>
+                                            <span class="dash-activity-time">32 minuets ago</span>
+                                        </div>
+                                        <div class="dash-activity-amount">-$552$</div>
+                                    </div>
+
+                                    <div class="dash-activity-item">
+                                        <div class="dash-activity-icon dark-sq">
+                                            <svg class="icone" aria-hidden="true"><use href="#i-bitcoin"/></svg>
+                                        </div>
+                                        <div class="dash-activity-details">
+                                            <div class="dash-activity-name-row">
+                                                <strong class="dash-activity-name">Bitcoin</strong>
+                                                <span class="dash-activity-sub">Money transaction</span>
+                                            </div>
+                                            <span class="dash-activity-time">1 hour ago</span>
+                                        </div>
+                                        <div class="dash-activity-amount">-$123$</div>
+                                    </div>
+
+                                    <div class="dash-activity-item">
+                                        <div class="dash-activity-icon light-blue">
+                                            <svg class="icone" aria-hidden="true"><use href="#i-apple"/></svg>
+                                        </div>
+                                        <div class="dash-activity-details">
+                                            <div class="dash-activity-name-row">
+                                                <strong class="dash-activity-name">Apple</strong>
+                                                <span class="dash-activity-sub">Payment at the store</span>
+                                            </div>
+                                            <span class="dash-activity-time">3 hour 21 minuets ago</span>
+                                        </div>
+                                        <div class="dash-activity-amount">-$242$</div>
+                                    </div>
+
+                                    <div class="dash-activity-item">
+                                        <div class="dash-activity-icon dark-sq">
+                                            <svg class="icone" aria-hidden="true"><use href="#i-binance"/></svg>
+                                        </div>
+                                        <div class="dash-activity-details">
+                                            <div class="dash-activity-name-row">
+                                                <strong class="dash-activity-name">Binance</strong>
+                                                <span class="dash-activity-sub">Money transaction</span>
+                                            </div>
+                                            <span class="dash-activity-time">1 day ago</span>
+                                        </div>
+                                        <div class="dash-activity-amount">-$160$</div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
+
                     </div>
+
+                    <!-- Elementos de estado sincronizado mantidos para compatibilidade com o script do painel -->
+                    <div style="display: none;" aria-hidden="true">
+                        <span id="estat-total">0</span>
+                        <span id="estat-visiveis">0</span>
+                        <span id="estat-ocultos">0</span>
+                        <span id="estat-sync">—</span>
+                        <span id="resumo-titulo">—</span>
+                        <span id="resumo-subtitulo">—</span>
+                        <span id="resumo-categorias">—</span>
+                        <span id="resumo-servicos">—</span>
+                        <span id="resumo-duvidas">—</span>
+                        <span id="resumo-servicos-vis"></span>
+                        <span id="resumo-grade"></span>
+                        <span id="btn-atualizar-selecoes"></span>
+                        <span id="lista-selecoes-resumo"></span>
+                    </div>
+
                 </section>
 
                 <!-- ------------------------------------------ 2. textos & capa -->

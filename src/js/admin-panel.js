@@ -791,28 +791,39 @@ const CHAVE_TEMA = 'painelTema';
  * do config.html. Aqui só desenhamos o botão que troca.
  */
 function aplicarTema(tema) {
-  document.documentElement.dataset.tema = tema;
+  const temaFinal = tema === 'claro' ? 'claro' : 'escuro';
+  document.documentElement.dataset.tema = temaFinal;
   try {
-    localStorage.setItem(CHAVE_TEMA, tema);
+    localStorage.setItem(CHAVE_TEMA, temaFinal);
   } catch {
     // Sem storage o tema vale só nesta aba, que ainda é o melhor comportamento.
   }
 
-  const claro = tema === 'claro';
+  const claro = temaFinal === 'claro';
   const botao = el('alternar-tema');
-  if (!botao) return;
+  if (botao) {
+    botao.setAttribute('aria-label', claro ? 'Mudar para o tema escuro' : 'Mudar para o tema claro');
+    el('tema-icone')?.querySelector('use')
+      ?.setAttribute('href', claro ? '#i-sol' : '#i-lua');
+    const rotulo = el('tema-rotulo');
+    if (rotulo) rotulo.textContent = claro ? 'Tema escuro' : 'Tema claro';
+  }
 
-  botao.setAttribute('aria-label', claro ? 'Mudar para o tema escuro' : 'Mudar para o tema claro');
-  el('tema-icone')?.querySelector('use')
-    ?.setAttribute('href', claro ? '#i-sol' : '#i-lua');
-  const rotulo = el('tema-rotulo');
-  if (rotulo) rotulo.textContent = claro ? 'Tema escuro' : 'Tema claro';
+  const btnTopo = el('btn-alternar-tema-topo');
+  if (btnTopo) {
+    btnTopo.setAttribute('aria-label', claro ? 'Mudar para Dark mode' : 'Mudar para White mode');
+    btnTopo.setAttribute('data-tema', temaFinal);
+  }
 }
 
 function ligarTema() {
-  el('alternar-tema')?.addEventListener('click', () => {
-    aplicarTema(document.documentElement.dataset.tema === 'claro' ? 'escuro' : 'claro');
-  });
+  const alternar = () => {
+    const atual = document.documentElement.dataset.tema || 'escuro';
+    aplicarTema(atual === 'claro' ? 'escuro' : 'claro');
+  };
+
+  el('alternar-tema')?.addEventListener('click', alternar);
+  el('btn-alternar-tema-topo')?.addEventListener('click', alternar);
 }
 
 // ------------------------------------------------------------- serviços
@@ -1264,6 +1275,46 @@ function ligarNavegacao() {
     atalho.addEventListener('click', () => mostrarSecao(atalho.dataset.ir));
   }
 
+  // Botão de encerrar sessão do trilho lateral
+  const btnLogoutTrilho = el('btn-fechar-sessao');
+  if (btnLogoutTrilho) {
+    btnLogoutTrilho.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (confirm('Deseja realmente encerrar a sessão administrativa agora?')) {
+        try {
+          await logout();
+        } catch (_) {}
+        window.location.replace('./login.html?sair=1');
+      }
+    });
+  }
+
+  // Busca rápida no topo
+  const inputBuscaRapida = el('dash-busca-rapida');
+  if (inputBuscaRapida) {
+    inputBuscaRapida.addEventListener('input', (e) => {
+      const q = (e.target.value || '').trim().toLowerCase();
+      const linhas = document.querySelectorAll('#dash-recent-sales-list .dash-table-row');
+      linhas.forEach((linha) => {
+        if (!q) {
+          linha.style.display = '';
+          return;
+        }
+        const texto = linha.textContent.toLowerCase();
+        linha.style.display = texto.includes(q) ? '' : 'none';
+      });
+    });
+  }
+
+  // Alternância visual das pílulas de ação
+  const pillsAcao = document.querySelectorAll('.dash-pill-btn');
+  pillsAcao.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      pillsAcao.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
   window.addEventListener('hashchange', () => {
     mostrarSecao(window.location.hash.slice(1), { moverHash: false });
   });
@@ -1526,7 +1577,44 @@ async function carregarSelecoesPainel() {
       }
     }
 
-    // 4. Renderizar grade completa no painel dedicado
+    // 4. Se houver seleções reais de clientes, atualizar também a tabela Recent Sales do visual Nikitin
+    const salesTable = el('dash-recent-sales-list');
+    if (salesTable && listaTodasSelecoes.length > 0) {
+      salesTable.innerHTML = listaTodasSelecoes.slice(0, 5).map((item, idx) => {
+        const dataFmt = item.created_at ? new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Mar 18, 2026';
+        const statusClass = item.status === 'concluida' ? 'status-success' : (item.status === 'em_tratamento' ? 'status-process' : 'status-failed');
+        const statusLabel = item.status === 'concluida' ? 'Success' : (item.status === 'em_tratamento' ? 'Process' : 'Pending');
+        const totalFotos = item.total || item.fotos.length;
+        const fotoPrimeira = item.fotos[0];
+        const avatarSrc = typeof fotoPrimeira === 'object' && fotoPrimeira?.src ? fotoPrimeira.src : './img/provas/p-steak.jpg';
+        const nomeCliente = item.cliente || item.cliente_email || `Client ${idx + 1}`;
+        const amount = `-$${(totalFotos * 35).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}`;
+
+        return `
+          <div class="dash-table-row" data-ir="selecoes">
+            <div class="dash-sender-cell">
+              <div class="dash-sender-avatar">
+                <img src="${avatarSrc}" alt="${nomeCliente}" onerror="this.src='./img/provas/capa.jpg'">
+              </div>
+              <span class="dash-sender-name">${nomeCliente}</span>
+            </div>
+            <div class="dash-date-cell">${dataFmt}</div>
+            <div class="dash-status-cell">
+              <span class="dash-status-pill ${statusClass}">
+                <span class="dash-status-dot"></span> ${statusLabel}
+              </span>
+            </div>
+            <div class="dash-amount-cell">${amount}</div>
+          </div>
+        `;
+      }).join('');
+
+      salesTable.querySelectorAll('[data-ir]').forEach((r) => {
+        r.addEventListener('click', () => mostrarSecao(r.dataset.ir));
+      });
+    }
+
+    // 5. Renderizar grade completa no painel dedicado
     renderizarGradeSelecoes();
 
   } catch (err) {
