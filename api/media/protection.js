@@ -30,6 +30,7 @@ module.exports = withErrorHandling(async (req, res) => {
         fontSize: req.query.fontSize !== undefined ? Number(req.query.fontSize) : 20,
         pattern: req.query.pattern || 'diagonal_grid',
         centerMark: req.query.centerMark !== 'false',
+        badgePosition: ['top', 'bottom', 'center'].includes(req.query.badgePosition) ? req.query.badgePosition : 'top',
         aiProtection: req.query.aiProtection !== 'false',
         aiNoiseStrength: req.query.aiNoiseStrength !== undefined ? Number(req.query.aiNoiseStrength) : 0.035,
         quality: 80,
@@ -115,12 +116,14 @@ module.exports = withErrorHandling(async (req, res) => {
   merged.quality = Math.min(Math.max(Number(merged.quality) || 82, 50), 95);
   merged.aiNoiseStrength = Math.min(Math.max(Number(merged.aiNoiseStrength) || 0.035, 0.005), 0.1);
 
+  // A chave vai como parâmetro, igual às outras gravações de content: com ela
+  // escrita no SQL, o banco em memória gravava o JSON no lugar do nome da chave.
   await query(
     `INSERT INTO content (key, value, version, updated_at)
-     VALUES ('watermarkConfig', $1::jsonb, 1, now())
+     VALUES ($1, $2::jsonb, 1, now())
      ON CONFLICT (key) DO UPDATE
      SET value = EXCLUDED.value, version = content.version + 1, updated_at = now()`,
-    [JSON.stringify(merged)]
+    ['watermarkConfig', JSON.stringify(merged)]
   );
 
   return json(res, 200, { ok: true, config: merged }, { 'Cache-Control': 'no-store' });

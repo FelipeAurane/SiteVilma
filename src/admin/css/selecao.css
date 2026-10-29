@@ -1,0 +1,251 @@
+/* =========================================================================
+   Tela "Seleção de fotos". Reaproveita abas, cartões, campos e interruptores
+   de meu-site.css, e pílulas/avatares/tons de inicio.css; aqui fica só o que
+   é desta tela.
+   ========================================================================= */
+
+/* ------------------------------------------------------------- seleções recebidas */
+
+.sl-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.sl-filtros { display: flex; gap: 8px; flex-wrap: wrap; }
+.sl-filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--cartao);
+  box-shadow: var(--sombra);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--texto-2);
+  transition: background 160ms, color 160ms;
+}
+.sl-filtro b {
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--cartao-2);
+  color: var(--texto);
+  font-size: 11.5px;
+}
+.sl-filtro:hover { color: var(--texto); }
+.sl-filtro.ativo { background: var(--trilho); color: #fff; }
+.sl-filtro.ativo b { background: rgba(255, 255, 255, .16); color: #fff; }
+
+.sl-recebidas { max-width: none; }
+
+.sl-selecao { gap: 0; padding: 14px 18px; }
+.sl-selecao-topo { display: flex; align-items: center; gap: 14px; }
+.sl-selecao-quem { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.sl-selecao-quem b { font-size: 14.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sl-selecao-quem small { font-size: 12.5px; color: var(--texto-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sl-selecao-total { font-size: 13px; color: var(--texto-2); white-space: nowrap; }
+.sl-selecao-total b { font-size: 15px; color: var(--texto); }
+
+.sl-status {
+  height: 32px;
+  padding: 0 28px 0 12px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--tom-suave) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 9px center / 12px;
+  color: var(--tom-texto);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  appearance: none;
+}
+.sl-seta { width: 16px; height: 16px; transition: transform var(--transicao); }
+.sl-seta.aberta { transform: rotate(180deg); }
+
+.sl-selecao-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--borda);
+  animation: entrar 240ms ease-out;
+}
+.sl-escolhidas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+}
+.sl-escolhidas figure { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.sl-escolhidas img, .sl-sem-foto {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
+  object-fit: cover;
+  background: var(--cartao-2);
+}
+.sl-sem-foto { display: grid; place-items: center; color: var(--texto-3); }
+.sl-escolhidas figcaption { display: flex; flex-direction: column; gap: 2px; font-size: 12px; min-width: 0; }
+.sl-escolhidas figcaption b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sl-escolhidas code, .sl-arquivo {
+  font-size: 11px;
+  color: var(--texto-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------- fotos da galeria */
+
+.sl-envio {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+.sl-envio .cartao-sub { margin-top: 4px; max-width: 640px; }
+
+.sl-fotos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+  gap: 14px;
+}
+.sl-foto { gap: 10px; padding: 12px; }
+.sl-foto-imagem { position: relative; }
+.sl-foto-imagem img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+  background: var(--cartao-2);
+}
+.sl-foto-imagem .item-acoes {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  opacity: 0;
+  transition: opacity 160ms;
+}
+.sl-foto:hover .item-acoes, .sl-foto:focus-within .item-acoes { opacity: 1; }
+@media (hover: none) { .sl-foto-imagem .item-acoes { opacity: 1; } }
+.sl-foto-imagem .icone-mini { background: rgba(0, 0, 0, .55); color: #fff; }
+.sl-foto .campo input { padding: 8px 11px; font-size: 13px; }
+
+/* ------------------------------------------------------------- marca-d'água */
+
+.sl-marca {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 440px);
+  gap: 20px;
+  align-items: start;
+}
+.sl-marca-controles { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+
+.sl-previa { position: sticky; top: 0; gap: 12px; }
+.sl-previa-estado { font-size: 12px; color: var(--texto-3); }
+/* A foto aparece inteira (sem cortar), para o selo no topo ou na base ficar visível */
+.sl-previa-quadro {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #1c1c20;
+  min-height: 200px;
+}
+.sl-previa-quadro img { display: block; width: 100%; height: auto; max-height: 70vh; object-fit: contain; }
+
+/* Camada da tela: o mesmo desenho que o catalogo.html coloca sobre cada foto */
+.sl-camada { position: absolute; inset: 0; pointer-events: none; }
+.sl-camada[hidden], .sl-camada [hidden] { display: none !important; }
+.sl-camada-repetida { position: absolute; inset: 0; background-repeat: repeat; }
+.sl-camada-selo {
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: calc(100% - 24px);
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: rgba(9, 9, 13, .82);
+  border: 1px solid rgba(147, 197, 253, .4);
+  white-space: nowrap;
+}
+.sl-camada-selo[data-posicao="centro"] { top: 50%; transform: translate(-50%, -50%); }
+.sl-camada-selo[data-posicao="baixo"] { top: auto; bottom: 12px; }
+.sl-camada-selo b { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #fff; }
+.sl-camada-selo small { font-size: 8px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #93c5fd; }
+
+.sl-deslizar .campo-rotulo { display: flex; justify-content: space-between; }
+.sl-deslizar output { font-variant-numeric: tabular-nums; color: var(--texto); font-weight: 600; }
+.sl-deslizar input[type="range"] {
+  width: 100%;
+  height: 20px;
+  padding: 0;
+  background: none;
+  accent-color: var(--destaque-forte);
+  cursor: pointer;
+}
+
+.sl-escolha {
+  display: flex;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--cartao-2);
+}
+.sl-escolha label {
+  position: relative;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  height: 34px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--texto-2);
+  cursor: pointer;
+  transition: background 160ms, color 160ms, box-shadow 160ms;
+}
+.sl-escolha label.ativa { background: var(--cartao); color: var(--texto); box-shadow: var(--sombra); }
+.sl-escolha input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; pointer-events: none; }
+.sl-escolha label:focus-within { outline: 2px solid var(--destaque); outline-offset: 1px; }
+
+.campo select {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: var(--raio-p);
+  background: var(--cartao-2);
+  font-size: 14px;
+  outline: none;
+}
+.campo select:focus { border-color: var(--destaque); }
+
+.sl-dica-chave { display: block; margin-top: 2px; font-size: 12px; color: var(--texto-3); }
+.sl-marca .interruptor { border-top: 0; padding: 6px 0; }
+
+.sl-regra { padding-top: 4px; }
+
+/* ------------------------------------------------------------- telas menores */
+
+@media (max-width: 1100px) {
+  .sl-marca { grid-template-columns: 1fr; }
+  .sl-previa { position: static; order: -1; }
+}
+
+@media (max-width: 760px) {
+  .sl-envio { flex-direction: column; align-items: stretch; }
+  .sl-selecao-topo { flex-wrap: wrap; }
+  .sl-selecao-quem { flex-basis: calc(100% - 60px); }
+  .sl-selecao-total { margin-left: 54px; }
+  .sl-status { margin-left: auto; }
+}

@@ -12,6 +12,7 @@
 import { exigirLogin, fazerLogout } from './auth.js';
 import { montar as montarSite } from './telas/site.js';
 import { montar as montarInicio } from './telas/inicio.js';
+import { montar as montarSelecao } from './telas/selecao.js';
 
 const TELAS = [
   { id: 'inicio',       rotulo: 'Início',           icone: 'i-inicio',       descricao: 'Resumo do dia: agenda, seleções em andamento e números do site.' },
@@ -30,6 +31,7 @@ const TELAS = [
 // Se ela devolver uma função, essa é chamada a cada nova visita à tela.
 const MONTADORES = {
   inicio: montarInicio,
+  selecao: montarSelecao,
   site: montarSite,
 };
 const ATUALIZADORES = {};

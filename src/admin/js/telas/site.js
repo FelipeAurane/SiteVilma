@@ -17,6 +17,7 @@
 import { getContent, putContent, uploadImage, uploadMedia, LIMITE_VIDEO_BYTES } from '../../../js/api.js';
 import { DataManager, defaultData, isVideoMedia } from '../../../js/dataManager.js';
 import { defaultVisibility, normalize, readCache, writeCache } from '../../../js/visibility.js';
+import { clonar, esc, previa, icone, avisar } from './comum.js';
 
 // ---------------------------------------------------------------- blocos
 
@@ -92,14 +93,6 @@ let raiz, painel, botaoSalvar, statusSalvar, barraAbas;
 
 // ---------------------------------------------------------------- utilidades
 
-const clonar = (v) => JSON.parse(JSON.stringify(v));
-
-function esc(valor) {
-  return String(valor ?? '').replace(/[&<>"']/g, (c) => (
-    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
-  ));
-}
-
 function lerCaminho(caminho) {
   return caminho.split('.').reduce((obj, chave) => (obj == null ? undefined : obj[chave]), estado);
 }
@@ -115,39 +108,7 @@ function gravarCaminho(caminho, valor) {
   obj[ultima] = valor;
 }
 
-/** O conteúdo guarda caminhos relativos ao site ("./img/x.jpg"); o painel mora em /config. */
-function previa(src) {
-  const s = String(src || '').trim();
-  if (s.startsWith('./')) return `/${s.slice(2)}`;
-  if (s.startsWith('../')) return `/${s.slice(3)}`;
-  return s;
-}
-
 const soDigitos = (v) => String(v ?? '').replace(/\D/g, '');
-
-function icone(id) {
-  return `<svg><use href="#${id}" /></svg>`;
-}
-
-function avisar(mensagem, tipo = 'ok') {
-  let caixa = document.getElementById('avisos');
-  if (!caixa) {
-    caixa = document.createElement('div');
-    caixa.id = 'avisos';
-    caixa.className = 'avisos';
-    caixa.setAttribute('aria-live', 'polite');
-    document.body.appendChild(caixa);
-  }
-  const aviso = document.createElement('div');
-  aviso.className = `aviso aviso-${tipo}`;
-  aviso.textContent = mensagem;
-  caixa.appendChild(aviso);
-  requestAnimationFrame(() => aviso.classList.add('visivel'));
-  setTimeout(() => {
-    aviso.classList.remove('visivel');
-    setTimeout(() => aviso.remove(), 300);
-  }, tipo === 'erro' ? 5000 : 2600);
-}
 
 // ---------------------------------------------------------------- sujo / salvo
 

@@ -24,7 +24,7 @@
     window.PAINEL_BASE = /\/admin\/(index\.html)?$/.test(location.pathname)
       ? location.pathname.replace(/index\.html$/, '')
       : '/admin/';
-    for (const folha of ['painel', 'meu-site', 'inicio']) {
+    for (const folha of ['painel', 'meu-site', 'inicio', 'selecao']) {
       document.write('<link rel="stylesheet" href="' + PAINEL_BASE + 'css/' + folha + '.css">');
     }
   </script>

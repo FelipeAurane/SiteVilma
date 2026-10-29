@@ -1503,6 +1503,34 @@
     <script type="module">
         import { getSession, logout, enviarSelecao, getContent } from './js/api.js';
 
+        // ==============================================================
+        // 0. Configuração publicada pelo painel (catalogConfig)
+        //
+        // Os padrões abaixo são o comportamento de sempre; o painel (tela
+        // "Seleção de fotos") pode mudar cada um. As regras e a camada da tela
+        // só valem depois que a configuração chega — por isso o aviso de
+        // direitos espera por `configPronta` antes de abrir.
+        // ==============================================================
+        let REGRAS = {
+            avisoAtivo: true,
+            bloquearBotaoDireito: true,
+            bloquearArrastar: true,
+            bloquearSalvar: true,
+            avisoPrint: true
+        };
+        let SOBREPOSICAO = {
+            ativa: true,
+            repetida: true,
+            selo: true,
+            nome: 'Vilma Silva Fotografia',
+            aviso: 'Amostra Protegida',
+            posicao: 'topo',
+            opacidade: null // null = desenho original da página
+        };
+        let LIMITE_FOTOS = 0; // 0 = sem limite
+        let liberarConfig;
+        const configPronta = new Promise((resolve) => { liberarConfig = resolve; });
+
         // 1. Verificação de sessão de acesso
         const temCredencialLocal = localStorage.getItem('vf_client_logged_in') === 'true' || Boolean(localStorage.getItem('vf_session_token'));
         try {
@@ -1543,7 +1571,7 @@
         // ==============================================================
         window.addEventListener('keydown', (e) => {
             // Ctrl + S ou Cmd + S (Salvar página)
-            if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+            if (REGRAS.bloquearSalvar && (e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
                 e.preventDefault();
                 mostrarToast('Salvar imagens desabilitado na área de prova.');
             }
@@ -1551,6 +1579,7 @@
 
         // Impede clique com botão direito
         document.addEventListener('contextmenu', (e) => {
+            if (!REGRAS.bloquearBotaoDireito) return;
             e.preventDefault();
             mostrarToast('Imagens protegidas por direitos autorais.');
             return false;
@@ -1558,6 +1587,7 @@
 
         // Impede arrastar imagens
         document.addEventListener('dragstart', (e) => {
+            if (!REGRAS.bloquearArrastar) return;
             e.preventDefault();
             return false;
         });
@@ -1596,6 +1626,10 @@
                 selecionou = false;
                 mostrarToast('Foto desmarcada.');
             } else {
+                if (LIMITE_FOTOS > 0 && selecionadas.length >= LIMITE_FOTOS) {
+                    mostrarToast(`Você pode escolher até ${LIMITE_FOTOS} ${LIMITE_FOTOS === 1 ? 'foto' : 'fotos'}. Desmarque uma para trocar.`);
+                    return false;
+                }
                 selecionadas.push(id);
                 selecionou = true;
                 mostrarToast('✓ Foto selecionada com o selo azul!');
@@ -1631,6 +1665,74 @@
         }
 
         // 5. Renderização dos Cards na Grade
+
+        function escHtml(texto) {
+            return String(texto ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        /** Classe do selo conforme a posição escolhida no painel. */
+        function classePosicaoSelo() {
+            return SOBREPOSICAO.posicao === 'baixo' ? 'posicao-baixo' : SOBREPOSICAO.posicao === 'centro' ? 'posicao-centro' : '';
+        }
+
+        /** Camada desenhada sobre cada foto da grade. */
+        function htmlSobreposicao() {
+            if (!SOBREPOSICAO.ativa) return '';
+            return `
+                <div class="marca-dagua-overlay" aria-hidden="true">
+                    ${SOBREPOSICAO.repetida ? '<span class="marca-dagua-repetida"></span>' : ''}
+                    ${SOBREPOSICAO.selo ? `
+                        <div class="marca-dagua-centro marca-dagua-card ${classePosicaoSelo()}">
+                            <span class="marca-dagua-nome">${escHtml(SOBREPOSICAO.nome)}</span>
+                            <span class="marca-dagua-aviso">${escHtml(SOBREPOSICAO.aviso)}</span>
+                        </div>` : ''}
+                </div>`;
+        }
+
+        /** Mesmo desenho do painel: nome e aviso repetidos na diagonal, num SVG de fundo. */
+        function padraoSobreposicao() {
+            const xml = (t) => String(t || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[c]));
+            const o = Math.min(Math.max(Number(SOBREPOSICAO.opacidade) || 0.28, 0.05), 0.9);
+            const svg =
+                `<svg xmlns='http://www.w3.org/2000/svg' width='280' height='160' viewBox='0 0 280 160'>` +
+                `<g transform='rotate(-25 140 80)' font-family='Montserrat, sans-serif' font-weight='700' text-anchor='middle' stroke='#000' stroke-width='0.4' stroke-opacity='0.6'>` +
+                `<text x='140' y='64' fill='#ffffff' fill-opacity='${o.toFixed(2)}' font-size='11' letter-spacing='0.22em'>${xml(String(SOBREPOSICAO.nome).toUpperCase())}</text>` +
+                `<text x='140' y='90' fill='#93c5fd' fill-opacity='${Math.min(o * 1.3, 0.95).toFixed(2)}' font-size='8.5' letter-spacing='0.26em'>${xml(String(SOBREPOSICAO.aviso).toUpperCase())}</text>` +
+                `</g></svg>`;
+            return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+        }
+
+        /** Aplica a configuração da camada também no visualizador ampliado e no desenho de fundo. */
+        function aplicarSobreposicao() {
+            let estilo = document.getElementById('estilo-sobreposicao');
+            if (!estilo) {
+                estilo = document.createElement('style');
+                estilo.id = 'estilo-sobreposicao';
+                document.head.appendChild(estilo);
+            }
+            estilo.textContent = `
+                .marca-dagua-card.posicao-centro { top: 50% !important; bottom: auto !important; transform: translate(-50%, -50%) !important; }
+                ${SOBREPOSICAO.opacidade == null ? '' : `.marca-dagua-repetida { background-image: ${padraoSobreposicao()} !important; }`}
+            `;
+
+            const overlayLightbox = document.querySelector('#zoom-container .marca-dagua-overlay');
+            if (overlayLightbox) {
+                overlayLightbox.hidden = !SOBREPOSICAO.ativa;
+                overlayLightbox.style.display = SOBREPOSICAO.ativa ? '' : 'none';
+                const repetida = overlayLightbox.querySelector('.marca-dagua-repetida');
+                if (repetida) repetida.style.display = SOBREPOSICAO.repetida ? '' : 'none';
+                const card = overlayLightbox.querySelector('.marca-dagua-card');
+                if (card) {
+                    card.style.display = SOBREPOSICAO.selo ? '' : 'none';
+                    card.classList.remove('posicao-baixo', 'posicao-centro');
+                    const classe = classePosicaoSelo();
+                    if (classe) card.classList.add(classe);
+                    card.querySelector('.marca-dagua-nome').textContent = SOBREPOSICAO.nome;
+                    card.querySelector('.marca-dagua-aviso').textContent = `${SOBREPOSICAO.aviso} • Prova de Seleção`;
+                }
+            }
+        }
+
         const gradeFotos = document.getElementById('grade-fotos');
         let categoriaAtual = 'todas';
 
@@ -1670,14 +1772,8 @@
                     <div class="foto-imagem-wrapper" data-id="${foto.id}">
                         <img class="foto-imagem" src="${foto.src}" alt="${foto.titulo}" loading="lazy" draggable="false">
 
-                        <!-- Marca d'água espalhada por toda a imagem -->
-                        <div class="marca-dagua-overlay" aria-hidden="true">
-                            <span class="marca-dagua-repetida"></span>
-                            <div class="marca-dagua-centro marca-dagua-card">
-                                <span class="marca-dagua-nome">Vilma Silva Fotografia</span>
-                                <span class="marca-dagua-aviso">Amostra Protegida</span>
-                            </div>
-                        </div>
+                        <!-- Marca d'água espalhada por toda a imagem (configurada no painel) -->
+                        ${htmlSobreposicao()}
 
                         <!-- Escudo transparente anti-salvar -->
                         <div class="escudo-anti-salvar"></div>
@@ -1818,7 +1914,7 @@
         const btnAbrirDireitos = document.getElementById('btn-abrir-direitos');
 
         function abrirPopupDireitos() {
-            if (!popupDireitos) return;
+            if (!popupDireitos || !REGRAS.avisoAtivo) return;
             popupDireitos.classList.add('ativo');
             popupDireitos.setAttribute('aria-hidden', 'false');
             btnAceitarDireitos?.focus();
@@ -1853,23 +1949,24 @@
             });
         }
 
-        // Abre o popup de aviso assim que a galeria é aberta
-        setTimeout(() => {
+        // Abre o popup de aviso assim que a galeria é aberta — depois que a
+        // configuração do painel chegou, para não mostrar um aviso desligado
+        configPronta.then(() => setTimeout(() => {
             if (!sessionStorage.getItem('vf_termos_direitos_aceitos')) {
                 abrirPopupDireitos();
             }
-        }, 350);
+        }, 350));
 
         // Bloqueio e aviso contra Print Screen e Teclas de Atalho
         window.addEventListener('keyup', (e) => {
-            if (e.key === 'PrintScreen') {
+            if (REGRAS.avisoPrint && e.key === 'PrintScreen') {
                 mostrarToast('⚠️ Captura de tela proibida por direitos autorais.');
                 abrirPopupDireitos();
             }
         });
 
         window.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
+            if (REGRAS.avisoPrint && (e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
                 e.preventDefault();
                 mostrarToast('⚠️ Impressão e captura não autorizadas.');
                 abrirPopupDireitos();
@@ -2115,13 +2212,59 @@
                     if (Array.isArray(configRemota.fotos) && configRemota.fotos.length > 0) {
                         FOTOS_CATALOGO = configRemota.fotos;
                     }
+                    if (configRemota.sobreposicao && typeof configRemota.sobreposicao === 'object') {
+                        SOBREPOSICAO = { ...SOBREPOSICAO, ...configRemota.sobreposicao };
+                    }
+                    if (configRemota.regras && typeof configRemota.regras === 'object') {
+                        REGRAS = { ...REGRAS, ...configRemota.regras };
+                        aplicarTextosDoAviso(REGRAS);
+                    }
+                    LIMITE_FOTOS = Math.max(0, Number(configRemota.limite) || 0);
                 }
             } catch (e) {
                 console.warn('[catalogo] usando dados locais padrão');
             }
 
+            // Aviso desligado no painel: a galeria abre direto, sem pedir aceite
+            if (!REGRAS.avisoAtivo) sessionStorage.setItem('vf_termos_direitos_aceitos', 'true');
+            aplicarSobreposicao();
             atualizarContadores();
             renderizarFotos();
+        }
+        liberarConfig();
+
+        /** Troca os textos do aviso de direitos pelos que vieram do painel. */
+        function aplicarTextosDoAviso(regras) {
+            const titulo = document.getElementById('popup-direitos-titulo');
+            if (!titulo) return;
+            if (regras.titulo) titulo.textContent = regras.titulo;
+            const subtitulo = titulo.nextElementSibling;
+            if (subtitulo && regras.subtitulo != null) subtitulo.textContent = regras.subtitulo;
+
+            const texto = document.querySelector('#popup-direitos .popup-texto');
+            if (texto && regras.texto != null) texto.textContent = regras.texto;
+
+            const blocoItens = texto?.nextElementSibling;
+            if (blocoItens && Array.isArray(regras.itens)) {
+                [...blocoItens.children].forEach((linha, i) => {
+                    const item = regras.itens[i];
+                    const corpo = linha.lastElementChild;
+                    const forte = corpo?.querySelector('strong');
+                    if (!item || !item.titulo) {
+                        linha.style.display = 'none';
+                        return;
+                    }
+                    if (!corpo || !forte) return;
+                    forte.textContent = `${item.titulo}:`;
+                    corpo.replaceChildren(forte, document.createTextNode(` ${item.texto || ''}`));
+                });
+            }
+
+            const rodape = blocoItens?.nextElementSibling;
+            if (rodape && rodape.tagName === 'P' && regras.rodape != null) rodape.textContent = regras.rodape;
+
+            const botao = document.getElementById('btn-aceitar-direitos');
+            if (botao && regras.botao) botao.textContent = regras.botao;
         }
 
         // O navegador guarda a posição da rolagem e abriria a galeria no meio
