@@ -88,13 +88,8 @@ function mostrarGateLogin(liberar) {
   `;
 
   box.innerHTML = `
-    <div style="width: 64px; height: 64px; margin: 0 auto 24px; background: linear-gradient(135deg, var(--accent-primary, #ffc60b), #e6b30a); border-radius: 16px; display: flex; align-items: center; justify-content: center;">
-      <svg width="32" height="32" viewBox="0 0 606.85 340.47" fill="none">
-        <path fill="#000" d="M458.38,112l-239.13-3.13L120,278.34H234l48.08-83,146.12,2.24c47.34,1.57,106.49,36.21,106.67,85.05h0c.19,49.43-45.72,89.63-102.54,89.77H304.37l-41.08,75.93,193.28,1c94.93-.26,171.65-76.05,171.34-169.25h0C627.59,188.05,552.15,113.24,458.38,112Z" transform="translate(-21.05 -108.88)"/>
-        <polygon fill="#000" points="158.98 263.55 158.38 263.55 158.52 263.29 44.15 262.88 0 338.23 116.87 338.83 158.98 263.55"/>
-      </svg>
-    </div>
-    <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary, #f8f8f8); margin-bottom: 8px;">Painel da Vilma</h1>
+    <!-- Logo Luvi do sprite do painel (#i-luvi-logo); a parte escura segue a cor do texto -->
+    <svg role="img" aria-label="Luvi" viewBox="0 0 1184 493" style="display: block; width: 168px; height: auto; margin: 0 auto 20px; color: #f1f1f4;"><use href="#i-luvi-logo" /></svg>
     <p style="color: var(--text-secondary, #b1b8b9); margin-bottom: 32px; font-size: 0.9375rem;">Digite o PIN de ${TAMANHO_PIN} dígitos para acessar o painel</p>
     <form id="auth-form" style="display: flex; flex-direction: column; gap: 16px;">
       <div style="text-align: left;">

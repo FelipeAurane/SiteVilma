@@ -1,5 +1,5 @@
 /**
- * Painel da Vilma — casca de navegação.
+ * Luvi — painel de controle do site. Casca de navegação.
  *
  * Cada entrada de TELAS vira um botão no trilho lateral e uma <section> vazia.
  * A troca entre telas usa o hash da URL (#agenda, #site...), então o botão
@@ -96,6 +96,8 @@ function mostrar(id) {
     secao.dataset.montada = '1';
     const atualizar = MONTADORES[id](secao);
     if (typeof atualizar === 'function') ATUALIZADORES[id] = atualizar;
+    // Montagem assíncrona (ex.: Meu site): o app espera por ela antes de mostrar a janela
+    else if (typeof atualizar?.then === 'function') secao.carregando = atualizar;
   } else {
     ATUALIZADORES[id]?.();
   }
@@ -104,8 +106,11 @@ function mostrar(id) {
   botoes.get(id).classList.add('ativo');
   botoes.get(id).setAttribute('aria-current', 'page');
 
+  // O topo (saudação, busca, conta) só aparece no Início — ver painel.css
+  document.querySelector('.palco').dataset.tela = id;
+
   const tela = TELAS.find((t) => t.id === id);
-  document.title = `${tela.rotulo} · Painel da Vilma`;
+  document.title = `${tela.rotulo} · Luvi`;
   telaAtual = id;
 }
 
@@ -133,12 +138,67 @@ function ligarTema() {
   });
 }
 
+/**
+ * App desktop (window.luvi, do preload): a janela não tem a barra do Windows,
+ * então a página mostra a própria; a sessão já vem aberta pela splash, então
+ * não há PIN; e "Sair" esquece o PIN deste computador e volta para a splash.
+ */
+const desktop = window.luvi?.desktop ? window.luvi : null;
+
+function ligarBarraDaJanela() {
+  const barra = document.getElementById('barra-app');
+  barra.hidden = false;
+
+  for (const botao of barra.querySelectorAll('[data-janela]')) {
+    botao.addEventListener('click', () => desktop.janela(botao.dataset.janela));
+  }
+  // Duplo clique na barra maximiza/restaura, como na barra nativa
+  barra.querySelector('.barra-marca').addEventListener('dblclick', () => desktop.janela('maximizar'));
+
+  const marcar = (maximizada) => {
+    document.documentElement.classList.toggle('janela-maximizada', maximizada);
+    barra.querySelector('[data-janela="maximizar"]').setAttribute('aria-label', maximizada ? 'Restaurar' : 'Maximizar');
+  };
+  marcar(desktop.maximizada());
+  desktop.aoMaximizar(marcar);
+
+  if (!desktop.info?.oficial && desktop.info?.servidor) {
+    const servidor = document.getElementById('barra-servidor');
+    servidor.textContent = `teste · ${new URL(desktop.info.servidor).host}`;
+    servidor.hidden = false;
+  }
+
+  // O nome da tela acompanha a navegação
+  const nome = document.getElementById('barra-tela');
+  new MutationObserver(() => {
+    nome.textContent = TELAS.find((t) => t.id === telaAtual)?.rotulo || '';
+  }).observe(document.querySelector('title'), { childList: true });
+}
+
 document.getElementById('avatar').src = new URL('../img/profile.jpg', import.meta.url).href;
 construir();
 saudar();
 ligarTema();
-document.getElementById('btn-sair').addEventListener('click', fazerLogout);
-// As telas só montam depois do PIN: algumas leem rotas que exigem sessão.
-await exigirLogin();
+
+if (desktop) {
+  ligarBarraDaJanela();
+  document.getElementById('btn-sair').addEventListener('click', () => {
+    if (confirm('Sair do Luvi neste computador? Na próxima vez o PIN será pedido de novo.')) desktop.sair();
+  });
+  document.body.classList.remove('auth-locked');
+} else {
+  document.getElementById('btn-sair').addEventListener('click', fazerLogout);
+  // No navegador as telas só montam depois do PIN: algumas leem rotas que exigem sessão.
+  await exigirLogin();
+}
+
 window.addEventListener('hashchange', () => mostrar(rotaAtual()));
 mostrar(rotaAtual());
+
+// Avisa o app que o painel montou com os dados da sincronia — só então a janela aparece
+if (desktop) {
+  await secoes.get(telaAtual)?.carregando;
+  await document.fonts.ready;
+  // setTimeout e não requestAnimationFrame: a janela ainda está escondida, e janela escondida não pinta quadros
+  setTimeout(() => desktop.pronto(), 0);
+}

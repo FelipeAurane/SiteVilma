@@ -1,0 +1,19 @@
+{
+  "name": "painel-vilma",
+  "productName": "Luvi",
+  "version": "1.0.0",
+  "description": "Luvi — painel de controle do site da Vilma Fotografia (app desktop).",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "local": "electron . --servidor=http://localhost:3000",
+    "copiar": "node scripts/copiar-painel.js",
+    "empacotar": "node scripts/copiar-painel.js && electron-packager . Luvi --platform=win32 --arch=x64 --out=dist --overwrite --extra-resource=build/painel --ignore=^/dist --ignore=^/build --ignore=^/scripts --icon=icone.ico --app-copyright=\"Vilma Fotografia\""
+  },
+  "devDependencies": {
+    "@electron/packager": "^18.3.6",
+    "electron": "^33.2.1"
+  },
+  "license": "ISC"
+}

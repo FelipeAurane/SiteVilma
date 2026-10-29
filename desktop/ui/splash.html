@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Luvi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --creme: #f6f3ee;
+      --tinta: #262522;
+      --tinta-2: #6f6c66;
+      --tinta-3: #a7a39b;
+      --verde: #7f8c7a;
+      --verde-forte: #66735f;
+      --borda: #e6e1d8;
+      --erro: #b4483c;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Janela transparente: a margem deixa espaço para a sombra do cartão */
+    html, body { height: 100%; background: transparent; }
+    body {
+      padding: 14px;
+      font-family: 'Inter', system-ui, sans-serif;
+      color: var(--tinta);
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    .cartao {
+      position: relative;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      padding: 32px 36px 26px;
+      border-radius: 22px;
+      background: var(--creme);
+      box-shadow: 0 10px 30px rgba(20, 18, 14, .25), 0 0 0 1px rgba(0, 0, 0, .04);
+      -webkit-app-region: drag;
+      overflow: hidden;
+      animation: entrar 420ms cubic-bezier(.2, .7, .2, 1);
+    }
+    @keyframes entrar { from { opacity: 0; transform: scale(.97); } }
+
+    .fechar {
+      position: absolute;
+      top: 12px; right: 12px;
+      display: grid;
+      place-items: center;
+      width: 30px; height: 30px;
+      border: 0;
+      border-radius: 9px;
+      background: none;
+      color: var(--tinta-3);
+      cursor: pointer;
+      -webkit-app-region: no-drag;
+      transition: background 160ms, color 160ms;
+    }
+    .fechar:hover { background: rgba(0, 0, 0, .06); color: var(--tinta); }
+    .fechar svg { width: 14px; height: 14px; }
+
+    .logo { width: 156px; height: auto; display: block; }
+
+    .estado { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .texto { min-height: 20px; font-size: 13.5px; color: var(--tinta-2); text-align: center; line-height: 1.45; }
+
+    .barra {
+      width: 100%;
+      height: 4px;
+      border-radius: 4px;
+      background: var(--borda);
+      overflow: hidden;
+    }
+    .barra span {
+      display: block;
+      height: 100%;
+      width: 4%;
+      border-radius: 4px;
+      background: var(--verde);
+      transition: width 420ms cubic-bezier(.2, .7, .2, 1);
+    }
+
+    /* Formulário do PIN (só na primeira vez) */
+    form { width: 100%; display: none; flex-direction: column; gap: 10px; -webkit-app-region: no-drag; }
+    [data-modo="pin"] form { display: flex; }
+    [data-modo="pin"] .barra { display: none; }
+
+    input {
+      width: 100%;
+      height: 48px;
+      border: 1px solid var(--borda);
+      border-radius: 12px;
+      background: #fff;
+      font: inherit;
+      font-size: 22px;
+      letter-spacing: 12px;
+      text-align: center;
+      color: var(--tinta);
+      outline: none;
+      transition: border-color 160ms, box-shadow 160ms;
+    }
+    input:focus { border-color: var(--verde); box-shadow: 0 0 0 3px rgba(127, 140, 122, .2); }
+    input::placeholder { color: var(--tinta-3); letter-spacing: 10px; }
+
+    .botoes { display: none; gap: 8px; -webkit-app-region: no-drag; }
+    [data-modo="erro"] .botoes { display: flex; }
+    [data-modo="erro"] .barra { display: none; }
+
+    button.acao {
+      height: 40px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 999px;
+      font: inherit;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 160ms, opacity 160ms;
+    }
+    .primario { background: var(--verde); color: #fff; }
+    .primario:hover { background: var(--verde-forte); }
+    .primario:disabled { opacity: .5; cursor: default; }
+    .secundario { background: rgba(0, 0, 0, .06); color: var(--tinta); }
+    .secundario:hover { background: rgba(0, 0, 0, .1); }
+    form .primario { width: 100%; height: 44px; border-radius: 12px; }
+
+    .erro { display: none; font-size: 13px; color: var(--erro); text-align: center; }
+    .erro.visivel { display: block; }
+
+    .rodape { font-size: 11.5px; color: var(--tinta-3); text-align: center; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cartao { animation: none; }
+      .barra span { transition: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="cartao" id="cartao" data-modo="carregando">
+    <button class="fechar" id="fechar" type="button" aria-label="Fechar">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8" /></svg>
+    </button>
+
+    <img class="logo" src="/admin/img/luvi-logo.svg" alt="Luvi">
+
+    <div class="estado">
+      <p class="texto" id="texto" aria-live="polite">Iniciando…</p>
+      <div class="barra" aria-hidden="true"><span id="progresso"></span></div>
+      <p class="erro" id="erro" role="alert"></p>
+
+      <form id="form-pin" autocomplete="off">
+        <input id="pin" type="password" inputmode="numeric" maxlength="4" placeholder="••••" aria-label="PIN de 4 dígitos">
+        <button class="acao primario" type="submit" id="entrar">Entrar e sincronizar</button>
+      </form>
+
+      <div class="botoes">
+        <button class="acao primario" type="button" id="tentar">Tentar de novo</button>
+        <button class="acao secundario" type="button" id="sair">Fechar</button>
+      </div>
+    </div>
+
+    <p class="rodape" id="rodape"></p>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const cartao = $('cartao');
+    const info = window.splash.info;
+
+    $('rodape').textContent = `${new URL(info.servidor).host}${info.oficial ? '' : ' (teste)'} · v${info.versao}`;
+
+    function modo(nome) {
+      cartao.dataset.modo = nome;
+    }
+
+    function erro(mensagem) {
+      $('erro').textContent = mensagem || '';
+      $('erro').classList.toggle('visivel', Boolean(mensagem));
+    }
+
+    window.splash.aoEstado((estado) => {
+      if (estado.etapa === 'pin') {
+        modo('pin');
+        $('texto').textContent = estado.texto || 'Digite o PIN do painel.';
+        erro(estado.erro);
+        $('pin').value = '';
+        $('entrar').disabled = false;
+        $('pin').focus();
+        return;
+      }
+      if (estado.etapa === 'erro') {
+        modo('erro');
+        $('texto').textContent = 'Não foi possível sincronizar';
+        erro(estado.erro);
+        return;
+      }
+      modo('carregando');
+      erro('');
+      $('texto').textContent = estado.texto;
+      if (typeof estado.progresso === 'number') $('progresso').style.width = `${Math.max(4, estado.progresso * 100)}%`;
+    });
+
+    $('pin').addEventListener('input', () => {
+      const digitos = $('pin').value.replace(/\D/g, '').slice(0, 4);
+      if (digitos !== $('pin').value) $('pin').value = digitos;
+      erro('');
+      if (digitos.length === 4) $('form-pin').requestSubmit();
+    });
+
+    $('form-pin').addEventListener('submit', (evento) => {
+      evento.preventDefault();
+      const pin = $('pin').value;
+      if (!/^\d{4}$/.test(pin)) {
+        erro('O PIN tem 4 dígitos.');
+        return;
+      }
+      $('entrar').disabled = true;
+      window.splash.enviarPin(pin);
+    });
+
+    $('tentar').addEventListener('click', () => {
+      modo('carregando');
+      erro('');
+      window.splash.tentar();
+    });
+    $('sair').addEventListener('click', () => window.splash.fechar());
+    $('fechar').addEventListener('click', () => window.splash.fechar());
+
+    window.splash.iniciar();
+  </script>
+</body>
+
+</html>

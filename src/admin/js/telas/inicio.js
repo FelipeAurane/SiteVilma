@@ -253,6 +253,7 @@ export function montar(secao) {
   secao.insertAdjacentHTML('beforeend', `
     <div class="inicio-painel"><div class="carregando"><span class="girando"></span> Montando o resumo…</div></div>`);
   painel = secao.querySelector('.inicio-painel');
-  carregar();
+  // O painel espera esta primeira carga antes de dizer ao app que está pronto
+  secao.carregando = carregar();
   return carregar;
 }

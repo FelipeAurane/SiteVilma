@@ -151,8 +151,9 @@ export async function uploadImage(file) {
   let blob = file;
   let mime = file.type || 'image/jpeg';
 
-  // Se o arquivo for maior que 14MB, reduz suavemente para 4K para caber no limite
-  if (file.size > 14 * 1024 * 1024) {
+  // A Vercel recusa corpo acima de 4,5MB, e o base64 aumenta o arquivo em ~1/3.
+  // Acima de 3MB a foto é reduzida suavemente para 4K, o que cabe com folga.
+  if (file.size > 3 * 1024 * 1024) {
     blob = await compressImage(file, { maxSize: 3840, quality: 0.90 });
     mime = 'image/jpeg';
   }

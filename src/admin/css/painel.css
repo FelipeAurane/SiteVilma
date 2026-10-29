@@ -1,5 +1,5 @@
 /* =========================================================================
-   Painel da Vilma — casca do painel (trilho lateral + topo + telas)
+   Luvi — casca do painel (trilho lateral + topo + telas)
    Tema escuro/claro: [data-tema="escuro"] no <html>; sem atributo segue o SO.
    ========================================================================= */
 
@@ -109,7 +109,7 @@ svg { width: 22px; height: 22px; flex-shrink: 0; }
   color: #f6f3ee;
   margin-bottom: 44px;
 }
-.rail-logo svg { width: 34px; height: 20px; }
+.rail-logo svg { width: 36px; height: 34px; }
 
 .rail-nav {
   flex: 1;
@@ -178,7 +178,8 @@ svg { width: 22px; height: 22px; flex-shrink: 0; }
 }
 .rail-btn:hover::after { opacity: 1; transform: translate(0, -50%); }
 
-.rail-sair { margin-top: 16px; }
+.rail-tema { margin-top: 16px; }
+.rail-sair { margin-top: 6px; }
 
 /* ------------------------------------------------------------- palco */
 
@@ -272,6 +273,10 @@ svg { width: 22px; height: 22px; flex-shrink: 0; }
 }
 .conta-btn svg { width: 18px; height: 18px; }
 .conta-btn .seta { width: 15px; height: 15px; opacity: .7; }
+
+/* O topo é do Início; nas outras telas o título da própria tela fica no alto */
+.palco:not([data-tela="inicio"]) .topo { display: none; }
+.palco:not([data-tela="inicio"]) .tela { padding-top: 28px; }
 
 /* ------------------------------------------------------------- telas */
 
@@ -376,7 +381,7 @@ svg { width: 22px; height: 22px; flex-shrink: 0; }
   .rail-btn::before { left: 50%; top: auto; bottom: -8px; width: 0; height: 3px; border-radius: 3px 3px 0 0; transform: translateX(-50%); transition: width var(--transicao); }
   .rail-btn.ativo::before { width: 18px; height: 3px; }
   .rail-btn::after { display: none; }
-  .rail-sair { margin: 0 0 0 4px; }
+  .rail-tema, .rail-sair { margin: 0 0 0 4px; flex-shrink: 0; }
 
   .palco { margin: 0; border-radius: 0 0 var(--raio-g) var(--raio-g); }
   .topo { flex-wrap: wrap; gap: 12px; padding: 16px; }
@@ -387,3 +392,69 @@ svg { width: 22px; height: 22px; flex-shrink: 0; }
   .tela { padding: 4px 16px 24px; }
   .tela-cabeca h2 { font-size: 20px; }
 }
+
+/* ------------------------------------------------------------- barra da janela (app desktop)
+   O app abre sem a barra do Windows (frame: false) e a página desenha esta.
+   A área da marca arrasta a janela; os botões não. */
+
+.barra-app { display: none; }
+
+html.app-desktop .barra-app {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 36px;
+  padding-left: 14px;
+  background: var(--trilho);
+  color: #d8d9de;
+  -webkit-app-region: drag;
+  user-select: none;
+}
+html.app-desktop .app { height: calc(100vh - 36px); }
+html.app-desktop .rail { padding-top: 14px; }
+html.app-desktop .palco { margin-top: 0; }
+
+.barra-marca {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 100%;
+  font-size: 12.5px;
+}
+.barra-marca svg { width: 17px; height: 16px; color: #f6f3ee; }
+.barra-nome { font-weight: 600; letter-spacing: .01em; }
+.barra-tela { color: var(--trilho-icone); }
+.barra-tela:not(:empty)::before { content: '·'; margin-right: 9px; }
+.barra-servidor {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #f2c94c;
+  color: #3a2c00;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.barra-botoes { display: flex; height: 100%; -webkit-app-region: no-drag; }
+.barra-botoes button {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 100%;
+  color: #c9cad0;
+  transition: background 120ms, color 120ms;
+}
+.barra-botoes button:hover { background: rgba(255, 255, 255, .08); color: #fff; }
+.barra-botoes button:active { background: rgba(255, 255, 255, .14); }
+.barra-botoes .barra-fechar:hover { background: #d93f3f; color: #fff; }
+.barra-botoes svg {
+  width: 12px; height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
+.barra-botoes .ico-restaurar { display: none; }
+html.janela-maximizada .barra-botoes .ico-maximizar { display: none; }
+html.janela-maximizada .barra-botoes .ico-restaurar { display: block; }
