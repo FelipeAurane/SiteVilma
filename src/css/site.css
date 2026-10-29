@@ -1235,24 +1235,6 @@ footer p {
     visibility: visible !important;
   }
 
-  /* Sem a barra de marcação (pill/badge), apenas os textos */
-  .portfolio-header-bar .portfolio-tag {
-    display: block !important;
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    color: var(--branco) !important;
-    font-size: 11px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.16em !important;
-    text-transform: uppercase !important;
-    margin-bottom: 2px !important;
-    text-align: left !important;
-  }
 
   .portfolio-header-bar .title-cardapio {
     color: var(--branco);
@@ -2349,20 +2331,6 @@ footer p {
     gap: 3px !important;
   }
 
-  .portfolio-header-bar .portfolio-tag {
-    font-size: 11px !important;
-    letter-spacing: 0.16em !important;
-    text-transform: uppercase !important;
-    color: var(--branco) !important;
-    display: block !important;
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    margin-bottom: 2px !important;
-    text-align: left !important;
-  }
 
   .portfolio-header-bar .title-cardapio {
     color: var(--branco) !important;

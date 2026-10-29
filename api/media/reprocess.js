@@ -23,7 +23,7 @@ module.exports = withErrorHandling(async (req, res) => {
   const config = await getWatermarkConfig();
 
   // Seleciona mídias a serem reprocessadas
-  let sql = 'SELECT id, mime, bytes, byte_size, original_bytes, original_mime, original_size, sha256 FROM media';
+  let sql = 'SELECT id, mime, bytes, byte_size, original_bytes, original_mime, original_size, sha256, meta FROM media';
   const params = [];
   if (targetId) {
     sql += ' WHERE id = $1';
@@ -55,6 +55,16 @@ module.exports = withErrorHandling(async (req, res) => {
       batch.map(async (row) => {
         // Ignora vídeos
         if (row.mime && row.mime.startsWith('video/')) {
+          skippedCount++;
+          return;
+        }
+
+        // Fotos do site (portfólio, capa, serviços) foram enviadas sem proteção de propósito
+        let meta = row.meta;
+        if (typeof meta === 'string') {
+          try { meta = JSON.parse(meta); } catch { meta = null; }
+        }
+        if (meta && meta.protegida === false) {
           skippedCount++;
           return;
         }

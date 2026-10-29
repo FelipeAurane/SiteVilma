@@ -67,6 +67,10 @@ function gruposCompletos() {
   return faltando.length ? [...GRUPOS, { id: 'outros', nome: 'Outros', tags: faltando }] : GRUPOS;
 }
 
+// Fotos e vídeos do site (portfólio, capa, serviços) vão sem marca-d'água:
+// a proteção é só da galeria de seleção.
+const SEM_PROTECAO = { protecao: false };
+
 const ABAS = [
   { id: 'capa', rotulo: 'Capa & textos', chaves: ['hero', 'center', 'banner'] },
   { id: 'portfolio', rotulo: 'Portfólio', chaves: ['categories'] },
@@ -493,18 +497,18 @@ async function enviarArquivos(input) {
   pintar();
   try {
     if (upload === 'imagem') {
-      gravarCaminho(caminho, await uploadImage(arquivos[0]));
+      gravarCaminho(caminho, await uploadImage(arquivos[0], SEM_PROTECAO));
     } else if (upload === 'video-capa') {
-      const { url, tipo } = await uploadMedia(arquivos[0]);
+      const { url, tipo } = await uploadMedia(arquivos[0], SEM_PROTECAO);
       if (tipo !== 'video') throw new Error('Escolha um arquivo de vídeo (MP4 ou WebM).');
       estado.site.hero.video = url;
     } else if (upload === 'centro') {
-      const { url, tipo } = await uploadMedia(arquivos[0]);
+      const { url, tipo } = await uploadMedia(arquivos[0], SEM_PROTECAO);
       estado.site.center = { media: url, tipo };
     } else if (upload === 'galeria') {
       const categoria = estado.site.categories[Number(indice)];
       if (!Array.isArray(categoria.gallery)) categoria.gallery = [];
-      for (const arquivo of arquivos) categoria.gallery.push(await uploadImage(arquivo));
+      for (const arquivo of arquivos) categoria.gallery.push(await uploadImage(arquivo, SEM_PROTECAO));
     }
     avisar(arquivos.length > 1 ? `${arquivos.length} fotos enviadas. Lembre de salvar.` : 'Arquivo enviado. Lembre de salvar.');
   } catch (erro) {

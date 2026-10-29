@@ -66,7 +66,10 @@ module.exports = withErrorHandling(async (req, res) => {
   if (!sameOriginGuard(req, res)) return;
   if (!requireAdmin(req, res)) return;
 
-  const { mime, data } = req.body || {};
+  // protecao: false = foto do site (portfólio, capa, serviços), guardada como veio.
+  // Sem o campo, a foto é protegida (marca-d'água etc.): é o caso da galeria de seleção.
+  const { mime, data, protecao } = req.body || {};
+  const proteger = protecao !== false;
 
   if (!ALLOWED_MIMES.has(mime)) {
     return fail(res, 415, 'Formato não aceito. Use JPEG, PNG, WebP, MP4 ou WebM.');
@@ -107,11 +110,13 @@ module.exports = withErrorHandling(async (req, res) => {
     publishedAt: new Date().toISOString(),
     originalSha256: sha256,
     originalSize: buffer.length,
-    watermarkApplied: false
+    watermarkApplied: false,
+    // O reprocessamento do acervo pula as fotos marcadas aqui como não protegidas
+    protegida: proteger
   };
 
   // Aplicação do pipeline multicamada para fotografias
-  if (!ehVideo(actualMime)) {
+  if (!ehVideo(actualMime) && proteger) {
     try {
       const config = await getWatermarkConfig();
       const processed = await processImageProtection(buffer, config, { id });

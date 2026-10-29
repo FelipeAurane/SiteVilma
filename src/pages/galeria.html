@@ -191,102 +191,6 @@
       transform: scale(1.035);
     }
 
-    /* Marca d'água de proteção fotográfica multicamada */
-    .marca-dagua-overlay {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 5;
-      pointer-events: none;
-      overflow: hidden;
-      border-radius: inherit;
-    }
-
-    /* Marca d'água espalhada por toda a imagem em padrão diagonal repetido */
-    .marca-dagua-repetida {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='160' viewBox='0 0 280 160'%3E%3Cg transform='rotate(-25 140 80)'%3E%3Ctext x='140' y='52' text-anchor='middle' fill='%23ffffff' fill-opacity='0.28' stroke='%23000000' stroke-width='0.4' stroke-opacity='0.6' font-family='Montserrat, sans-serif' font-size='11' font-weight='700' letter-spacing='0.22em'%3EVILMA SILVA FOTOGRAFIA%3C/text%3E%3Ctext x='140' y='78' text-anchor='middle' fill='%2393c5fd' fill-opacity='0.36' stroke='%23000000' stroke-width='0.4' stroke-opacity='0.6' font-family='Montserrat, sans-serif' font-size='8.5' font-weight='700' letter-spacing='0.26em'%3EAMOSTRA PROTEGIDA %E2%80%A2 PROVA DE SELE%C3%87%C3%83O%3C/text%3E%3Ctext x='140' y='102' text-anchor='middle' fill='%23ffffff' fill-opacity='0.20' stroke='%23000000' stroke-width='0.3' stroke-opacity='0.45' font-family='Montserrat, sans-serif' font-size='7.5' font-weight='600' letter-spacing='0.2em'%3EPROIBIDO PRINT E DOWNLOAD %E2%80%A2 LEI 9.610/98%3C/text%3E%3C/g%3E%3C/svg%3E");
-      background-repeat: repeat;
-      background-position: 0 0;
-      font-size: 0;
-      line-height: 0;
-      color: transparent;
-      pointer-events: none;
-      z-index: 4;
-    }
-
-    /* Card de identificação: posicionado no topo ou na parte de baixo para não cobrir o centro da foto */
-    .marca-dagua-card {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      background: rgba(9, 9, 13, 0.84);
-      padding: 5px 14px;
-      border-radius: 999px;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(147, 197, 253, 0.4);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7), 0 0 12px rgba(37, 99, 235, 0.25);
-      z-index: 7;
-      pointer-events: auto;
-      max-width: calc(100% - 24px);
-      white-space: nowrap;
-      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-      user-select: none;
-    }
-
-    .marca-dagua-card.posicao-baixo {
-      top: auto !important;
-      bottom: 12px !important;
-    }
-
-    .marca-dagua-nome {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #ffffff;
-      line-height: 1.25;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-    }
-
-    .marca-dagua-aviso {
-      font-size: 8px;
-      letter-spacing: 0.08em;
-      color: #93c5fd;
-      text-transform: uppercase;
-      font-weight: 600;
-      line-height: 1.2;
-    }
-
-    .lightbox-content .marca-dagua-overlay {
-      z-index: 8;
-    }
-
-    .lightbox-content .marca-dagua-card {
-      top: 18px;
-      padding: 7px 20px;
-      background: rgba(9, 9, 14, 0.88);
-      border: 1.5px solid rgba(147, 197, 253, 0.5);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 16px rgba(59, 130, 246, 0.3);
-      cursor: pointer;
-    }
-
-    .lightbox-content .marca-dagua-card.posicao-baixo {
-      top: auto !important;
-      bottom: 24px !important;
-    }
-
     /* Lightbox Modal para ampliar a imagem ao clicar */
     .lightbox {
       display: none;
@@ -426,100 +330,6 @@
       }
     }
 
-    /* Popup de Direitos Autorais e Regras de Proteção */
-    .popup-direitos {
-      position: fixed;
-      inset: 0;
-      z-index: 1000000;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .popup-direitos.ativo {
-      display: flex;
-    }
-
-    .popup-cartao-direitos {
-      max-width: 500px;
-      width: 100%;
-      background: #0d0d12;
-      border: 1px solid rgba(59, 130, 246, 0.4);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 32px rgba(37, 99, 235, 0.2);
-      border-radius: 20px;
-      padding: 26px 22px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 13px;
-      text-align: center;
-      position: relative;
-      max-height: 90vh;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      animation: popupAparecer 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @keyframes popupAparecer {
-      from {
-        opacity: 0;
-        transform: scale(0.92) translateY(12px);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
-    }
-
-    .popup-fechar-direitos {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #94a3b8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      padding: 0;
-      z-index: 10;
-    }
-
-    .popup-fechar-direitos:hover {
-      background: rgba(255, 255, 255, 0.2);
-      color: #ffffff;
-      transform: scale(1.06);
-    }
-
-    .popup-btn-confirmar {
-      width: 100%;
-      padding: 12px 24px;
-      border-radius: 999px;
-      font-family: inherit;
-      font-size: 13.5px;
-      font-weight: 600;
-      color: #ffffff;
-      background: #2563eb;
-      border: 1px solid #3b82f6;
-      box-shadow: 0 0 20px rgba(37, 99, 235, 0.45);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .popup-btn-confirmar:hover {
-      background: #1d4ed8;
-      transform: scale(1.02);
-    }
   </style>
 </head>
 
@@ -554,74 +364,11 @@
 
       <div class="lightbox-content" style="position: relative;">
         <img id="lightbox-img" src="" alt="Foto em alta resolução">
-        <div class="marca-dagua-overlay" aria-hidden="true">
-          <span class="marca-dagua-repetida"></span>
-          <div class="marca-dagua-card" id="marca-dagua-card-lightbox-galeria" title="Clique para alternar entre topo e parte de baixo">
-            <span class="marca-dagua-nome">Vilma Silva Fotografia</span>
-            <span class="marca-dagua-aviso">Amostra Protegida • Prova de Seleção</span>
-          </div>
-        </div>
       </div>
 
       <button type="button" class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Próxima">&#10095;</button>
 
       <div class="lightbox-counter" id="lightbox-counter">1 de 1</div>
-    </div>
-  </div>
-
-  <!-- Popup de Aviso sobre Direitos Autorais e Proibições -->
-  <div id="popup-direitos" class="popup-direitos" role="dialog" aria-modal="true" aria-labelledby="popup-direitos-titulo" aria-hidden="true">
-    <div class="popup-cartao-direitos">
-      <button type="button" class="popup-fechar-direitos" id="btn-fechar-direitos-x" title="Fechar aviso" aria-label="Fechar aviso">
-        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-
-      <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(59, 130, 246, 0.15); border: 1.5px solid rgba(59, 130, 246, 0.5); display: flex; align-items: center; justify-content: center; color: #60a5fa; box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          <line x1="12" y1="8" x2="12" y2="12"/>
-          <line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-      </div>
-
-      <div>
-        <h2 id="popup-direitos-titulo" style="font-size: 19px; font-weight: 700; color: #ffffff;">Aviso de Direitos Autorais</h2>
-        <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: #60a5fa; font-weight: 600; margin-top: 4px;">Vilma Silva Fotografia • Protegido pela Lei nº 9.610/98</p>
-      </div>
-
-      <p style="font-size: 12.5px; color: #cbd5e1; line-height: 1.55; margin: 0;">
-        Todas as fotografias exibidas nesta galeria são de autoria exclusiva e protegidas por lei. Para preservar a segurança do trabalho artístico, <strong>são proibidas as seguintes práticas:</strong>
-      </p>
-
-      <div style="width: 100%; text-align: left; background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 9px;">
-        <div style="display: flex; align-items: flex-start; gap: 9px;">
-          <span style="color: #ef4444; font-size: 15px; line-height: 1.2;">🚫</span>
-          <div style="font-size: 12px; color: #e2e8f0; line-height: 1.45;">
-            <strong style="color: #ffffff;">Proibido Print ou Captura de Tela:</strong> É expressamente vedado tirar prints, gravações ou capturas de tela.
-          </div>
-        </div>
-        <div style="display: flex; align-items: flex-start; gap: 9px;">
-          <span style="color: #ef4444; font-size: 15px; line-height: 1.2;">🚫</span>
-          <div style="font-size: 12px; color: #e2e8f0; line-height: 1.45;">
-            <strong style="color: #ffffff;">Proibido Download e Cópia Não Autorizada:</strong> As imagens contam com direitos reservados e não devem ser salvas ou baixadas.
-          </div>
-        </div>
-        <div style="display: flex; align-items: flex-start; gap: 9px;">
-          <span style="color: #ef4444; font-size: 15px; line-height: 1.2;">🚫</span>
-          <div style="font-size: 12px; color: #e2e8f0; line-height: 1.45;">
-            <strong style="color: #ffffff;">Proibida Remoção da Marca d'Água:</strong> Qualquer recorte, modificação ou remoção das marcas d'água é proibida por lei.
-          </div>
-        </div>
-      </div>
-
-      <div style="width: 100%; margin-top: 2px;">
-        <button type="button" class="popup-btn-confirmar" id="btn-aceitar-direitos">
-          Entendi e Concordo
-        </button>
-      </div>
     </div>
   </div>
 
@@ -826,13 +573,6 @@
 
           pin.appendChild(img);
 
-          var overlay = document.createElement('div');
-          overlay.className = 'marca-dagua-overlay';
-          overlay.setAttribute('aria-hidden', 'true');
-          overlay.innerHTML = '<span class="marca-dagua-repetida"></span>' +
-            '<div class="marca-dagua-card"><span class="marca-dagua-nome">Vilma Silva Fotografia</span><span class="marca-dagua-aviso">Amostra Protegida</span></div>';
-          pin.appendChild(overlay);
-
           pin.addEventListener('click', function() {
             abrirLightbox(index);
           });
@@ -881,14 +621,6 @@
       if (lightboxPrev) lightboxPrev.addEventListener('click', function(e) { e.stopPropagation(); lightboxNav(-1); });
       if (lightboxNext) lightboxNext.addEventListener('click', function(e) { e.stopPropagation(); lightboxNav(1); });
 
-      var cardGaleriaEl = document.getElementById('marca-dagua-card-lightbox-galeria');
-      if (cardGaleriaEl) {
-        cardGaleriaEl.addEventListener('click', function(e) {
-          e.stopPropagation();
-          cardGaleriaEl.classList.toggle('posicao-baixo');
-        });
-      }
-
       if (lightbox) {
         lightbox.addEventListener('click', function(e) {
           if (e.target === lightbox || e.target.id === 'lightbox-dialog' || e.target.classList.contains('lightbox-content')) {
@@ -932,50 +664,6 @@
           }
         });
       }
-
-      // Popup de Direitos Autorais e Proteção
-      var popupDireitos = document.getElementById('popup-direitos');
-      var btnAceitarDireitos = document.getElementById('btn-aceitar-direitos');
-      var btnFecharDireitosX = document.getElementById('btn-fechar-direitos-x');
-
-      function abrirPopupDireitos() {
-        if (popupDireitos) {
-          popupDireitos.classList.add('ativo');
-          popupDireitos.setAttribute('aria-hidden', 'false');
-          if (btnAceitarDireitos) btnAceitarDireitos.focus();
-        }
-      }
-
-      function fecharPopupDireitos() {
-        if (popupDireitos) {
-          popupDireitos.classList.remove('ativo');
-          popupDireitos.setAttribute('aria-hidden', 'true');
-        }
-      }
-
-      if (btnAceitarDireitos) {
-        btnAceitarDireitos.addEventListener('click', function() {
-          sessionStorage.setItem('vf_termos_direitos_aceitos', 'true');
-          fecharPopupDireitos();
-        });
-      }
-
-      if (btnFecharDireitosX) {
-        btnFecharDireitosX.addEventListener('click', fecharPopupDireitos);
-      }
-
-      // Exibe o popup assim que a galeria abre se não foi aceito nesta sessão
-      setTimeout(function() {
-        if (!sessionStorage.getItem('vf_termos_direitos_aceitos')) {
-          abrirPopupDireitos();
-        }
-      }, 350);
-
-      window.addEventListener('keyup', function(e) {
-        if (e.key === 'PrintScreen') {
-          abrirPopupDireitos();
-        }
-      });
 
       // Inicialização imediata
       var catInicial = obterParametroCategoria() || 'Gastronomia';

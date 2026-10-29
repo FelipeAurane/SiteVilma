@@ -144,8 +144,14 @@ function blobToBase64(blob) {
   });
 }
 
-/** Envia a imagem e devolve a URL servida pelo nosso domínio com proteção e separação de original. */
-export async function uploadImage(file) {
+/**
+ * Envia a imagem e devolve a URL servida pelo nosso domínio.
+ *
+ * Por padrão o servidor protege a foto (marca-d'água e separação do original),
+ * que é o que a galeria de seleção precisa. Fotos do próprio site — portfólio,
+ * capa, serviços — vão com { protecao: false } e são guardadas como vieram.
+ */
+export async function uploadImage(file, { protecao } = {}) {
   if (!file) throw new Error('Nenhum arquivo de imagem fornecido.');
 
   let blob = file;
@@ -159,7 +165,8 @@ export async function uploadImage(file) {
   }
 
   const data = await blobToBase64(blob);
-  const payload = await request('/media', { method: 'POST', body: { mime, data } });
+  const corpo = protecao === false ? { mime, data, protecao: false } : { mime, data };
+  const payload = await request('/media', { method: 'POST', body: corpo });
   return payload.url;
 }
 
@@ -191,11 +198,11 @@ export const LIMITE_VIDEO_BYTES = 3 * 1024 * 1024;
  * como está, porque o navegador não recomprime vídeo — por isso o arquivo
  * precisa já vir pequeno.
  */
-export async function uploadMedia(file) {
+export async function uploadMedia(file, opcoes = {}) {
   if (!file) throw new Error('Nenhum arquivo escolhido.');
 
   if (file.type.startsWith('image/')) {
-    return { url: await uploadImage(file), tipo: 'imagem' };
+    return { url: await uploadImage(file, opcoes), tipo: 'imagem' };
   }
 
   if (!VIDEOS_ACEITOS[file.type]) {
