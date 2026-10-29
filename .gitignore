@@ -34,3 +34,4 @@ Thumbs.db
 
 # Ferramenta de teste solta (grava arquivos em src/img)
 gravar-teste.js
+.neon
