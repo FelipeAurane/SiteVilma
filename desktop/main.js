@@ -18,20 +18,28 @@
  * o que o sameOriginGuard do servidor espera de quem não é navegador; quem
  * autoriza a escrita é o token de sessão (Authorization: Bearer).
  *
+ * Sem PIN: o app entra com a chave do app (LUVI_APP_KEY no servidor, a mesma
+ * em desktop/chave.local.json — gerada por scripts/gerar-chave.js).
+ *
  * Abertura:
- *   1. A splash aparece e sincroniza: confere o servidor, entra com o PIN
- *      guardado neste computador (criptografado pelo Windows via safeStorage)
- *      e baixa o conteúdo do site.
- *   2. Só a primeira vez — ou se o PIN mudar no servidor — a splash pede o PIN.
- *   3. O painel carrega escondido, com o token já entregue pelo preload e as
+ *   1. A splash sincroniza: confere o servidor, entra com a chave e baixa o
+ *      conteúdo do site. Falha de rede é tentada de novo antes de desistir.
+ *   2. O painel carrega escondido, com o token já entregue pelo preload e as
  *      respostas da sincronização prontas; aparece quando avisa que montou.
+ *
+ * Conexão estável, depois de aberto:
+ *   - a sessão é renovada antes de vencer;
+ *   - uma resposta 401 da API faz o app entrar de novo e repetir o pedido;
+ *   - uma falha de rede numa leitura é repetida uma vez;
+ *   - o estado (conectado / sem conexão) vai para a barra da janela, e o
+ *     servidor é consultado de tempos em tempos para saber quando voltou.
  *
  * Servidor, em ordem de prioridade:
  *   --servidor=URL  ->  VILMA_SERVIDOR  ->  config.json na pasta de dados do
  *   usuário  ->  config.json do app  ->  site da Vercel
  */
 
-const { app, BrowserWindow, protocol, net, shell, Menu, ipcMain, safeStorage } = require('electron');
+const { app, BrowserWindow, protocol, net, shell, Menu, ipcMain } = require('electron');
 const fs = require('node:fs');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
@@ -57,10 +65,14 @@ const SINCRONIA = [
   { rotulo: 'seleções', url: '/api/selecao', comToken: true }
 ];
 
-// A sessão do servidor dura 8h; renova antes disso com o PIN guardado
+// A sessão do servidor dura 8h; renova bem antes disso
 const RENOVAR_SESSAO_MS = 6 * 60 * 60 * 1000;
+// Conferência do servidor: espaçada quando está tudo bem, curta quando caiu
+const VERIFICAR_ONLINE_MS = 60 * 1000;
+const VERIFICAR_OFFLINE_MS = 10 * 1000;
 const PREPARO_MAXIMO_MS = 15000;
 const TEMPO_LIMITE_MS = 15000;
+const TENTATIVAS = 3;
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -68,6 +80,8 @@ protocol.registerSchemesAsPrivileged([
     privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, stream: true }
   }
 ]);
+
+const esperar = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // ---------------------------------------------------------------- configuração
 
@@ -98,6 +112,12 @@ function descobrirServidor() {
   }
 }
 
+/** Chave do app: variável LUVI_APP_KEY, ou desktop/chave.local.json (vai junto no executável). */
+function lerChave() {
+  const chave = process.env.LUVI_APP_KEY || lerJson(path.join(__dirname, 'chave.local.json'))?.chave;
+  return typeof chave === 'string' && chave.length >= 32 ? chave : null;
+}
+
 /** Em desenvolvimento lê direto de ../src; empacotado, da cópia em resources/painel. */
 function pastaDoPainel() {
   return app.isPackaged ? path.join(process.resourcesPath, 'painel') : path.join(__dirname, '..', 'src');
@@ -105,31 +125,6 @@ function pastaDoPainel() {
 
 let SERVIDOR = PADRAO;
 let PAINEL_DIR = '';
-
-// ---------------------------------------------------------------- PIN guardado
-
-function arquivoCredencial() {
-  return path.join(app.getPath('userData'), 'credencial.bin');
-}
-
-function lerPin() {
-  try {
-    if (!safeStorage.isEncryptionAvailable()) return null;
-    return safeStorage.decryptString(fs.readFileSync(arquivoCredencial()));
-  } catch {
-    return null;
-  }
-}
-
-function guardarPin(pin) {
-  if (!safeStorage.isEncryptionAvailable()) return false;
-  fs.writeFileSync(arquivoCredencial(), safeStorage.encryptString(pin));
-  return true;
-}
-
-function esquecerPin() {
-  fs.rmSync(arquivoCredencial(), { force: true });
-}
 
 // ---------------------------------------------------------------- servidor
 
@@ -145,7 +140,7 @@ class ErroServidor extends Error {
   }
 }
 
-async function pedir(caminho, { method = 'GET', corpo, comToken = false } = {}) {
+async function pedirUmaVez(caminho, { method = 'GET', corpo, comToken = false } = {}) {
   const headers = { Accept: 'application/json' };
   if (corpo !== undefined) headers['Content-Type'] = 'application/json';
   if (comToken && token) headers.Authorization = `Bearer ${token}`;
@@ -174,28 +169,90 @@ async function pedir(caminho, { method = 'GET', corpo, comToken = false } = {}) 
   return { dados, texto, status: resposta.status, tipo: resposta.headers.get('content-type') };
 }
 
-async function entrar(pin) {
-  const { dados } = await pedir('/api/auth/login', { method: 'POST', corpo: { pin } });
-  if (!dados?.token) throw new ErroServidor('O servidor não devolveu a sessão.');
-  token = dados.token;
-  return token;
+/** Tenta de novo quando a falha é de rede ou do servidor (5xx); erro do pedido (4xx) não adianta repetir. */
+async function pedir(caminho, opcoes = {}) {
+  let ultimo;
+  for (let tentativa = 1; tentativa <= TENTATIVAS; tentativa++) {
+    try {
+      const resposta = await pedirUmaVez(caminho, opcoes);
+      marcarConexao(true);
+      return resposta;
+    } catch (erro) {
+      ultimo = erro;
+      if (erro.status && erro.status < 500) {
+        marcarConexao(true);
+        throw erro;
+      }
+      if (tentativa < TENTATIVAS) await esperar(800 * tentativa);
+    }
+  }
+  marcarConexao(false);
+  throw ultimo;
+}
+
+let entrando = null;
+
+/** Abre a sessão com a chave do app. Pedidos simultâneos esperam a mesma tentativa. */
+function entrar() {
+  if (entrando) return entrando;
+  entrando = (async () => {
+    const chave = lerChave();
+    if (!chave) {
+      throw new ErroServidor('Este app está sem a chave de conexão. Gere com: node desktop/scripts/gerar-chave.js');
+    }
+    try {
+      const { dados } = await pedir('/api/auth/login', { method: 'POST', corpo: { chaveApp: chave } });
+      if (!dados?.token) throw new ErroServidor('O servidor não devolveu a sessão.');
+      token = dados.token;
+      janelaPainel?.webContents.send('luvi:token', token);
+      return token;
+    } catch (erro) {
+      if (erro.status === 401) throw new ErroServidor('O site não reconheceu a chave deste app. Confira LUVI_APP_KEY no servidor.', 401);
+      if (erro.status === 429) throw new ErroServidor('Tentativas demais. Espere alguns minutos e tente de novo.', 429);
+      throw erro;
+    }
+  })().finally(() => {
+    entrando = null;
+  });
+  return entrando;
 }
 
 let renovacao = null;
 
-/** Renova a sessão em segundo plano e entrega o token novo ao painel aberto. */
+/** Renova a sessão em segundo plano, antes de ela vencer no servidor. */
 function agendarRenovacao() {
   if (renovacao) return;
-  renovacao = setInterval(async () => {
-    const pin = lerPin();
-    if (!pin) return;
+  renovacao = setInterval(() => {
+    entrar().catch((erro) => console.error('[painel] não foi possível renovar a sessão:', erro.message));
+  }, RENOVAR_SESSAO_MS);
+  renovacao.unref();
+}
+
+// ---------------------------------------------------------------- estado da conexão
+
+let online = true;
+let verificacao = null;
+
+function marcarConexao(estaOnline) {
+  if (estaOnline === online) return;
+  online = estaOnline;
+  janelaPainel?.webContents.send('luvi:conexao', { online });
+  agendarVerificacao();
+}
+
+/** Consulta o servidor de tempos em tempos; o intervalo encurta enquanto estiver sem conexão. */
+function agendarVerificacao() {
+  clearTimeout(verificacao);
+  verificacao = setTimeout(async () => {
     try {
-      await entrar(pin);
-      janelaPainel?.webContents.send('luvi:token', token);
+      await pedirUmaVez('/api/auth/session');
+      marcarConexao(true);
     } catch (erro) {
-      console.error('[painel] não foi possível renovar a sessão:', erro.message);
+      marcarConexao(Boolean(erro.status && erro.status < 500));
     }
-  }, RENOVAR_SESSAO_MS).unref();
+    agendarVerificacao();
+  }, online ? VERIFICAR_ONLINE_MS : VERIFICAR_OFFLINE_MS);
+  verificacao.unref?.();
 }
 
 // ---------------------------------------------------------------- protocolo
@@ -232,27 +289,60 @@ function respostaDeErro(status, mensagem) {
 
 async function encaminhar(request, url) {
   const destino = SERVIDOR + url.pathname + url.search;
-  const headers = new Headers();
-  for (const nome of CABECALHOS_ENCAMINHADOS) {
-    const valor = request.headers.get(nome);
-    if (valor) headers.set(nome, valor);
-  }
+  const ehApi = url.pathname.startsWith('/api/');
+  const leitura = request.method === 'GET' || request.method === 'HEAD';
+  const corpo = leitura ? undefined : await request.arrayBuffer();
 
-  const temCorpo = request.method !== 'GET' && request.method !== 'HEAD';
-
-  try {
-    return await net.fetch(destino, {
+  const enviar = (autorizacao) => {
+    const headers = new Headers();
+    for (const nome of CABECALHOS_ENCAMINHADOS) {
+      const valor = request.headers.get(nome);
+      if (valor) headers.set(nome, valor);
+    }
+    if (autorizacao) headers.set('authorization', autorizacao);
+    return net.fetch(destino, {
       method: request.method,
       headers,
-      body: temCorpo ? await request.arrayBuffer() : undefined,
+      body: corpo,
       redirect: 'follow',
       // A sessão vai no token; cookies do navegador interno não entram na conta.
       credentials: 'omit'
     });
-  } catch (erro) {
-    console.error(`[painel] ${request.method} ${destino} falhou:`, erro.message);
-    return respostaDeErro(502, 'Sem conexão com o servidor do site. Confira a internet e tente de novo.');
+  };
+
+  let resposta;
+  try {
+    resposta = await enviar();
+  } catch {
+    // Leitura que falhou na rede: mais uma chance antes de dar erro ao painel
+    if (leitura) {
+      await esperar(800);
+      try {
+        resposta = await enviar();
+      } catch {
+        // cai no erro abaixo
+      }
+    }
+    if (!resposta) {
+      marcarConexao(false);
+      console.error(`[painel] ${request.method} ${destino} falhou`);
+      return respostaDeErro(502, 'Sem conexão com o servidor do site. Confira a internet e tente de novo.');
+    }
   }
+  marcarConexao(true);
+
+  // Sessão vencida ou recusada: entra de novo com a chave e repete o pedido uma vez.
+  // O login em si não entra aqui, senão um 401 dele viraria um laço.
+  if (resposta.status === 401 && ehApi && url.pathname !== '/api/auth/login') {
+    try {
+      await entrar();
+      resposta = await enviar(`Bearer ${token}`);
+    } catch (erro) {
+      console.error('[painel] não foi possível renovar a sessão:', erro.message);
+    }
+  }
+
+  return resposta;
 }
 
 function registrarProtocolo() {
@@ -325,7 +415,7 @@ function protegerNavegacao(janela) {
 function criarSplash() {
   janelaSplash = new BrowserWindow({
     width: 440,
-    height: 340,
+    height: 320,
     frame: false,
     resizable: false,
     maximizable: false,
@@ -418,32 +508,15 @@ function prepararPainel() {
 
 let sincronizando = false;
 
-async function sincronizar(pinDigitado) {
+async function sincronizar() {
   if (sincronizando) return;
   sincronizando = true;
   try {
     avisarSplash({ etapa: 'conectar', texto: 'Conectando ao site…', progresso: 0.08 });
     await pedir('/api/auth/session');
 
-    const pin = pinDigitado || lerPin();
-    if (!pin) {
-      avisarSplash({ etapa: 'pin', texto: 'Digite o PIN do painel uma vez. Ele fica guardado neste computador.' });
-      return;
-    }
-
-    avisarSplash({ etapa: 'entrar', texto: 'Entrando…', progresso: 0.2 });
-    try {
-      await entrar(pin);
-    } catch (erro) {
-      if (erro.status === 401) {
-        esquecerPin();
-        avisarSplash({ etapa: 'pin', erro: pinDigitado ? 'PIN incorreto.' : 'O PIN mudou no site. Digite o novo.' });
-        return;
-      }
-      if (erro.status === 429) throw new ErroServidor('Tentativas demais. Espere alguns minutos e tente de novo.');
-      throw erro;
-    }
-    if (pinDigitado) guardarPin(pinDigitado);
+    avisarSplash({ etapa: 'entrar', texto: 'Abrindo a sessão…', progresso: 0.2 });
+    await entrar();
 
     preCarregado.clear();
     for (const [i, item] of SINCRONIA.entries()) {
@@ -460,6 +533,7 @@ async function sincronizar(pinDigitado) {
     janelaPainel?.focus();
     janelaSplash?.close();
     agendarRenovacao();
+    agendarVerificacao();
   } catch (erro) {
     console.error('[painel] sincronia falhou:', erro.message);
     avisarSplash({ etapa: 'erro', erro: erro.message || 'Algo deu errado ao sincronizar.' });
@@ -474,9 +548,6 @@ function ligarIpc() {
   // Splash
   ipcMain.on('splash:iniciar', () => sincronizar());
   ipcMain.on('splash:tentar', () => sincronizar());
-  ipcMain.on('splash:pin', (evento, pin) => {
-    if (typeof pin === 'string' && /^\d{4}$/.test(pin)) sincronizar(pin);
-  });
   ipcMain.on('splash:fechar', () => app.quit());
   ipcMain.on('splash:info', (evento) => {
     evento.returnValue = { servidor: SERVIDOR, oficial: SERVIDOR === PADRAO, versao: app.getVersion() };
@@ -496,18 +567,19 @@ function ligarIpc() {
   ipcMain.on('luvi:estado-janela', (evento) => {
     evento.returnValue = BrowserWindow.fromWebContents(evento.sender)?.isMaximized() || false;
   });
-  // "Sair": esquece o PIN deste computador e volta para a splash
-  ipcMain.on('luvi:sair', async () => {
-    try {
-      if (token) await pedir('/api/auth/logout', { method: 'POST', corpo: {}, comToken: true });
-    } catch {
-      // sair funciona mesmo sem internet
-    }
-    token = null;
-    esquecerPin();
-    criarSplash();
-    janelaPainel?.close();
+  ipcMain.on('luvi:conexao-agora', (evento) => {
+    evento.returnValue = { online };
   });
+  // Botão "reconectar" da barra: confere o servidor na hora
+  ipcMain.on('luvi:reconectar', async () => {
+    try {
+      await pedir('/api/auth/session');
+      await entrar();
+    } catch (erro) {
+      console.error('[painel] reconexão falhou:', erro.message);
+    }
+  });
+  ipcMain.on('luvi:sair', () => app.quit());
   ipcMain.on('luvi:info', (evento) => {
     evento.returnValue = { servidor: SERVIDOR, oficial: SERVIDOR === PADRAO };
   });
@@ -515,9 +587,8 @@ function ligarIpc() {
 
 // ---------------------------------------------------------------- ciclo de vida
 
-// Precisa ser antes do "ready": cada servidor guarda a sua própria sessão
-// (PIN guardado, tema, rascunhos). Sem isso, o PIN do servidor local seria
-// tentado no site publicado.
+// Precisa ser antes do "ready": cada servidor guarda os seus próprios dados
+// locais (tema, rascunhos, token).
 SERVIDOR = descobrirServidor();
 if (SERVIDOR !== PADRAO) {
   app.setPath('userData', `${app.getPath('userData')}-${new URL(SERVIDOR).host.replace(/[^a-z0-9.-]/gi, '_')}`);

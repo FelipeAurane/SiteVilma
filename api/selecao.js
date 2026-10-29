@@ -8,6 +8,7 @@ const {
   methodGuard,
   sameOriginGuard,
   handleCors,
+  requireAdmin,
   withErrorHandling
 } = require('../lib/http');
 
@@ -24,8 +25,10 @@ module.exports = withErrorHandling(async (req, res) => {
   if (!handleCors(req, res)) return;
   if (!methodGuard(req, res, ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'])) return;
 
-  // GET: Lista as seleções salvas para o painel administrativo
+  // GET: Lista as seleções salvas para o painel administrativo.
+  // Só admin: a lista tem nome, e-mail e fotos escolhidas pelos clientes.
   if (req.method === 'GET') {
+    if (!requireAdmin(req, res)) return;
     try {
       const resultado = await query(
         `SELECT id, cliente, cliente_email, fotos, total, status, created_at

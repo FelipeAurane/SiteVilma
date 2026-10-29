@@ -1,7 +1,7 @@
 'use strict';
 
 const { query } = require('../../lib/db');
-const { verifyPin, verifyCredentials, createSessionToken, sessionCookie } = require('../../lib/auth');
+const { verifyPin, verifyAppKey, verifyCredentials, createSessionToken, sessionCookie } = require('../../lib/auth');
 const { json, fail, methodGuard, sameOriginGuard, handleCors, clientIp, withErrorHandling } = require('../../lib/http');
 
 const WINDOW_MINUTES = 15;
@@ -53,12 +53,17 @@ module.exports = withErrorHandling(async (req, res) => {
     return fail(res, 429, `Tentativas demais. Aguarde ${WINDOW_MINUTES} minutos.`);
   }
 
-  const { pin, email, password } = req.body || {};
+  const { pin, email, password, chaveApp } = req.body || {};
 
   let ok = false;
   let erroMensagem = 'Credenciais inválidas';
 
-  if (typeof email === 'string' && typeof password === 'string') {
+  // App desktop Luvi: entra com a chave LUVI_APP_KEY em vez do PIN.
+  // Passa pelo mesmo limite de tentativas por IP de cima.
+  if (typeof chaveApp !== 'undefined') {
+    ok = verifyAppKey(chaveApp);
+    erroMensagem = 'Chave do app não reconhecida';
+  } else if (typeof email === 'string' && typeof password === 'string') {
     ok = verifyCredentials(email, password);
     erroMensagem = 'E-mail ou senha incorretos';
   } else if (typeof pin !== 'undefined') {

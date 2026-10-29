@@ -140,8 +140,8 @@ function ligarTema() {
 
 /**
  * App desktop (window.luvi, do preload): a janela não tem a barra do Windows,
- * então a página mostra a própria; a sessão já vem aberta pela splash, então
- * não há PIN; e "Sair" esquece o PIN deste computador e volta para a splash.
+ * então a página mostra a própria; a sessão já vem aberta pela splash (com a
+ * chave do app), então não há PIN; e "Sair" fecha o app.
  */
 const desktop = window.luvi?.desktop ? window.luvi : null;
 
@@ -168,6 +168,18 @@ function ligarBarraDaJanela() {
     servidor.hidden = false;
   }
 
+  const conexao = document.getElementById('barra-conexao');
+  const mostrarConexao = ({ online }) => {
+    conexao.dataset.online = String(online);
+    conexao.querySelector('span').textContent = online ? 'Conectado' : 'Sem conexão · reconectar';
+    conexao.title = online ? `Conectado a ${new URL(desktop.info.servidor).host}` : 'Clique para tentar de novo agora';
+  };
+  mostrarConexao(desktop.conexao());
+  desktop.aoConexao(mostrarConexao);
+  conexao.addEventListener('click', () => {
+    if (conexao.dataset.online === 'false') desktop.reconectar();
+  });
+
   // O nome da tela acompanha a navegação
   const nome = document.getElementById('barra-tela');
   new MutationObserver(() => {
@@ -183,7 +195,7 @@ ligarTema();
 if (desktop) {
   ligarBarraDaJanela();
   document.getElementById('btn-sair').addEventListener('click', () => {
-    if (confirm('Sair do Luvi neste computador? Na próxima vez o PIN será pedido de novo.')) desktop.sair();
+    if (confirm('Fechar o Luvi?')) desktop.sair();
   });
   document.body.classList.remove('auth-locked');
 } else {

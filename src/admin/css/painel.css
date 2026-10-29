@@ -458,3 +458,34 @@ html.app-desktop .palco { margin-top: 0; }
 .barra-botoes .ico-restaurar { display: none; }
 html.janela-maximizada .barra-botoes .ico-maximizar { display: none; }
 html.janela-maximizada .barra-botoes .ico-restaurar { display: block; }
+
+/* Estado da conexão com o site, à esquerda dos botões da janela */
+.barra-conexao {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 24px;
+  margin-right: 10px;
+  padding: 0 10px;
+  border-radius: 999px;
+  color: var(--trilho-icone);
+  font-size: 11.5px;
+  cursor: default;
+  -webkit-app-region: no-drag;
+  transition: background 160ms, color 160ms;
+}
+.barra-conexao i {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #5fbf86;
+  box-shadow: 0 0 0 3px rgba(95, 191, 134, .18);
+}
+.barra-conexao[data-online="false"] { color: #f3b1a9; cursor: pointer; }
+.barra-conexao[data-online="false"]:hover { background: rgba(255, 255, 255, .08); }
+.barra-conexao[data-online="false"] i {
+  background: #e05a5a;
+  box-shadow: 0 0 0 3px rgba(224, 90, 90, .2);
+  animation: pulsar 1.4s ease-in-out infinite;
+}
+@keyframes pulsar { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .barra-conexao i { animation: none !important; } }
