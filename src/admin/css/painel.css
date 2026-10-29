@@ -1,0 +1,389 @@
+/* =========================================================================
+   Painel da Vilma — casca do painel (trilho lateral + topo + telas)
+   Tema escuro/claro: [data-tema="escuro"] no <html>; sem atributo segue o SO.
+   ========================================================================= */
+
+:root {
+  --fundo: #ecedf1;
+  --palco: #f6f7f9;
+  --cartao: #ffffff;
+  --cartao-2: #f1f2f5;
+  --borda: #e6e7ec;
+  --texto: #1d1d22;
+  --texto-2: #6b6d76;
+  --texto-3: #a2a4ad;
+  --trilho: #2a2a2e;
+  --trilho-icone: #8b8c93;
+  --trilho-ativo: #ffffff;
+  --destaque: #8db6ee;
+  --destaque-forte: #5a8fd8;
+  --destaque-suave: #e4eefc;
+  --sombra: 0 1px 2px rgba(20, 20, 30, .04), 0 8px 24px rgba(20, 20, 30, .06);
+
+  --raio-g: 28px;
+  --raio-m: 18px;
+  --raio-p: 12px;
+  --trilho-largura: 76px;
+  --transicao: 320ms cubic-bezier(.2, .7, .2, 1);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    --fundo: #121214;
+    --palco: #1a1a1e;
+    --cartao: #232328;
+    --cartao-2: #2b2b31;
+    --borda: #303037;
+    --texto: #f1f1f4;
+    --texto-2: #a6a7b0;
+    --texto-3: #6f707a;
+    --trilho: #0c0c0e;
+    --destaque-suave: #26344a;
+    --sombra: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+    color-scheme: dark;
+  }
+}
+
+:root[data-tema="escuro"] {
+  --fundo: #121214;
+  --palco: #1a1a1e;
+  --cartao: #232328;
+  --cartao-2: #2b2b31;
+  --borda: #303037;
+  --texto: #f1f1f4;
+  --texto-2: #a6a7b0;
+  --texto-3: #6f707a;
+  --trilho: #0c0c0e;
+  --destaque-suave: #26344a;
+  --sombra: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--trilho);
+  color: var(--texto);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Enquanto o PIN não for validado, o painel fica invisível atrás do overlay */
+body.auth-locked .app { visibility: hidden; }
+
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; }
+a { color: inherit; text-decoration: none; }
+svg { width: 22px; height: 22px; flex-shrink: 0; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ------------------------------------------------------------- layout */
+
+.app {
+  display: flex;
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* ------------------------------------------------------------- trilho */
+
+.rail {
+  width: var(--trilho-largura);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 26px 0 24px;
+  background: var(--trilho);
+}
+
+.rail-logo {
+  color: #f6f3ee;
+  margin-bottom: 44px;
+}
+.rail-logo svg { width: 34px; height: 20px; }
+
+.rail-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rail-btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  color: var(--trilho-icone);
+  transition: color var(--transicao), background var(--transicao);
+}
+.rail-btn:hover { color: #d8d9de; background: rgba(255, 255, 255, .05); }
+.rail-btn:focus-visible { outline: 2px solid var(--destaque); outline-offset: 2px; }
+
+/* Indicador do item ativo: barrinha que encosta na borda esquerda */
+.rail-btn::before {
+  content: '';
+  position: absolute;
+  left: -15px;
+  top: 50%;
+  width: 4px;
+  height: 0;
+  border-radius: 0 4px 4px 0;
+  background: var(--trilho-ativo);
+  transform: translateY(-50%);
+  transition: height var(--transicao);
+}
+.rail-btn.ativo { color: var(--trilho-ativo); }
+.rail-btn.ativo::before { height: 22px; }
+
+/* Bolinha de aviso (ex.: mensagens novas) */
+.rail-btn .ponto {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #f2c94c;
+  box-shadow: 0 0 0 2px var(--trilho);
+}
+
+/* Rótulo que aparece ao passar o mouse */
+.rail-btn::after {
+  content: attr(data-rotulo);
+  position: absolute;
+  left: calc(100% + 14px);
+  top: 50%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--texto);
+  color: var(--palco);
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-6px, -50%);
+  transition: opacity 160ms, transform 160ms;
+  z-index: 20;
+}
+.rail-btn:hover::after { opacity: 1; transform: translate(0, -50%); }
+
+.rail-sair { margin-top: 16px; }
+
+/* ------------------------------------------------------------- palco */
+
+.palco {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 10px 10px 10px 0;
+  border-radius: var(--raio-g);
+  background: var(--palco);
+  overflow: hidden;
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 22px 32px 18px;
+}
+
+.saudacao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.avatar {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--cartao-2);
+}
+.saudacao { flex-shrink: 0; }
+.saudacao h1 { font-size: 18px; font-weight: 600; white-space: nowrap; }
+.saudacao p { white-space: nowrap; }
+.saudacao p { font-size: 13px; color: var(--texto-2); margin-top: 2px; }
+
+.busca {
+  flex: 1;
+  max-width: 380px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--cartao-2);
+  color: var(--texto-3);
+}
+.busca svg { width: 18px; height: 18px; }
+.busca input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; color: var(--texto); font-size: 14px; }
+.busca input::placeholder { color: var(--texto-3); }
+
+.topo-acoes { display: flex; align-items: center; gap: 10px; }
+
+.icone-btn {
+  display: grid;
+  place-items: center;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--cartao);
+  border: 1px solid var(--borda);
+  color: var(--texto-2);
+  transition: color 160ms, border-color 160ms;
+}
+.icone-btn:hover { color: var(--texto); border-color: var(--texto-3); }
+.icone-btn svg { width: 19px; height: 19px; }
+
+.so-escuro { display: none; }
+:root[data-tema="escuro"] .so-claro { display: none; }
+:root[data-tema="escuro"] .so-escuro { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) .so-claro { display: none; }
+  :root:not([data-tema="claro"]) .so-escuro { display: block; }
+}
+
+.conta-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--trilho);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.conta-btn svg { width: 18px; height: 18px; }
+.conta-btn .seta { width: 15px; height: 15px; opacity: .7; }
+
+/* ------------------------------------------------------------- telas */
+
+.telas {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.tela {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  padding: 8px 32px 32px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px);
+  transition: opacity var(--transicao), transform var(--transicao), visibility 0s linear 320ms;
+}
+.tela.ativa {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity var(--transicao), transform var(--transicao), visibility 0s;
+}
+/* Tela que está saindo sobe um pouco, a que entra vem de baixo */
+.tela.saindo {
+  transform: translateY(-10px);
+  transition: opacity 160ms ease-out, transform 160ms ease-out, visibility 0s linear 160ms;
+}
+/* A que entra espera a outra sair, para os textos não se sobreporem */
+.tela.ativa { transition-delay: 90ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tela, .tela.ativa { transition: opacity 120ms, visibility 0s; transform: none; }
+}
+
+.tela-cabeca {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.tela-cabeca h2 { font-size: 24px; font-weight: 600; letter-spacing: -.01em; }
+.tela-cabeca p { font-size: 14px; color: var(--texto-2); margin-top: 4px; }
+
+/* Estado vazio — placeholder até cada tela ganhar conteúdo */
+.vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 360px;
+  height: calc(100% - 80px);
+  padding: 40px 24px;
+  border: 1.5px dashed var(--borda);
+  border-radius: var(--raio-g);
+  background: var(--cartao);
+  text-align: center;
+}
+.vazio-icone {
+  display: grid;
+  place-items: center;
+  width: 64px; height: 64px;
+  border-radius: 20px;
+  background: var(--destaque-suave);
+  color: var(--destaque-forte);
+}
+.vazio-icone svg { width: 28px; height: 28px; }
+.vazio h3 { font-size: 16px; font-weight: 600; }
+.vazio p { max-width: 360px; font-size: 14px; line-height: 1.5; color: var(--texto-2); }
+
+/* Janela média: a busca cede espaço para a saudação e os botões */
+@media (max-width: 1000px) and (min-width: 761px) {
+  .busca { max-width: 220px; }
+  .conta-btn { width: 42px; padding: 0; justify-content: center; font-size: 0; }
+  .conta-btn .seta { display: none; }
+}
+
+/* ------------------------------------------------------------- celular */
+
+@media (max-width: 760px) {
+  .app { flex-direction: column-reverse; }
+
+  /* O trilho vira barra inferior com rolagem horizontal */
+  .rail {
+    width: 100%;
+    flex-direction: row;
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  }
+  .rail-logo { display: none; }
+  .rail-nav {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .rail-btn { width: 42px; height: 42px; }
+  .rail-btn::before { left: 50%; top: auto; bottom: -8px; width: 0; height: 3px; border-radius: 3px 3px 0 0; transform: translateX(-50%); transition: width var(--transicao); }
+  .rail-btn.ativo::before { width: 18px; height: 3px; }
+  .rail-btn::after { display: none; }
+  .rail-sair { margin: 0 0 0 4px; }
+
+  .palco { margin: 0; border-radius: 0 0 var(--raio-g) var(--raio-g); }
+  .topo { flex-wrap: wrap; gap: 12px; padding: 16px; }
+  .busca { order: 3; flex-basis: 100%; max-width: none; }
+  .topo-acoes { margin-left: auto; }
+  .conta-btn { width: 42px; padding: 0; justify-content: center; font-size: 0; }
+  .conta-btn .seta { display: none; }
+  .tela { padding: 4px 16px 24px; }
+  .tela-cabeca h2 { font-size: 20px; }
+}

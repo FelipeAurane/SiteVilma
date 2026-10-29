@@ -292,4 +292,8 @@ export async function saveCatalogConfig(value) {
   return putContent('catalogConfig', value);
 }
 
-export { ApiError };
+// `request` fica exportado para os módulos que precisam de rotas fora do
+// conteúdo — hoje o gerenciador de arquivos do painel, que fala com
+// /api/arquivos. Ele continua sendo o mesmo transporte com o token: não há
+// um segundo fetch solto no projeto.
+export { ApiError, request };

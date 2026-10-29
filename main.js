@@ -31,7 +31,8 @@ const rotas = {
   '/api/auth/login': require('./api/auth/login'),
   '/api/auth/logout': require('./api/auth/logout'),
   '/api/auth/session': require('./api/auth/session'),
-  '/api/selecao': require('./api/selecao')
+  '/api/selecao': require('./api/selecao'),
+  '/api/arquivos': require('./api/arquivos')
 };
 
 for (const [rota, handler] of Object.entries(rotas)) {
@@ -66,9 +67,16 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'src', 'index.html'));
 });
 
+// O painel fica em src/admin/, e nao em src/. Sem este mount, os caminhos
+// relativos do HTML (./css/, ./js/, ./img/) seriam resolvidos a partir de /css,
+// /js e /img na raiz do site — que e outra pasta. Servir o painel pelo mesmo
+// prefixo do arquivo mantem "./css/home.css" apontando para
+// src/admin/css/home.css.
+app.use('/admin', express.static(path.join(__dirname, 'src', 'admin')));
+
 app.get(['/config', '/admin', '/painel', '/dashboard', '/dashboard.html'], (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
-  res.sendFile(path.join(__dirname, 'src', 'config.html'));
+  res.sendFile(path.join(__dirname, 'src', 'admin', 'index.html'));
 });
 
 app.get(['/login', '/entrar'], (req, res) => {
