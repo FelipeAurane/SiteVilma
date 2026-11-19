@@ -2852,9 +2852,11 @@ footer p {
 
 /* Mantém os espaços do mosaico sem fotos ou ações de exemplo. */
 .hero-pinterest-grid .pinterest-card.portfolio-vazio { cursor: default; }
-/* Na Section 2, slots vazios não ocupam espaço no layout */
+/* Na Section 2, apenas itens com tag 'galeria' permanecem visíveis */
 .hero-pinterest-grid.section-2-active .pinterest-card.portfolio-vazio,
-body.section-2-active .hero-pinterest-grid .pinterest-card.portfolio-vazio { display: none !important; }
+body.section-2-active .hero-pinterest-grid .pinterest-card.portfolio-vazio,
+.hero-pinterest-grid.section-2-active .pinterest-card[data-card-tipo="imagem"],
+body.section-2-active .hero-pinterest-grid .pinterest-card[data-card-tipo="imagem"] { display: none !important; }
 .hero-pinterest-grid .pinterest-card.portfolio-vazio .pinterest-badge,
 .hero-pinterest-grid .pinterest-card.portfolio-vazio .card-ver-mais,
 .hero-pinterest-grid .pinterest-card.portfolio-vazio .play-icon,
