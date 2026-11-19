@@ -272,13 +272,14 @@ button {
 
 @media (max-width: 899px) {
   .marca-logo-desktop { display: none; }
-  .marca-logo-mobile { display: block; height: 40px; }
+  .marca-logo-mobile { display: block; height: 52px; }
 }
 
 .title-logo {
-  height: clamp(40px, 8vw, 72px);
+  height: clamp(60px, 12vw, 110px);
   width: auto;
   display: block;
+  margin: 0 auto;
 }
 
 .marca-nome {
