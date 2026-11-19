@@ -976,8 +976,7 @@ footer p {
     display: flex;
     align-items: center;
     gap: 34px;
-    margin-left: 60px;
-    margin-right: auto;
+    margin: 0 auto;
     list-style: none;
   }
 
