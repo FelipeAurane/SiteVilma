@@ -975,8 +975,9 @@ footer p {
   .menu-desktop {
     display: flex;
     align-items: center;
+    justify-content: center;
+    flex: 1;
     gap: 34px;
-    margin: 0 auto;
     list-style: none;
   }
 
