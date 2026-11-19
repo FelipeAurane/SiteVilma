@@ -2849,3 +2849,14 @@ footer p {
     height: 48px;
   }
 }
+
+/* Mantém os espaços do mosaico sem fotos ou ações de exemplo. */
+.hero-pinterest-grid .pinterest-card.portfolio-vazio { cursor: default; }
+/* Na Section 2, slots vazios não ocupam espaço no layout */
+.hero-pinterest-grid.section-2-active .pinterest-card.portfolio-vazio,
+body.section-2-active .hero-pinterest-grid .pinterest-card.portfolio-vazio { display: none !important; }
+.hero-pinterest-grid .pinterest-card.portfolio-vazio .pinterest-badge,
+.hero-pinterest-grid .pinterest-card.portfolio-vazio .card-ver-mais,
+.hero-pinterest-grid .pinterest-card.portfolio-vazio .play-icon,
+.hero-pinterest-grid .pinterest-card.portfolio-vazio .card-play,
+.hero-pinterest-grid .pinterest-card.portfolio-vazio .card-play-icon { display: none !important; }
