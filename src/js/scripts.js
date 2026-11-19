@@ -385,14 +385,15 @@
       return copia;
     }
 
-    // Uma entrada da grade por foto de galeria, com a categoria dona da foto.
-    // O painel é a fonte da verdade: trocar a categoria lá troca a foto aqui.
-    // Devolve também o índice categoria -> fotos, usado no clique do cartão.
+    // Separa os itens em dois tipos:
+    // 1. 'galeria' -> Capa oficial da galeria do portfólio (fica visível na Section 1 E na Section 2).
+    // 2. 'imagem'  -> Fotos internas adicionais para completar o mosaico da Section 1 (somem na Section 2).
     function montarPool(categories) {
-      var pool = [];
+      var poolGalerias = [];
+      var poolImagens = [];
       var porCategoria = {};
 
-      if (!Array.isArray(categories)) return { pool: pool, porCategoria: porCategoria };
+      if (!Array.isArray(categories)) return { poolGalerias: [], poolImagens: [], porCategoria: {} };
 
       for (var i = 0; i < categories.length; i++) {
         var categoria = categories[i];
@@ -408,25 +409,44 @@
             if (typeof foto === 'string' && foto.trim()) fotos.push(foto.trim());
           }
         }
-        // Categoria sem galeria ainda mostra a capa, senão o cartão fica vazio.
-        if (!fotos.length && typeof categoria.image === 'string' && categoria.image.trim()) {
-          fotos.push(categoria.image.trim());
-        }
-        if (!fotos.length) continue;
+
+        var capa = (typeof categoria.image === 'string' && categoria.image.trim())
+          ? categoria.image.trim()
+          : (fotos[0] || '');
+
+        if (!capa && !fotos.length) continue;
 
         var legenda = typeof categoria.subtitle === 'string' ? categoria.subtitle.trim() : '';
+        var galeriaId = categoria.id || 'galeria-' + i;
+
+        // Adiciona a capa oficial como item prioritário 'galeria'
+        poolGalerias.push({
+          tipo: 'galeria',
+          src: capa || fotos[0],
+          badge: legenda || nome,
+          category: nome,
+          galleryId: galeriaId,
+          alt: 'Galeria ' + nome
+        });
+
+        // Demais fotos internas são marcadas como 'imagem'
         for (var f = 0; f < fotos.length; f++) {
-          pool.push({
-            src: fotos[f],
-            badge: legenda || nome,
-            category: nome,
-            alt: 'Fotografia de ' + nome
-          });
+          var fotoUrl = fotos[f];
+          if (fotoUrl !== capa) {
+            poolImagens.push({
+              tipo: 'imagem',
+              src: fotoUrl,
+              badge: legenda || nome,
+              category: nome,
+              galleryId: galeriaId,
+              alt: 'Fotografia de ' + nome
+            });
+          }
         }
-        porCategoria[nome] = fotos;
+        porCategoria[nome] = fotos.length ? fotos : (capa ? [capa] : []);
       }
 
-      return { pool: pool, porCategoria: porCategoria };
+      return { poolGalerias: poolGalerias, poolImagens: poolImagens, porCategoria: porCategoria };
     }
 
     // Enquanto a API não responde, a cópia em localStorage (escrita pelo
@@ -443,24 +463,89 @@
     }
 
     var montagemInicial = montarPool(categoriasDoCache());
-    var poolGrade = montagemInicial.pool.length ? montagemInicial.pool : PINTEREST_POOL_PADRAO;
-    var fotosPorCategoria = montagemInicial.porCategoria;
+    var galeriasOficiais = montagemInicial.poolGalerias || [];
+    var imagensComplementares = montagemInicial.poolImagens || [];
+    var fotosPorCategoria = montagemInicial.porCategoria || {};
 
-    // Embaralha dinamicamente as fotos e posições de todos os cartões da grade a cada recarregamento da tela
+    // Prioriza as galerias oficiais nos slots visíveis e preenche os espaços
+    // restantes da Section 1 com as fotos complementares das galerias.
     function randomizarGradePinterest() {
-      var cards = pinterestGrid.querySelectorAll('.pinterest-card:not(#hero-featured-card):not(.card-main-hero)');
+      var cards = Array.prototype.slice.call(
+        pinterestGrid.querySelectorAll('.pinterest-card:not(#hero-featured-card):not(.card-main-hero)')
+      );
       if (!cards || cards.length === 0) return;
 
-      var shuffled1 = embaralharArray(poolGrade);
-      var shuffled2 = embaralharArray(poolGrade);
-      var shuffledPool = shuffled1.concat(shuffled2);
+      var totalSlots = cards.length;
+      var fotosUsadas = new Set();
+
+      // --- Mapeamento de índices por coluna (na ordem do DOM) ---
+      // col-left: 5 cards (idx 0..4)
+      // col-2:    5 cards (idx 5..9)
+      // col-center top+bottom: 2 cards (idx 10..11) — não usados para galerias
+      // col-4:    5 cards (idx 12..16)
+      // col-right: 5 cards (idx 17..21)
+      var colunas = [
+        [0, 1, 2, 3, 4],       // col-left
+        [5, 6, 7, 8, 9],       // col-2
+        [12, 13, 14, 15, 16],  // col-4
+        [17, 18, 19, 20, 21]   // col-right
+      ];
+      var NCOLS = colunas.length;
+
+      // 1. Distribui as galerias oficiais intercalando pelas 4 colunas laterais
+      //    (horizontal-first): galeria 0→col-left[0], galeria 1→col-2[0],
+      //    galeria 2→col-4[0], galeria 3→col-right[0], galeria 4→col-left[1], ...
+      var galEmbaralhadas = embaralharArray(galeriasOficiais);
+      var slotOrdem = {}; // slotOrdem[idxCard] = item a exibir
+      for (var gi = 0; gi < galEmbaralhadas.length; gi++) {
+        var gItem = galEmbaralhadas[gi];
+        var colIdx = gi % NCOLS;
+        var rowIdx = Math.floor(gi / NCOLS);
+        if (rowIdx < colunas[colIdx].length) {
+          var cardIdx = colunas[colIdx][rowIdx];
+          slotOrdem[cardIdx] = gItem;
+          fotosUsadas.add(gItem.src);
+        }
+      }
+
+      // 2. Preenche os slots restantes com fotos complementares
+      var imgEmbaralhadas = embaralharArray(imagensComplementares);
+      var mi = 0;
+      for (var ci = 0; ci < totalSlots; ci++) {
+        if (slotOrdem[ci]) continue; // já tem galeria
+        // Avança até achar imagem não usada
+        while (mi < imgEmbaralhadas.length && fotosUsadas.has(imgEmbaralhadas[mi].src)) { mi++; }
+        if (mi < imgEmbaralhadas.length) {
+          var mItem = imgEmbaralhadas[mi];
+          fotosUsadas.add(mItem.src);
+          slotOrdem[ci] = mItem;
+          mi++;
+        }
+      }
 
       cards.forEach(function(card, idx) {
-        var item = shuffledPool[idx % shuffledPool.length];
-        if (!item) return;
+        var item = slotOrdem[idx];
+        card.classList.toggle('portfolio-vazio', !item);
+        card.setAttribute('aria-disabled', String(!item));
+        card.tabIndex = item ? 0 : -1;
+
+        if (!item) {
+          card.removeAttribute('data-category');
+          card.removeAttribute('data-card-tipo');
+          card.removeAttribute('aria-label');
+          var vazia = card.querySelector('img');
+          if (vazia) { vazia.removeAttribute('src'); vazia.alt = ''; vazia.style.visibility = 'hidden'; }
+          var legendaVazia = card.querySelector('.pinterest-badge');
+          if (legendaVazia) legendaVazia.textContent = '';
+          return;
+        }
+
+        // Aplica a tag no elemento: 'galeria' ou 'imagem'
+        card.setAttribute('data-card-tipo', item.tipo);
 
         var img = card.querySelector('img');
         if (img) {
+          img.style.visibility = '';
           img.src = item.src;
           img.alt = item.alt;
         }
@@ -471,27 +556,23 @@
         }
 
         card.setAttribute('data-category', item.category);
-        card.setAttribute('aria-label', 'Ver galeria de ' + item.category);
+        card.setAttribute('aria-label', (item.tipo === 'galeria' ? 'Ver galeria de ' : 'Ver foto de ') + item.category);
       });
     }
 
     // Executa a randomização inicial imediatamente para mudar a posição das fotos a cada carregamento/recarregamento
     randomizarGradePinterest();
 
-    // O content.js avisa quando o conteúdo chega do servidor. Na primeira visita
-    // sem cache a grade começa na reserva e é refeita aqui com as categorias do
-    // painel; nas seguintes o cache já acerta e nada muda.
+    // O content.js avisa quando o conteúdo chega do servidor.
     document.addEventListener('vilma:conteudo', function (evento) {
       var detalhe = evento && evento.detail ? evento.detail : null;
       var montagem = montarPool(detalhe ? detalhe.categories : null);
-      // Pool vazio = servidor sem categorias, aí a reserva continua valendo.
-      if (!montagem.pool.length) return;
-
-      poolGrade = montagem.pool;
-      fotosPorCategoria = montagem.porCategoria;
-      randomizarGradePinterest();
-      // Na Section 2 a altura do cartão segue a proporção real da foto, então a
-      // medição em cache mediu as imagens antigas e precisa ser refeita.
+      if (montagem.poolGalerias.length || montagem.poolImagens.length) {
+        galeriasOficiais = montagem.poolGalerias.slice();
+        imagensComplementares = montagem.poolImagens.slice();
+        fotosPorCategoria = montagem.porCategoria || {};
+        randomizarGradePinterest();
+      }
       galeriaMaxH = null;
     });
 
@@ -853,10 +934,21 @@
         var cardProg = Math.min(Math.max((ease - delay) / Math.max(1 - delay, 0.001), 0), 1);
         var cardEase = cardProg * cardProg * (3 - 2 * cardProg);
 
+        var tipo = entry.el.getAttribute('data-card-tipo');
         var dx = 0;
         var dy = cardEase * (18 + (entry.row % 3) * 6);
         var sc = 1 - cardEase * 0.04;
-        var op = 1 - cardEase * 0.12;
+        var op;
+
+        if (tipo === 'imagem') {
+          // As que tiverem tag 'imagem' somem suavemente no scroll para a Section 2
+          op = Math.max(1 - ease * 2.2, 0);
+          entry.el.style.pointerEvents = op < 0.1 ? 'none' : 'auto';
+        } else {
+          // As que tiverem tag 'galeria' permanecem ativas e visíveis na Section 2
+          op = 1 - cardEase * 0.08;
+          entry.el.style.pointerEvents = ease >= 0.65 ? 'auto' : 'none';
+        }
 
         entry.el.style.transform = 'translate3d(' + dx.toFixed(1) + 'px, ' + dy.toFixed(1) + 'px, 0) scale(' + sc.toFixed(3) + ')';
         entry.el.style.opacity = op.toFixed(3);
