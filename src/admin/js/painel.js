@@ -9,22 +9,17 @@
  * `montar(secao)` e registre em MONTADORES abaixo.
  */
 
-import { exigirLogin, fazerLogout } from './auth.js';
+import { exigirLogin } from './auth.js';
 import { montar as montarSite } from './telas/site.js';
 import { montar as montarInicio } from './telas/inicio.js';
-import { montar as montarSelecao } from './telas/selecao.js';
+import { montar as montarSelecao } from './telas/selecoes.js';
+import { montar as montarClientes } from './telas/clientes.js';
+import { montar as montarGaleria, ligarSeletorLocal } from './telas/galeria-local.js';
+import { montar as montarAjustes } from './telas/ajustes.js';
 
 const TELAS = [
   { id: 'inicio',       rotulo: 'Início',           icone: 'i-inicio',       descricao: 'Resumo do dia: agenda, seleções em andamento e números do site.' },
-  { id: 'agenda',       rotulo: 'Agenda',           icone: 'i-agenda',       descricao: 'Sessões marcadas e datas disponíveis para os clientes.' },
-  { id: 'clientes',     rotulo: 'Clientes',         icone: 'i-clientes',     descricao: 'Cadastro de clientes e histórico de trabalhos.' },
-  { id: 'selecao',      rotulo: 'Seleção de fotos', icone: 'i-selecao',      descricao: 'Galerias para o cliente escolher as fotos favoritas.' },
   { id: 'site',         rotulo: 'Meu site',         icone: 'i-site',         descricao: 'Editor do site: capa, portfólio, serviços, dúvidas e visibilidade.' },
-  { id: 'financeiro',   rotulo: 'Financeiro',       icone: 'i-financeiro',   descricao: 'Pagamentos recebidos, pendentes e relatórios.' },
-  { id: 'insights',     rotulo: 'Insights',         icone: 'i-insights',     descricao: 'Visitas ao site e desempenho das galerias.' },
-  { id: 'mensagens',    rotulo: 'Mensagens',        icone: 'i-mensagens',    descricao: 'Conversas e pedidos de orçamento.', aviso: true },
-  { id: 'notificacoes', rotulo: 'Notificações',     icone: 'i-notificacoes', descricao: 'Avisos de seleções concluídas, novos agendamentos e mais.' },
-  { id: 'ajustes',      rotulo: 'Ajustes',          icone: 'i-ajustes',      descricao: 'Preferências do painel, PIN e integrações.' },
 ];
 
 // id da tela -> função que monta o conteúdo (preenchidas aos poucos).
@@ -32,11 +27,14 @@ const TELAS = [
 const MONTADORES = {
   inicio: montarInicio,
   selecao: montarSelecao,
+  clientes: montarClientes,
   site: montarSite,
+  galeria: montarGaleria,
+  ajustes: montarAjustes,
 };
 const ATUALIZADORES = {};
 
-const TELA_PADRAO = TELAS[0].id;
+const TELA_PADRAO = 'inicio';
 const nav = document.getElementById('rail-nav');
 const palco = document.getElementById('telas');
 const botoes = new Map();
@@ -117,7 +115,7 @@ function mostrar(id) {
 }
 
 function rotaAtual() {
-  return location.hash.replace('#', '') || TELA_PADRAO;
+  return location.hash.replace('#', '').split('?')[0] || TELA_PADRAO;
 }
 
 function saudar() {
@@ -164,12 +162,6 @@ function ligarBarraDaJanela() {
   marcar(desktop.maximizada());
   desktop.aoMaximizar(marcar);
 
-  if (!desktop.info?.oficial && desktop.info?.servidor) {
-    const servidor = document.getElementById('barra-servidor');
-    servidor.textContent = `teste · ${new URL(desktop.info.servidor).host}`;
-    servidor.hidden = false;
-  }
-
   const conexao = document.getElementById('barra-conexao');
   const mostrarConexao = ({ online }) => {
     conexao.dataset.online = String(online);
@@ -182,26 +174,21 @@ function ligarBarraDaJanela() {
     if (conexao.dataset.online === 'false') desktop.reconectar();
   });
 
-  // O nome da tela acompanha a navegação
-  const nome = document.getElementById('barra-tela');
-  new MutationObserver(() => {
-    nome.textContent = TELAS.find((t) => t.id === telaAtual)?.rotulo || '';
-  }).observe(document.querySelector('title'), { childList: true });
+
 }
 
 document.getElementById('avatar').src = new URL('../img/profile.jpg', import.meta.url).href;
 construir();
+ligarSeletorLocal();
 saudar();
 ligarTema();
 
 if (desktop) {
   ligarBarraDaJanela();
-  document.getElementById('btn-sair').addEventListener('click', () => {
-    if (confirm('Fechar o Luvi?')) desktop.sair();
-  });
+
   document.body.classList.remove('auth-locked');
 } else {
-  document.getElementById('btn-sair').addEventListener('click', fazerLogout);
+
   // No navegador as telas só montam depois do PIN: algumas leem rotas que exigem sessão.
   await exigirLogin();
 }
