@@ -552,7 +552,7 @@
 
         var badge = card.querySelector('.pinterest-badge');
         if (badge) {
-          badge.textContent = item.badge;
+          badge.textContent = String(item.badge || '').slice(0, 12);
         }
 
         card.setAttribute('data-category', item.category);
