@@ -40,17 +40,9 @@ const defaultData = {
     media: '',
     tipo: ''
   },
-  categories: [
-    { name: 'Confeitaria', subtitle: 'Doces e sobremesas', image: './img/p-2.JPG', gallery: [] },
-    { name: 'Gastronomia', subtitle: 'Pratos e menus', image: './img/p-6.JPG', gallery: [] },
-    { name: 'Hambúrgueres', subtitle: 'Lanches e artesanais', image: './img/p-4.JPG', gallery: [] },
-    { name: 'Pizzas', subtitle: 'Fornos e massas', image: './img/p-5.jpg', gallery: [] },
-    { name: 'Bebidas', subtitle: 'Drinks e cafés', image: './img/p-7.jpg', gallery: [] },
-    { name: 'Restaurantes', subtitle: 'Ambiente e equipe', image: './img/p-3.JPG', gallery: [] },
-    { name: 'Produtos', subtitle: 'Embalagens e rótulos', image: './img/img1.jpg', gallery: [] },
-    { name: 'Doces', subtitle: 'Bombons e trufas', image: './img/p-2.JPG', gallery: [] },
-    { name: 'Outros trabalhos', subtitle: 'Projetos diversos', image: './img/vilma.jpg', gallery: [] }
-  ],
+  logoHeaderHeight: 52,
+  splashLogoHeight: 180,
+  categories: [],
   services: [
     {
       name: 'Cardápio Digital & iFood',

@@ -573,6 +573,15 @@
         fotosPorCategoria = montagem.porCategoria || {};
         randomizarGradePinterest();
       }
+      // Aplica tamanhos de logo configurados no painel (lidos do cache local).
+      try {
+        var cfgBruto = localStorage.getItem('vilma_fotografia_data');
+        if (cfgBruto) {
+          var cfgDados = JSON.parse(cfgBruto);
+          if (cfgDados.logoHeaderHeight) document.documentElement.style.setProperty('--logo-header-height', cfgDados.logoHeaderHeight + 'px');
+          if (cfgDados.splashLogoHeight) document.documentElement.style.setProperty('--splash-logo-width', cfgDados.splashLogoHeight + 'px');
+        }
+      } catch (e) {}
       galeriaMaxH = null;
     });
 

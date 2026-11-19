@@ -212,6 +212,13 @@ function abaCapa() {
       </article>
 
       <article class="cartao">
+        <h3>Tamanho das logos</h3>
+        <p class="cartao-sub">Altura da logo do cabeçalho e largura da logo do splash (em pixels).</p>
+        ${campo({ rotulo: 'Logo do cabeçalho (px)', caminho: 'site.logoHeaderHeight', tipo: 'number', placeholder: '52' })}
+        ${campo({ rotulo: 'Logo do splash (px)', caminho: 'site.splashLogoHeight', tipo: 'number', placeholder: '180' })}
+      </article>
+
+      <article class="cartao">
         <h3>Mídia da capa</h3>
         <p class="cartao-sub">Foto de fundo ou um vídeo curto em loop. A foto vira a prévia do vídeo enquanto ele carrega.</p>
         ${midia(temVideo ? hero.video : hero.image, { video: temVideo, poster: hero.image, classe: 'midia-larga' })}
@@ -387,7 +394,7 @@ function trocarAba(id) {
 // ---------------------------------------------------------------- ações
 
 const NOVOS = {
-  categories: () => ({ name: '', subtitle: '', image: '', gallery: [] }),
+  categories: () => ({ id: crypto.randomUUID(), name: '', subtitle: '', image: '', gallery: [] }),
   // WhatsApp próprio vazio: o site cai no número do site.
   services: () => ({ name: '', image: '', price: 'Sob Consulta', duration: '', description: '', includes: [], whatsapp: '', whatsappMessage: '' }),
   faqs: () => ({ question: '', answer: '' })
@@ -533,6 +540,7 @@ function prontoParaSalvar(idAba) {
         .filter((c) => String(c.name ?? '').trim())
         .map((c) => ({
           ...c,
+          id: c.id || crypto.randomUUID(),
           name: String(c.name).trim(),
           subtitle: String(c.subtitle ?? '').trim(),
           gallery: Array.isArray(c.gallery) ? c.gallery : []
@@ -568,7 +576,10 @@ function prontoParaSalvar(idAba) {
   return null;
 }
 
+let salvamentoEmCurso = false;
 async function salvar() {
+  if (salvamentoEmCurso) return;
+  salvamentoEmCurso = true;
   const idAba = abaAtual;
   const rotulo = botaoSalvar.textContent;
   botaoSalvar.disabled = true;
@@ -587,6 +598,7 @@ async function salvar() {
   } catch (erro) {
     avisar(erro.status === 401 ? 'Sua sessão expirou. Entre de novo.' : erro.message || 'Não foi possível salvar.', 'erro');
   } finally {
+    salvamentoEmCurso = false;
     botaoSalvar.textContent = rotulo;
     pintar();
   }
