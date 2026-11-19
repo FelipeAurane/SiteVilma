@@ -262,10 +262,14 @@ button {
 
 .marca {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  align-items: center;
   line-height: 1;
-  color: var(--branco);
+}
+
+.marca-logo {
+  height: 36px;
+  width: auto;
+  display: block;
 }
 
 .marca-nome {
