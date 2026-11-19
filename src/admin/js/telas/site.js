@@ -73,7 +73,7 @@ function gruposCompletos() {
 const SEM_PROTECAO = { protecao: false };
 
 const ABAS = [
-  { id: 'capa', rotulo: 'Capa & textos', chaves: ['hero', 'center', 'banner'] },
+  { id: 'capa', rotulo: 'Capa & textos', chaves: ['hero', 'center', 'banner', 'logoHeaderHeight', 'splashLogoHeight'] },
   { id: 'portfolio', rotulo: 'Portfólio', chaves: ['categories'] },
   { id: 'servicos', rotulo: 'Serviços', chaves: ['services'] },
   { id: 'duvidas', rotulo: 'Dúvidas' },
