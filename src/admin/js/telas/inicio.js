@@ -11,7 +11,7 @@
  * para os números não ficarem velhos depois de editar o site.
  */
 
-import { getContent, getSelecoes } from '../../../js/api.js';
+import { getContent, getSelecoes, getAnalytics } from '../../../js/api.js';
 
 const STATUS = {
   pendente: { rotulo: 'Pendente', tom: 'ambar' },
@@ -21,7 +21,7 @@ const STATUS = {
 
 const ATALHOS = [
   { rotulo: 'Editar site', icone: 'i-site', href: '#site', destaque: true },
-  { rotulo: 'Seleções', icone: 'i-selecao', href: '#selecao' },
+
   { rotulo: 'Agenda', icone: 'i-agenda', href: '#agenda' },
   { rotulo: 'Ver site', icone: 'i-externo', href: '/', externo: true }
 ];
@@ -176,7 +176,7 @@ function listaDatas(datas) {
 
 // ---------------------------------------------------------------- tela
 
-function pintar({ site, faqs, datas, selecoes, erroSelecoes }) {
+function pintar({ site, faqs, datas, selecoes, erroSelecoes, analytics }) {
   const categorias = Array.isArray(site?.categories) ? site.categories : [];
   const fotos = categorias.reduce((soma, c) => soma + (Array.isArray(c.gallery) ? c.gallery.length : 0), 0);
   const servicos = Array.isArray(site?.services) ? site.services.length : 0;
@@ -185,6 +185,14 @@ function pintar({ site, faqs, datas, selecoes, erroSelecoes }) {
   const contagem = { pendente: 0, em_tratamento: 0, concluida: 0 };
   for (const s of selecoes) contagem[STATUS[s.status] ? s.status : 'pendente'] += 1;
   const ultima = selecoes[0];
+  const metricas = { visit: 0, whatsapp: 0, instagram: 0, google: 0, direct: 0, other: 0 };
+  for (const linha of analytics?.rows || []) {
+    const quantidade = Number(linha.count) || 0;
+    if (linha.event === 'visit') {
+      metricas.visit += quantidade;
+      if (Object.hasOwn(metricas, linha.source)) metricas[linha.source] += quantidade;
+    } else if (linha.event === 'whatsapp') metricas.whatsapp += quantidade;
+  }
 
   painel.innerHTML = `
     <div class="inicio">
@@ -212,6 +220,22 @@ function pintar({ site, faqs, datas, selecoes, erroSelecoes }) {
           </a>
         </div>
 
+        <section class="insights cartao" aria-label="Insights dos últimos 30 dias">
+          <div class="bloco-titulo"><h3>Insights do site</h3><span>Últimos 30 dias</span></div>
+          ${analytics ? `
+            <div class="insights-numeros">
+              <div><strong>${numero(metricas.visit)}</strong><span>visitas</span></div>
+              <div><strong>${numero(metricas.whatsapp)}</strong><span>cliques no WhatsApp</span></div>
+            </div>
+            <div class="insights-origens" aria-label="Origem das visitas">
+              <span>Instagram <b>${numero(metricas.instagram)}</b></span>
+              <span>Google <b>${numero(metricas.google)}</b></span>
+              <span>Direto <b>${numero(metricas.direct)}</b></span>
+              <span>Outros <b>${numero(metricas.other)}</b></span>
+            </div>` : '<p class="insights-indisponivel">Insights indisponíveis no momento.</p>'}
+          <small>Visitas por sessão no navegador; contatos são cliques, não conversas concluídas.</small>
+        </section>
+
         <nav class="atalhos" aria-label="Atalhos">
           ${ATALHOS.map((a) => `
             <a class="atalho ${a.destaque ? 'destaque' : ''}" href="${a.href}" ${a.externo ? 'target="_blank" rel="noopener"' : ''}>
@@ -237,15 +261,16 @@ function pintar({ site, faqs, datas, selecoes, erroSelecoes }) {
 }
 
 async function carregar() {
-  const [site, faqs, datas, resultadoSelecoes] = await Promise.all([
+  const [site, faqs, datas, resultadoSelecoes, analytics] = await Promise.all([
     getContent('siteData').catch(() => null),
     getContent('faqs').catch(() => null),
     getContent('availableDates').catch(() => null),
-    getSelecoes().then((r) => ({ lista: r?.selecoes || [] }), (e) => ({ lista: [], erro: e.status === 401 ? 'Entre de novo para ver.' : e.message }))
+    getSelecoes().then((r) => ({ lista: r?.selecoes || [] }), (e) => ({ lista: [], erro: e.status === 401 ? 'Entre de novo para ver.' : e.message })),
+    getAnalytics().catch(() => null)
   ]);
   const selecoes = [...resultadoSelecoes.lista]
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-  pintar({ site, faqs, datas, selecoes, erroSelecoes: resultadoSelecoes.erro });
+  pintar({ site, faqs, datas, selecoes, erroSelecoes: resultadoSelecoes.erro, analytics });
 }
 
 export function montar(secao) {
