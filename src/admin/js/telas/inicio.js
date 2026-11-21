@@ -189,7 +189,7 @@ function pintar({ site, faqs, datas, selecoes, erroSelecoes }) {
   painel.innerHTML = `
     <div class="inicio">
       <div class="inicio-principal">
-        <div class="bloco-titulo"><h3>Visão geral</h3><a href="#selecao">Ver seleções</a></div>
+  
 
         <div class="cartoes-resumo">
           <a class="resumo escuro" href="#selecao">
