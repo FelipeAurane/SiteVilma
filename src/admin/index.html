@@ -24,7 +24,7 @@
     window.PAINEL_BASE = /\/admin\/(index\.html)?$/.test(location.pathname)
       ? location.pathname.replace(/index\.html$/, '')
       : '/admin/';
-    for (const folha of ['painel', 'meu-site', 'inicio', 'selecao']) {
+    for (const folha of ['painel', 'meu-site', 'inicio', 'selecao', 'galeria-local', 'clientes', 'galerias']) {
       document.write('<link rel="stylesheet" href="' + PAINEL_BASE + 'css/' + folha + '.css">');
     }
   </script>
@@ -60,12 +60,7 @@
 
   <!-- ====== Barra da janela (só no app desktop, que abre sem a barra do Windows) ====== -->
   <header class="barra-app" id="barra-app" hidden>
-    <div class="barra-marca">
-      <svg><use href="#i-luvi" /></svg>
-      <span class="barra-nome">Luvi</span>
-      <span class="barra-tela" id="barra-tela"></span>
-      <span class="barra-servidor" id="barra-servidor" hidden></span>
-    </div>
+    <div class="barra-marca" aria-hidden="true"></div>
     <!-- Estado da conexão com o site; sem conexão, o clique tenta reconectar na hora -->
     <button class="barra-conexao" id="barra-conexao" type="button" data-online="true" title="Conectado ao site">
       <i aria-hidden="true"></i><span>Conectado</span>
@@ -100,11 +95,6 @@
         <svg class="so-claro"><use href="#i-lua" /></svg>
         <svg class="so-escuro"><use href="#i-sol" /></svg>
       </button>
-
-      <button class="rail-btn rail-sair" id="btn-sair" type="button" data-rotulo="Sair">
-        <svg><use href="#i-sair" /></svg>
-        <span class="sr-only">Sair</span>
-      </button>
     </aside>
 
     <!-- ====== Área principal ====== -->
@@ -114,7 +104,7 @@
           <img class="avatar" id="avatar" alt="">
           <div>
             <h1 id="saudacao-titulo">Olá, Vilma! 👋</h1>
-            <p id="saudacao-sub">Comece o seu dia por aqui</p>
+
           </div>
         </div>
 

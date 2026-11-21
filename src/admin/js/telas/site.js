@@ -73,11 +73,11 @@ function gruposCompletos() {
 const SEM_PROTECAO = { protecao: false };
 
 const ABAS = [
-  { id: 'capa', rotulo: 'Capa & textos', chaves: ['hero', 'center', 'banner', 'logoHeaderHeight', 'splashLogoHeight'] },
-  { id: 'portfolio', rotulo: 'Portfólio', chaves: ['categories'] },
-  { id: 'servicos', rotulo: 'Serviços', chaves: ['services'] },
-  { id: 'duvidas', rotulo: 'Dúvidas' },
-  { id: 'visibilidade', rotulo: 'Visibilidade' }
+  { id: 'capa', rotulo: 'Capa & textos', icone: 'i-site', chaves: ['hero', 'center', 'banner', 'logoHeaderHeight', 'splashLogoHeight'] },
+  { id: 'portfolio', rotulo: 'Portfólio', icone: 'i-selecao', chaves: ['categories'] },
+  { id: 'servicos', rotulo: 'Serviços', icone: 'i-externo', chaves: ['services'] },
+  { id: 'duvidas', rotulo: 'Dúvidas', icone: 'i-mensagens' },
+  { id: 'visibilidade', rotulo: 'Visibilidade', icone: 'i-ajustes' }
 ];
 
 // ---------------------------------------------------------------- estado
@@ -136,11 +136,13 @@ function atualizarSujo() {
   const sujo = estaSujo(abaAtual);
   botaoSalvar.hidden = !temSalvar;
   botaoSalvar.disabled = !sujo || enviando.size > 0;
-  statusSalvar.textContent = !temSalvar
-    ? 'Cada mudança é salva na hora'
-    : enviando.size > 0 ? 'Enviando arquivo…'
-    : sujo ? 'Alterações não salvas' : 'Tudo salvo';
-  statusSalvar.classList.toggle('pendente', temSalvar && sujo);
+  if (statusSalvar) {
+    statusSalvar.textContent = !temSalvar
+      ? 'Cada mudança é salva na hora'
+      : enviando.size > 0 ? 'Enviando arquivo…'
+      : sujo ? 'Alterações não salvas' : 'Tudo salvo';
+    statusSalvar.classList.toggle('pendente', temSalvar && sujo);
+  }
 }
 
 // ---------------------------------------------------------------- pedaços de HTML
@@ -648,18 +650,18 @@ export async function montar(secao) {
   secao.querySelector('.vazio')?.remove();
 
   const cabeca = secao.querySelector('.tela-cabeca');
+  cabeca.innerHTML = '';
   cabeca.insertAdjacentHTML('beforeend', `
     <div class="ms-salvar">
-      <span class="ms-status" id="ms-status">Carregando…</span>
       <a class="botao botao-secundario" href="/" target="_blank" rel="noopener">${icone('i-externo')} Ver site</a>
       <button class="botao botao-primario" type="button" data-acao="salvar" id="ms-salvar" disabled>Salvar alterações</button>
     </div>`);
   botaoSalvar = cabeca.querySelector('#ms-salvar');
-  statusSalvar = cabeca.querySelector('#ms-status');
+  statusSalvar = null;
 
   secao.insertAdjacentHTML('beforeend', `
     <div class="ms-abas" role="tablist" aria-label="Partes do site">
-      ${ABAS.map((a) => `<button class="ms-aba" type="button" role="tab" data-acao="aba" data-aba="${a.id}">${a.rotulo}<span class="ponto-sujo"></span></button>`).join('')}
+      ${ABAS.map((a) => `<button class="ms-aba" type="button" role="tab" data-acao="aba" data-aba="${a.id}" title="${esc(a.rotulo)}" aria-label="${esc(a.rotulo)}">${icone(a.icone)}<span class="ms-aba-texto">${esc(a.rotulo)}</span><span class="ponto-sujo"></span></button>`).join('')}
     </div>
     <div class="ms-painel" role="tabpanel">
       <div class="carregando"><span class="girando"></span> Carregando o conteúdo do site…</div>
@@ -684,7 +686,7 @@ export async function montar(secao) {
     visibilidade = vis ? normalize(vis) : (readCache() || { ...defaultVisibility });
   } catch (erro) {
     painel.innerHTML = `<div class="carregando erro">Não foi possível carregar o conteúdo: ${esc(erro.message)}</div>`;
-    statusSalvar.textContent = 'Erro ao carregar';
+    if (statusSalvar) statusSalvar.textContent = 'Erro ao carregar';
     return;
   }
 
