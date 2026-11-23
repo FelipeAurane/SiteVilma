@@ -15,7 +15,7 @@ import { montar as montarSite } from './telas/site.js';
 import { montar as montarInicio } from './telas/inicio.js';
 import { montar as montarAgenda } from './telas/agenda.js';
 import { montar as montarSelecao } from './telas/selecoes.js?v=entrega-20261123';
-import { montar as montarClientes } from './telas/clientes.js?v=clientes-20261122';
+import { montar as montarClientes } from './telas/clientes.js';
 import { montar as montarGaleria, ligarSeletorLocal } from './telas/galeria-local.js';
 import { montar as montarAjustes } from './telas/ajustes.js';
 
