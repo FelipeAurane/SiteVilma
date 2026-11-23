@@ -91,7 +91,7 @@ app.get(['/config', '/admin', '/painel', '/dashboard', '/dashboard.html'], (req,
 
 app.get(['/login', '/entrar'], (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
-  res.sendFile(path.join(__dirname, 'src', 'login.html'));
+  res.redirect('/config');
 });
 
 app.get(['/catalogo', '/galeria-cliente', '/cliente'], (req, res) => {

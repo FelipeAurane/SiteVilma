@@ -51,11 +51,11 @@
     },
     {
       "source": "/login",
-      "destination": "/src/login.html"
+      "destination": "/src/admin/index.html"
     },
     {
       "source": "/login.html",
-      "destination": "/src/login.html"
+      "destination": "/src/admin/index.html"
     },
     {
       "source": "/robots.txt",
