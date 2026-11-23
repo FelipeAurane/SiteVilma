@@ -41,7 +41,14 @@ export function montar(secao) {
     if (!arquivo) return;
     status.textContent = 'Importando clientes…';
     try {
-      const XLSX = await import('https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs');
+      if (!window.XLSX) {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+          s.onload = resolve; s.onerror = reject; document.head.appendChild(s);
+        });
+      }
+      const XLSX = window.XLSX;
       const buf = await arquivo.arrayBuffer();
       const wb = XLSX.read(buf, { type: 'array' });
       const ws = wb.Sheets[wb.SheetNames[0]];
