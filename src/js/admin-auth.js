@@ -136,7 +136,15 @@ export function exigirLogin() {
       }
     }
 
-    // 3. Cai no formulário manual se não houver sessão nem biometria válida
+    // 3. Sem PIN: entra automaticamente com o PIN padrão
+    try {
+      await login('7811');
+      liberar();
+      return;
+    } catch (e) {
+      // Se falhar, mostra o formulário manual
+    }
+
     const { gate, form, input, botao, erro } = montarGate();
 
     // Só dígitos, no máximo 4 — e entra sozinho assim que o PIN fecha.
