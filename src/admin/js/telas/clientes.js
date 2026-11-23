@@ -5,6 +5,15 @@ export function montar(secao) {
   let clientes = [], carregado = false, ocupado = false, editando = null;
   let selecionados = new Set();
   let importacaoPendente = null;
+  function mensagemErro(err) {
+    if (!err) return 'Erro desconhecido';
+    if (err instanceof Error) return err.message || 'Erro';
+    if (typeof err === 'string') return err;
+    if (err?.message) return String(err.message);
+    if (err?.target?.error?.message) return String(err.target.error.message);
+    if (err instanceof Event) return 'Falha ao carregar recurso externo.';
+    try { return JSON.stringify(err); } catch { return 'Erro desconhecido'; }
+  }
 
   secao.innerHTML = `<div class="tela-cabeca"><div><h2 id="titulo-clientes">Clientes</h2><p>Cadastre nome, e-mail e WhatsApp para vincular e enviar galerias.</p></div><span class="clientes-total"></span></div>
     <div class="clientes-abas" role="tablist" aria-label="Clientes"><button id="clientes-tab-lista" role="tab" aria-selected="true" aria-controls="clientes-lista" data-aba="lista">Todos os clientes</button><button id="clientes-tab-cadastro" role="tab" aria-selected="false" aria-controls="clientes-cadastro" data-aba="cadastro">Adicionar cliente</button></div>
@@ -102,7 +111,7 @@ export function montar(secao) {
         const lista = clientes.filter(c => c.id !== cliente.id);
         await putContent('clientes', lista);
         clientes = lista; selecionados.delete(cliente.id); listar(); status.textContent = 'Cliente excluído.';
-      } catch (err) { status.textContent = `Falha ao excluir: ${err?.message || err}`; }
+      } catch (err) { status.textContent = `Falha ao excluir: ${mensagemErro(err)}`; }
       finally { ocupado = false; atualizarLote(); }
     }
     if (botao.hasAttribute('data-excluir-lote')) {
@@ -114,7 +123,7 @@ export function montar(secao) {
         const lista = clientes.filter(c => !selecionados.has(c.id));
         await putContent('clientes', lista);
         clientes = lista; selecionados.clear(); listar(); status.textContent = `${ids.length} cliente(s) excluído(s).`;
-      } catch (err) { status.textContent = `Falha ao excluir: ${err?.message || err}`; }
+      } catch (err) { status.textContent = `Falha ao excluir: ${mensagemErro(err)}`; }
       finally { ocupado = false; atualizarLote(); }
     }
   });
@@ -131,7 +140,7 @@ export function montar(secao) {
       if (idx >= 0) lista[idx] = dadosCliente; else lista.push(dadosCliente);
       await putContent('clientes', lista);
       clientes = lista; listar(); form.reset(); editando = null; form.querySelector('h3').textContent = 'Novo cliente'; aba('lista'); status.textContent = 'Cliente salvo.';
-    } catch (err) { status.textContent = `Falha ao salvar: ${err?.message || err}`; }
+    } catch (err) { status.textContent = `Falha ao salvar: ${mensagemErro(err)}`; }
     finally { ocupado = false; form.querySelectorAll('input,textarea,button').forEach(el => el.disabled = false); }
   });
 
@@ -161,8 +170,11 @@ export function montar(secao) {
     await new Promise((resolve, reject) => {
       const s = document.createElement('script');
       s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
-      s.onload = resolve; s.onerror = reject; document.head.appendChild(s);
+      s.onload = () => window.XLSX ? resolve() : reject(new Error('Biblioteca de planilhas não carregou.'));
+      s.onerror = () => reject(new Error('Não foi possível baixar a biblioteca de planilhas.'));
+      document.head.appendChild(s);
     });
+    if (!window.XLSX) throw new Error('Biblioteca de planilhas indisponível.');
     return window.XLSX;
   }
 
@@ -298,7 +310,7 @@ export function montar(secao) {
       importacaoPendente = null;
       status.textContent = `Importação concluída: ${importados} importados, ${atualizados} atualizados, ${ignorados} duplicados ignorados.`;
     } catch (err) {
-      status.textContent = `Falha ao importar: ${err?.message || err}`;
+      status.textContent = `Falha ao importar: ${mensagemErro(err)}`;
       btn.disabled = false; btn.textContent = 'Confirmar importação';
     } finally {
       ocupado = false;
@@ -314,7 +326,7 @@ export function montar(secao) {
       const dados = await processarArquivo(arquivo);
       abrirPreview(dados);
     } catch (err) {
-      status.textContent = `Falha ao importar: ${err?.message || err}`;
+      status.textContent = `Falha ao importar: ${mensagemErro(err)}`;
     } finally {
       ocupado = false;
       e.target.value = '';
