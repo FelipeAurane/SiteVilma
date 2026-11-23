@@ -135,6 +135,19 @@
       ]
     },
     {
+      "source": "/admin/css/(.*)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/css; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
       "source": "/catalogo.html/(.*)",
       "headers": [
         {
