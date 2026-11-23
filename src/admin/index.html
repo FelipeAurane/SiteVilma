@@ -7,7 +7,7 @@
   <title>Luvi</title>
   <!-- Tema aplicado antes do CSS para não piscar claro -> escuro -->
   <script>
-    try { const t = localStorage.getItem('painelTema'); if (t) document.documentElement.dataset.tema = t; } catch (e) {}
+    try { const t = localStorage.getItem('painelTema') || 'claro'; document.documentElement.dataset.tema = t; } catch (e) { document.documentElement.dataset.tema = 'claro'; }
     // No app desktop (window.luvi vem do preload) a página desenha a barra da janela
     if (window.luvi && window.luvi.desktop) document.documentElement.classList.add('app-desktop');
   </script>
@@ -24,13 +24,14 @@
     window.PAINEL_BASE = /\/admin\/(index\.html)?$/.test(location.pathname)
       ? location.pathname.replace(/index\.html$/, '')
       : '/admin/';
-    for (const folha of ['painel', 'meu-site', 'inicio', 'selecao', 'galeria-local', 'clientes', 'galerias']) {
-      document.write('<link rel="stylesheet" href="' + PAINEL_BASE + 'css/' + folha + '.css">');
+    for (const folha of ['painel', 'meu-site', 'inicio', 'agenda', 'selecao', 'galeria-local', 'clientes', 'galerias']) {
+      document.write('<link rel="stylesheet" href="' + PAINEL_BASE + 'css/' + folha + '.css' + (['painel','inicio','agenda','meu-site','galerias'].includes(folha) ? '?v=paleta-20261123' : folha === 'clientes' ? '?v=clientes-20261122' : folha === 'galerias' ? '?v=entrega-20261123' : '') + '">');
     }
   </script>
 </head>
 
 <body class="auth-locked">
+  <div id="luvi-splash" aria-hidden="true"><img src="/admin/img/luvi-logo-splash.svg" alt=""></div>
 
   <!-- ====== Sprite de ícones (use href="#i-xxx") ====== -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -79,6 +80,11 @@
     </div>
   </header>
 
+  <div id="painel-splash" class="painel-splash">
+    <svg class="painel-splash-logo"><use href="#i-luvi" /></svg>
+    <p class="painel-splash-texto">Montando resumo…</p>
+  </div>
+
   <div class="app">
 
     <!-- ====== Trilho lateral ====== -->
@@ -119,9 +125,10 @@
   <script>
     const entrada = document.createElement('script');
     entrada.type = 'module';
-    entrada.src = PAINEL_BASE + 'js/painel.js';
+    entrada.src = PAINEL_BASE + 'js/painel.js?v=entrega-20261123';
     document.body.appendChild(entrada);
   </script>
+  <script>window.addEventListener('load',()=>setTimeout(()=>document.getElementById('luvi-splash')?.remove(),950));</script>
 </body>
 
 </html>

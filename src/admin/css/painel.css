@@ -533,3 +533,7 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
 html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; height: 0; }
 * { scrollbar-width: none; -ms-overflow-style: none; }
 *::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+.painel-splash { position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: var(--fundo); color: var(--texto); }
+.painel-splash-logo { width: 80px; height: auto; }
+.painel-splash-texto { font-size: 14px; opacity: .7; }

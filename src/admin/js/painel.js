@@ -10,16 +10,21 @@
  */
 
 import { exigirLogin } from './auth.js';
+import { putContent } from '../../js/api.js';
 import { montar as montarSite } from './telas/site.js';
 import { montar as montarInicio } from './telas/inicio.js';
-import { montar as montarSelecao } from './telas/selecoes.js';
-import { montar as montarClientes } from './telas/clientes.js';
+import { montar as montarAgenda } from './telas/agenda.js';
+import { montar as montarSelecao } from './telas/selecoes.js?v=entrega-20261123';
+import { montar as montarClientes } from './telas/clientes.js?v=clientes-20261122';
 import { montar as montarGaleria, ligarSeletorLocal } from './telas/galeria-local.js';
 import { montar as montarAjustes } from './telas/ajustes.js';
 
 const TELAS = [
   { id: 'inicio',       rotulo: 'Início',           icone: 'i-inicio',       descricao: 'Resumo do dia: agenda, seleções em andamento e números do site.' },
   { id: 'site',         rotulo: 'Meu site',         icone: 'i-site',         descricao: 'Editor do site: capa, portfólio, serviços, dúvidas e visibilidade.' },
+  { id: 'selecao',      rotulo: 'Seleção de fotos', icone: 'i-selecao',      descricao: 'Organize as galerias de seleção e acompanhe as escolhas dos clientes.' },
+  { id: 'clientes',      rotulo: 'Clientes',         icone: 'i-clientes',     descricao: 'Cadastre e edite os contatos usados para enviar galerias.' },
+  { id: 'agenda',       rotulo: 'Agenda',           icone: 'i-agenda',       descricao: 'Organize sua disponibilidade e seus lembretes pessoais.' },
 ];
 
 // id da tela -> função que monta o conteúdo (preenchidas aos poucos).
@@ -31,6 +36,7 @@ const MONTADORES = {
   site: montarSite,
   galeria: montarGaleria,
   ajustes: montarAjustes,
+  agenda: montarAgenda,
 };
 const ATUALIZADORES = {};
 
@@ -135,6 +141,7 @@ function ligarTema() {
     const novo = temaEscuroAtivo() ? 'claro' : 'escuro';
     document.documentElement.dataset.tema = novo;
     try { localStorage.setItem('painelTema', novo); } catch (e) { /* modo privado */ }
+    putContent('panelTheme',novo).catch(e=>console.warn('Não foi possível sincronizar o tema:',e.message));
   });
 }
 
@@ -195,6 +202,9 @@ if (desktop) {
 
 window.addEventListener('hashchange', () => mostrar(rotaAtual()));
 mostrar(rotaAtual());
+
+const splashPainel = document.getElementById('painel-splash');
+if (splashPainel) splashPainel.remove();
 
 // Avisa o app que o painel montou com os dados da sincronia — só então a janela aparece
 if (desktop) {
