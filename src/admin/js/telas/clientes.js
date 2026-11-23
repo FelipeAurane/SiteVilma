@@ -169,7 +169,7 @@ export function montar(secao) {
     if (window.XLSX) return window.XLSX;
     await new Promise((resolve, reject) => {
       const s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+      s.src = new URL('../vendor/xlsx.full.min.js', import.meta.url).href;
       s.onload = () => window.XLSX ? resolve() : reject(new Error('Biblioteca de planilhas não carregou.'));
       s.onerror = () => reject(new Error('Não foi possível baixar a biblioteca de planilhas.'));
       document.head.appendChild(s);
