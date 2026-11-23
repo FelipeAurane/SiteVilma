@@ -203,6 +203,7 @@ svg { width: 22px; height: 22px; flex-shrink: 0; }
 .topo {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 24px;
   padding: 22px 32px 18px;
 }
