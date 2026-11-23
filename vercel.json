@@ -50,14 +50,6 @@
       "destination": "/src/pages/selecao.html"
     },
     {
-      "source": "/download.html",
-      "destination": "/src/pages/download.html"
-    },
-    {
-      "source": "/download.html/:galeria",
-      "destination": "/src/pages/download.html"
-    },
-    {
       "source": "/login",
       "destination": "/src/login.html"
     },

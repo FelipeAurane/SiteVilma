@@ -66,7 +66,6 @@ app.all('/api/media/:id', (req, res) => {
 // ------------------------------------------------------------- estáticos
 
 app.get(['/catalogo.html','/catalogo.html/:galeria'],(req,res)=>{res.setHeader('Cache-Control','no-store');res.sendFile(path.join(__dirname,'src','pages','selecao.html'));});
-app.get(['/download.html','/download.html/:galeria'],(req,res)=>{res.setHeader('Cache-Control','no-store');res.sendFile(path.join(__dirname,'src','pages','download.html'));});
 app.use(express.static(path.join(__dirname, 'src'), { index: false }));
 
 // Arquivos da raiz que o site ou PWA solicitam
