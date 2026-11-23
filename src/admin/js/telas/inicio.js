@@ -11,7 +11,7 @@
  * para os números não ficarem velhos depois de editar o site.
  */
 
-import { getContent, getSelecoes, getAnalytics } from '../../../js/api.js';
+import { getContent, getSelecoes } from '../../../js/api.js';
 
 const STATUS = {
   pendente: { rotulo: 'Pendente', tom: 'ambar' },
@@ -261,13 +261,13 @@ function pintar({ site, faqs, datas, selecoes, erroSelecoes, analytics }) {
 }
 
 async function carregar() {
-  const [site, faqs, datas, resultadoSelecoes, analytics] = await Promise.all([
+  const [site, faqs, datas, resultadoSelecoes] = await Promise.all([
     getContent('siteData').catch(() => null),
     getContent('faqs').catch(() => null),
     getContent('availableDates').catch(() => null),
-    getSelecoes().then((r) => ({ lista: r?.selecoes || [] }), (e) => ({ lista: [], erro: e.status === 401 ? 'Entre de novo para ver.' : e.message })),
-    getAnalytics().catch(() => null)
+    getSelecoes().then((r) => ({ lista: r?.selecoes || [] }), (e) => ({ lista: [], erro: e.status === 401 ? 'Entre de novo para ver.' : e.message }))
   ]);
+  const analytics = null;
   const selecoes = [...resultadoSelecoes.lista]
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   pintar({ site, faqs, datas, selecoes, erroSelecoes: resultadoSelecoes.erro, analytics });
