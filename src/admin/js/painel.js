@@ -203,8 +203,7 @@ if (desktop) {
 window.addEventListener('hashchange', () => mostrar(rotaAtual()));
 mostrar(rotaAtual());
 
-const splashPainel = document.getElementById('painel-splash');
-if (splashPainel) splashPainel.remove();
+
 
 // Avisa o app que o painel montou com os dados da sincronia — só então a janela aparece
 if (desktop) {
