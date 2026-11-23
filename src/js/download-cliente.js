@@ -27,6 +27,7 @@ async function entrar(email, senha) {
   if (!fotos.length && data.galeria?.image) fotos = [data.galeria.image];
   login.style.display = 'none';
   app.style.display = 'block';
+  if (!fotos.length) { stage.innerHTML = '<p style="color:#fff">Nenhuma foto disponível.</p>'; return; }
   mostrar(0);
   iniciar();
 }
