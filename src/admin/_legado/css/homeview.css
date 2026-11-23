@@ -1,0 +1,87 @@
+.home-div {
+  padding: 26px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0px;
+  background-color: #1c1b2cd8;
+}
+
+.bunner {
+  display: flex;
+  border-radius: 25px;
+  height: 300px;
+  background-size: cover;
+  align-items: end;
+  justify-content: end;
+  margin: 0 auto;
+  background: #4e4e4e9c;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 10px;
+}
+
+
+
+header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.icone {
+  cursor: pointer;
+}
+
+.dias-semana {
+  margin-left: 10px;
+  display: grid;
+  grid-template-columns: repeat(7, 2fr);
+  font-weight: bold;
+  grid-gap: 10px;
+  margin-bottom: 10px;
+}
+
+.dias {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 5px;
+}
+
+.dias span {
+  display: flex;
+  color: #ffffff;
+  justify-content: center;
+  align-items: center;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.dias span:hover {
+  background-color: #777777cb;
+}
+
+.dias span.outro-mes {
+  color: #aaa;
+}
+
+.dias span.hoje {
+  background-color: #ffc60b;
+  color: #fff;
+}
+.dias-semana, #mes-atual{
+  color: #ffffff;
+}
+.home-div-inicio {
+  display: flex;
+}
+
+.bunner {
+  height: 350px;
+  width: 70%; /* Defina a largura desejada para o elemento */
+}
+.menu-top-home{
+   display: flex;
+}

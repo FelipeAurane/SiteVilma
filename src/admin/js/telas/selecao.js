@@ -77,10 +77,8 @@ const PADROES_GRADE = [
 ];
 
 const ABAS = [
-  { id: 'recebidas', rotulo: 'Seleções recebidas' },
-  { id: 'fotos', rotulo: 'Fotos da galeria', chaves: ['fotos'] },
-  { id: 'marca', rotulo: "Marca-d'água", chaves: ['sobreposicao'], comMarca: true },
-  { id: 'regras', rotulo: 'Regras e ajustes', chaves: ['estabelecimento', 'limite', 'regras'] }
+  { id: 'marca', rotulo: "Marca-d'água", chaves: ['sobreposicao'], comMarca: true }
+
 ];
 
 // ---------------------------------------------------------------- estado
@@ -95,7 +93,7 @@ let marcaPadrao = {};
 const salvo = {};             // id da aba -> JSON do que está publicado
 const abertas = new Set();    // seleções expandidas
 let filtro = 'todas';
-let abaAtual = 'recebidas';
+let abaAtual = 'marca';
 let enviandoFotos = null;     // { feitas, total } durante o envio
 let raiz, painel, botaoSalvar, statusSalvar, barraAbas;
 
@@ -455,7 +453,8 @@ function atualizarPreviaGravada() {
     const pedido = ++previaPedido;
     estadoEl.textContent = 'Gerando…';
     try {
-      const resposta = await fetch(`/api/media/protection?${params}`, { cache: 'no-store' });
+      const token = localStorage.getItem('vf_session_token');
+      const resposta = await fetch(`/api/media/protection?${params}`, { cache: 'no-store', headers: token ? { Authorization: `Bearer ${token}` } : {} });
       if (!resposta.ok) throw new Error(`Erro ${resposta.status}`);
       const blob = await resposta.blob();
       if (pedido !== previaPedido) return; // chegou uma prévia mais nova
@@ -843,7 +842,6 @@ export function montar(secao) {
   secao.querySelector('.tela-cabeca').insertAdjacentHTML('beforeend', `
     <div class="ms-salvar">
       <span class="ms-status" id="sl-status">Carregando…</span>
-      <a class="botao botao-secundario" href="/catalogo" target="_blank" rel="noopener">${icone('i-externo')} Abrir galeria do cliente</a>
       <button class="botao botao-primario" type="button" data-acao="salvar" id="sl-salvar" disabled hidden>Salvar alterações</button>
     </div>`);
   botaoSalvar = secao.querySelector('#sl-salvar');

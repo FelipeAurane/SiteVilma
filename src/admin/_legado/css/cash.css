@@ -1,0 +1,26 @@
+.pagamentos {
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .pagamentos h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .saldo, .saidas, .saldoTotal {
+    margin-bottom: 10px;
+  }
+  
+  .saldo h3, .saidas h3, .saldoTotal h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+  
+  .saldo p, .saidas p, .saldoTotal p {
+    font-size: 16px;
+  }
+  

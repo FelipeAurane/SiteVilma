@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- ====== Fontes ====== -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel da Vilma</title>
+
+
+  <!-- ====== CSS ====== -->
+  <!-- Caminhos absolutos: o painel mora em src/admin/ e e servido tambem em
+       /config, /admin e /painel. Com caminho relativo ("./css/...") o navegador
+       resolveria a partir de /css, que e a pasta de CSS do site. -->
+  <link rel="stylesheet" href="/admin/css/home.css">
+  <link rel="stylesheet" href="/admin/css/styles.css">
+  <link rel="stylesheet" href="/admin/css/scroll.css">
+  <link rel="stylesheet" href="/admin/css/navigate.css">
+  <link rel="stylesheet" href="/admin/css/search.css">
+  <link rel="stylesheet" href="/admin/css/homeview.css">
+  <link rel="stylesheet" href="/admin/css/agendamentos.css">
+  <link rel="stylesheet" href="/admin/css/cash.css">
+  <link rel="stylesheet" href="/admin/css/style-new-aluno.css">
+  <link rel="stylesheet" href="/admin/css/tailwind.output.css">
+  <link rel="stylesheet" href="/admin/css/admin.css">
+  <!-- Última folha de propósito: painel.css é a fonte da verdade do layout e
+       da estética, e precisa vencer as regras anteriores para o mesmo elemento. -->
+  <link rel="stylesheet" href="/admin/css/painel.css">
+
+</head>
+
+<body>
+
+  <div class="sidebar close" id="sidebar">
+
+    <!-- Icon Main -->
+    <div class="logo-details">
+      <i class='icon'>
+        <svg id="Camada_3" data-name="Camada 3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 606.85 340.47"
+>
+          <defs>
+            <style>
+              .cls-1 {
+                fill: #f6f3ee;
+              }
+            </style>
+          </defs>
+          <polygon class="cls-1"
+            points="158.98 263.55 158.38 263.55 158.52 263.29 44.15 262.88 0 338.23 116.87 338.83 158.98 263.55" />
+          <path class="cls-1"
+            d="M458.38,112l-239.13-3.13L120,278.34H234l48.08-83,146.12,2.24c47.34,1.57,106.49,36.21,106.67,85.05h0c.19,49.43-45.72,89.63-102.54,89.77H304.37l-41.08,75.93,193.28,1c94.93-.26,171.65-76.05,171.34-169.25h0C627.59,188.05,552.15,113.24,458.38,112Z"
+            transform="translate(-21.05 -108.88)" />
+        </svg>
+      </i>
+      <span class="logo_name">Vilma Fotografia</span>
+    </div>
+
+    <!-- Menu Lateral -->
+    <ul class="nav-links">
+      <li>
+        <a href="#" class="nav-btn active" data-screen="inicio">
+          <i class='bx bxs-grid-alt'></i>
+          <span class="link_name">Inicio</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="#" class="nav-btn" data-screen="insights">
+          <i class='bx bxs-carousel'></i>
+          <span class="link_name">Insights</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="#" class="nav-btn" data-screen="clientes">
+          <i class='bx bxs-group'></i>
+          <span class="link_name">Clientes</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="#" class="nav-btn" data-screen="financeiro">
+          <i class='bx bxs-wallet'></i>
+          <span class="link_name">Financeiro</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="#" class="nav-btn" data-screen="agendamento">
+          <i class='bx bxs-calendar'></i>
+          <span class="link_name">Agendamento</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="#" class="nav-btn" data-screen="selecao">
+          <i class='bx bxs-message-square-add'></i>
+          <span class="link_name">Seleção de fotos</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="#" class="nav-btn" data-screen="arquivos">
+          <i class='bx bxs-folder'></i>
+          <span class="link_name">Arquivos</span>
+        </a>
+      </li>
+
+      <li>
+        <div class="iocn-link">
+
+          <a href="#" class="nav-btn" data-screen="meusite">
+            <i class='bx bxs-layer'></i>
+            <span class="link_name">Meu Site</span>
+          </a>
+          <i class='bx bxs-chevron-down arrow'></i>
+        </div>
+        <ul class="sub-menu">
+          <li><a class="link_name" href="#" data-screen="meusite">Configurações</a></li>
+          <li><a class="link_name" href="#" data-screen="meusite">Galeria</a></li>
+          <li><a class="link_name" href="#" data-screen="meusite">Serviços</a></li>
+        </ul>
+      </li>
+
+      <li>
+        <a href="#" class="nav-btn" data-screen="arquivos">
+          <i class='bx bxs-folder'></i>
+          <span class="link_name">Arquivos</span>
+        </a>
+      </li>
+
+      <li>
+        <div class="iocn-link">
+
+          <a href="#" class="nav-btn" data-screen="ajustes">
+            <i class='bx bx-cog'></i>
+            <span class="link_name">Ajustes</span>
+          </a>
+          <i class='bx bxs-chevron-down arrow'></i>
+        </div>
+        <ul class="sub-menu">
+          <li><a class="link_name" href="#" data-screen="ajustes">Ajustes</a></li>
+        </ul>
+      </li>
+
+      <div class="profile-details">
+        <div class="profile-content">
+          <img id="image" src="/admin/img/profile.jpg" alt="Painel da Vilma">
+          <div id="onlineIndicator"></div>
+        </div>
+        <div class="name-job">
+          <div id="name" class="profile_name">Painel da Vilma</div>
+          <div id="job" class="job">Administradora</div>
+        </div>
+
+      </div>
+    </ul>
+
+  </div>
+
+  <!-- Todas as Telas -->
+  <section class="home-section rounded-overlay">
+
+    <!-- Notifications -->
+    <ul class="notifications"></ul>
+
+    <!-- Menu Top Bar -->
+    <div class="menutopbar">
+      <div class="home-content">
+
+        <div class="menu-btn" id="menuBtn">
+          <i class="menu-btn__burger"></i>
+
+        </div>
+
+        <!-- Busca: filtra o que já está carregado no painel. Não consulta o
+             servidor — a busca antiga vinha de uma coleção de alunos que hoje
+             não existe no backend. -->
+        <div class="search-container">
+          <input type="text" id="searchInput" class="search-input" placeholder="Buscar informações do aluno.">
+          <i class="fas fa-search search-icon"></i>
+          <div id="suggestionsContainer">
+            <p class="result">Resultado da busca.</p>
+            <ul id="suggestionsList"></ul>
+          </div>
+        </div>
+
+        <div class="icons">
+          <i class='bx bxs-bell'></i>
+          <i class='bx bxs-collection' onclick="menuToggle();"></i>
+        </div>
+
+
+        <div class="menu-content">
+
+
+          <ul>
+            <li id="logoutBtn" style="cursor:pointer;">
+              <i class="bx bx-log-out"></i>
+              <span class="log_out">Sair</span>
+            </li>
+          </ul>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Splash Loader  -->
+    <div id="preloader">
+      <p id="preloader-message">Aguarde...</p>
+      <p id="preloader-progress">Conectando ao servidor...</p>
+      <div id="preloader-spinner"></div>
+    </div>
+
+    <div class="home-div" id="home-div">
+
+
+      <!-- Inicio  -->
+      <div class="home-div-inicio screen active" id="inicio">
+
+        <header class="painel-cabecalho">
+          <div>
+            <h1>Bom te ver por aqui</h1>
+            <p id="painel-data">Resumo do que esta publicado no site.</p>
+          </div>
+          <div class="painel-selo">
+            <span class="painel-selo-ponto" id="painel-status-ponto"></span>
+            <span id="painel-status">Conectado a API do site</span>
+          </div>
+        </header>
+
+        <section class="section">
+          <h2><ion-icon name="color-wand-outline"></ion-icon> Conteudo publicado</h2>
+          <div class="cards-grid">
+            <div class="card stat stat--creme">
+              <span class="stat-icone"><ion-icon name="folder-open-outline"></ion-icon></span>
+              <h3>Categorias</h3>
+              <div class="metric" id="total-categories">0</div>
+              <p class="stat-nota">Grupos do portfolio</p>
+            </div>
+            <div class="card stat stat--blush">
+              <span class="stat-icone"><ion-icon name="images-outline"></ion-icon></span>
+              <h3>Imagens</h3>
+              <div class="metric" id="total-images">0</div>
+              <p class="stat-nota">Fotos referenciadas no site</p>
+            </div>
+            <div class="card stat stat--ceu">
+              <span class="stat-icone"><ion-icon name="briefcase-outline"></ion-icon></span>
+              <h3>Servicos</h3>
+              <div class="metric" id="total-services">0</div>
+              <p class="stat-nota">Na aba de servicos</p>
+            </div>
+            <div class="card stat stat--rosa">
+              <span class="stat-icone"><ion-icon name="help-circle-outline"></ion-icon></span>
+              <h3>Duvidas</h3>
+              <div class="metric" id="total-faqs">0</div>
+              <p class="stat-nota">Perguntas frequentes</p>
+            </div>
+          </div>
+        </section>
+
+        <div class="painel-duas-colunas">
+          <section class="section">
+            <h2><ion-icon name="flash-outline"></ion-icon> Atalhos</h2>
+            <div class="atalhos">
+              <button class="atalho" data-ir="meusite">
+                <ion-icon name="brush-outline"></ion-icon>
+                <span><strong>Editar o site</strong><small>Textos, imagens e secoes</small></span>
+              </button>
+              <button class="atalho" data-ir="agendamento">
+                <ion-icon name="calendar-outline"></ion-icon>
+                <span><strong>Abrir a agenda</strong><small>Datas disponiveis</small></span>
+              </button>
+              <button class="atalho" data-ir="arquivos">
+                <ion-icon name="folder-outline"></ion-icon>
+                <span><strong>Gerenciar arquivos</strong><small>Pastas do computador</small></span>
+              </button>
+            </div>
+          </section>
+
+          <section class="section">
+            <h2><ion-icon name="server-outline"></ion-icon> Sistema</h2>
+            <ul class="painel-lista">
+              <li>
+                <span>Origem dos dados</span>
+                <strong id="data-source">API do site</strong>
+              </li>
+              <li>
+                <span>Banco</span>
+                <strong id="data-backend">-</strong>
+              </li>
+              <li>
+                <span>Arquivos de midia</span>
+                <strong id="storage-usage">0 arquivos</strong>
+              </li>
+              <li>
+                <span>Versao dos dados</span>
+                <strong id="data-version">1</strong>
+              </li>
+              <li>
+                <span>Datas liberadas na agenda</span>
+                <strong id="total-datas">0</strong>
+              </li>
+            </ul>
+          </section>
+        </div>
+
+      </div>
+
+      <!-- Insights -->
+      <div class="home-div-insights screen" id="insights">
+        <main class="h-full pb-16 overflow-y-auto">
+          <div>
+            <h2 class="my-6 text-2xl font-semibold">Insights</h2>
+            <div class="section">
+              <div class="empty-state">
+                <ion-icon name="stats-chart-outline" style="font-size:4rem; margin-bottom:16px;"></ion-icon>
+                <h3>Nenhum dado de readership ainda</h3>
+                <p>As métricas de acesso do site aparecem aqui quando houver visitações registradas.</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <!-- Clientes -->
+      <div class="home-div-clientes screen" id="clientes">
+        <main class="h-full pb-16 overflow-y-auto">
+          <div>
+            <h2 class="my-6 text-2xl font-semibold">Clientes</h2>
+            <div class="section">
+              <div class="empty-state">
+                <ion-icon name="people-outline" style="font-size:4rem; margin-bottom:16px;"></ion-icon>
+                <h3>Nenhum cliente cadastrado</h3>
+                <p>Clientes entram pelo fluxo de login da área do cliente, em /login.</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <!-- Financeiro -->
+      <div class="home-div-financeiro screen" id="financeiro">
+        <main class="h-full pb-16 overflow-y-auto">
+          <div>
+            <h2 class="my-6 text-2xl font-semibold">Financeiro</h2>
+            <div class="section">
+              <div class="empty-state">
+                <ion-icon name="wallet-outline" style="font-size:4rem; margin-bottom:16px;"></ion-icon>
+                <h3>Nenhum pagamento registrado</h3>
+                <p>Quando houver cobrança integrada, o extrato aparece nesta tela.</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+
+
+      <!-- Agenda -->
+      <div class="home-div-agendamento screen" id="agendamento">
+
+        <main class="h-full pb-16 overflow-y-auto">
+          <div>
+            <h2 class="my-6 text-2xl font-semibold">Datas disponíveis</h2>
+
+            <div class="btns">
+              <div class="div-lixeira" onclick="openDateModal()">
+                <i class="bx bxs-calendar-plus" style="color:#ffffff; width:35px; height:35px;"></i>
+                <span class="textBtn">Adicionar</span>
+              </div>
+            </div>
+
+            <!-- Calendário: os dias marcados viram as datas que o site oferece -->
+            <div class="section">
+              <div class="agenda-controles">
+                <label for="agenda-mes">Mês</label>
+                <select id="agenda-mes"></select>
+
+                <label for="agenda-ano">Ano</label>
+                <select id="agenda-ano"></select>
+              </div>
+
+              <div id="calendar-container" class="agenda-grade" aria-live="polite"></div>
+
+              <p class="agenda-ajuda">
+                Clique num dia para liberar a data e de novo para bloquear.
+                <button class="btn" id="save-date-btn">Salvar agenda</button>
+              </p>
+            </div>
+          </div>
+        </main>
+
+      </div>
+
+      <!-- Seleção de fotos -->
+      <div class="home-div-selecao screen" id="selecao">
+        <main class="h-full pb-16 overflow-y-auto">
+          <div>
+            <h2 class="my-6 text-2xl font-semibold">Seleção de fotos</h2>
+            <div class="section">
+              <div class="empty-state">
+                <ion-icon name="images-outline" style="font-size:4rem; margin-bottom:16px;"></ion-icon>
+                <h3>Nenhuma seleção recebida ainda</h3>
+                <p>Cada finalize em /catalogo vira uma linha na tabela <code>selecoes</code>.</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <!-- Site Geral -->
+      <div class="home-div-geral screen" id="meusite">
+
+        <main class="h-full pb-16 overflow-y-auto">
+          <div>
+            <h2 class="my-6 text-2xl font-semibold">
+              Meu Site
+            </h2>
+            <!-- CTA -->
+            <a class="flex items-center justify-between p-4 mb-8 text-sm font-semibold card-mini rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple"
+              href="#">
+              <div class="flex items-center">
+                <svg id="Camada_3" data-name="Camada 3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 606.85 340.47"
+                  style="width: 25px; height: 15px; margin-right: 16px;">
+                  <defs>
+                    <style>
+                      .cls-1 {
+                        fill: #f6f3ee;
+                      }
+                    </style>
+                  </defs>
+                  <polygon class="cls-1"
+                    points="158.98 263.55 158.38 263.55 158.52 263.29 44.15 262.88 0 338.23 116.87 338.83 158.98 263.55" />
+                  <path class="cls-1"
+                    d="M458.38,112l-239.13-3.13L120,278.34H234l48.08-83,146.12,2.24c47.34,1.57,106.49,36.21,106.67,85.05h0c.19,49.43-45.72,89.63-102.54,89.77H304.37l-41.08,75.93,193.28,1c94.93-.26,171.65-76.05,171.34-169.25h0C627.59,188.05,552.15,113.24,458.38,112Z"
+                    transform="translate(-21.05 -108.88)" />
+                </svg>
+                <span>Configure e personalize seu website com facilidade.!</span>
+              </div>
+
+            </a>
+
+            <div class="submenu" role="tablist">
+              <button class="submenu-btn active" data-subscreen="configuracoes-gerais" role="tab" aria-selected="true"
+                aria-controls="configuracoes-gerais">Configurações Gerais</button>
+              <button class="submenu-btn" data-subscreen="galeriasite" role="tab" aria-selected="false"
+                aria-controls="galeriasite">Galeria do Site</button>
+              <button class="submenu-btn" data-subscreen="servicos" role="tab" aria-selected="false"
+                aria-controls="servicos">Serviços</button>
+              <button class="submenu-btn" data-subscreen="duvidas" role="tab" aria-selected="false"
+                aria-controls="duvidas">Dúvidas</button>
+              <button class="submenu-btn" data-subscreen="personalizar" role="tab" aria-selected="false"
+                aria-controls="personalizar">Personalizar</button>
+            </div>
+            <div id="configuracoes-gerais" class="subscreen active" role="tabpanel"
+              aria-labelledby="configuracoes-gerais-tab">
+              <div class="section">
+                <h2><ion-icon name="home-outline"></ion-icon> Seção Principal (Hero)</h2>
+                <div class="form-group">
+                  <label for="hero-etiqueta">Etiqueta superior</label>
+                  <input type="text" id="hero-etiqueta" placeholder="Ex: Fotografia Gastronômica" maxlength="60">
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="hero-titulo">Título Principal *</label>
+                    <input type="text" id="hero-titulo" placeholder="Ex: Vilma Silva" maxlength="50" required
+                      aria-required="true">
+                  </div>
+                  <div class="form-group">
+                    <label for="hero-subtitulo">Subtítulo</label>
+                    <input type="text" id="hero-subtitulo" placeholder="Ex: Fotógrafa de Comida" maxlength="100">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="hero-image-upload">Imagem ou vídeo principal</label>
+                  <div class="image-upload-area" id="hero-image-upload">
+                    <p>Clique ou arraste uma imagem ou vídeo aqui</p>
+                    <small>Vídeo substitui a imagem na capa. Limite de 3MB.</small>
+                    <input type="file" accept="image/*,video/mp4,video/webm" style="display: none;"
+                      id="hero-image-input" aria-label="Upload de mídia principal">
+                    <div class="upload-progress">
+                      <div class="upload-progress-bar"></div>
+                    </div>
+                  </div>
+                  <img id="hero-image-preview" class="image-preview" style="display: none;"
+                    alt="Pré-visualização da imagem principal">
+                  <video id="hero-video-preview" class="image-preview" style="display: none;" muted playsinline
+                    aria-label="Pré-visualização do vídeo principal"></video>
+                </div>
+
+                <div class="form-group">
+                  <label for="center-arquivo">Mídia em destaque no meio da capa</label>
+                  <input type="file" accept="image/*,video/mp4,video/webm" id="center-arquivo"
+                    aria-label="Upload da mídia em destaque">
+                  <small id="center-atual">Padrão do site</small>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="botao-texto">Texto do Botão</label>
+                    <input type="text" id="botao-texto" placeholder="Ex: Orçamentos" maxlength="30">
+                  </div>
+                  <div class="form-group">
+                    <label for="botao-whatsapp">WhatsApp (com código do país)</label>
+                    <input type="tel" id="botao-whatsapp" placeholder="5581998370180" pattern="[0-9]{10,15}"
+                      title="Digite um número de telefone válido com código do país">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="botao-mensagem">Mensagem WhatsApp</label>
+                  <textarea id="botao-mensagem" placeholder="Olá, gostaria de solicitar um orçamento..."
+                    maxlength="200"></textarea>
+                </div>
+              </div>
+            </div>
+            <div id="galeriasite" class="subscreen" role="tabpanel" aria-labelledby="galeriasite-tab">
+              <div class="section">
+                <h2><ion-icon name="image-outline"></ion-icon> Banner da Galeria</h2>
+                <div class="form-group">
+                  <label for="banner-text-enable">
+                    <input type="checkbox" id="banner-text-enable" checked>
+                    Exibir Título e Subtítulo
+                  </label>
+                </div>
+                <div class="form-group">
+                  <label for="banner-titulo-tela">Título do Cardápio</label>
+                  <input type="text" id="banner-titulo-tela" maxlength="50" placeholder="Ex: Cardápio">
+                </div>
+                <div id="banner-text-fields">
+                  <div class="form-group">
+                    <label for="banner-titulo">Título do Banner</label>
+                    <input type="text" id="banner-titulo" maxlength="50" placeholder="Ex: Meu Portifólio">
+                  </div>
+                  <div class="form-group">
+                    <label for="banner-subtitulo">Subtítulo do Banner</label>
+                    <input type="text" id="banner-subtitulo" maxlength="100" placeholder="Ex: Em Forma de menu">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="banner-image-upload">Imagem do Banner</label>
+                  <div class="image-upload-area" id="banner-image-upload">
+                    <p><ion-icon name="image-outline"></ion-icon> Clique ou arraste uma imagem aqui</p>
+                    <small>Formatos aceitos: JPG, PNG, WebP (máx. 5MB)</small>
+                    <input type="file" accept="image/*" style="display: none;" id="banner-image-input"
+                      aria-label="Upload de imagem do banner">
+                    <div class="upload-progress">
+                      <div class="upload-progress-bar"></div>
+                    </div>
+                  </div>
+                  <img id="banner-image-preview" class="image-preview" style="display: none;"
+                    alt="Pré-visualização da imagem do banner">
+                </div>
+              </div>
+              <div class="section">
+                <h2><ion-icon name="folder-outline"></ion-icon> Categorias</h2>
+                <div style="margin-bottom: 20px;">
+                  <button class="btn" id="add-category-btn" aria-label="Adicionar nova categoria">
+                    <ion-icon name="add-circle-outline"></ion-icon> Adicionar Nova Categoria
+                  </button>
+                </div>
+                <div id="categories-container" aria-live="polite">
+                  <div class="empty-state" id="empty-categories" style="display: none;">
+                    <ion-icon name="folder-open-outline" style="font-size: 4rem; margin-bottom: 15px;"></ion-icon>
+                    <h3>Nenhuma categoria criada</h3>
+                    <p>Clique no botão acima para adicionar sua primeira categoria</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="servicos" class="subscreen" role="tabpanel" aria-labelledby="servicos-tab">
+              <div class="section">
+                <h2><ion-icon name="briefcase-outline"></ion-icon> Serviços</h2>
+                <div style="margin-bottom: 20px;">
+                  <button class="btn" id="add-service-btn" aria-label="Adicionar novo serviço">
+                    <ion-icon name="add-circle-outline"></ion-icon> Adicionar Novo Serviço
+                  </button>
+                </div>
+                <div id="services-container" aria-live="polite">
+                  <div class="empty-state" id="empty-services" style="display: none;">
+                    <ion-icon name="briefcase-outline" style="font-size: 4rem; margin-bottom: 15px;"></ion-icon>
+                    <h3>Nenhum serviço criado</h3>
+                    <p>Clique no botão acima para adicionar seu primeiro serviço</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="duvidas" class="subscreen" role="tabpanel" aria-labelledby="duvidas-tab">
+              <div class="section">
+                <h2><ion-icon name="help-circle-outline"></ion-icon> Dúvidas Frequentes</h2>
+                <div style="margin-bottom: 20px;">
+                  <button class="btn" id="add-faq-btn" aria-label="Adicionar nova dúvida">
+                    <ion-icon name="add-circle-outline"></ion-icon> Adicionar Nova Dúvida
+                  </button>
+                </div>
+                <div id="faqs-container" aria-live="polite">
+                  <div class="empty-state" id="empty-faqs" style="display: none;">
+                    <ion-icon name="help-circle-outline" style="font-size: 4rem; margin-bottom: 15px;"></ion-icon>
+                    <h3>Nenhuma dúvida criada</h3>
+                    <p>Clique no botão acima para adicionar sua primeira dúvida</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="personalizar" class="subscreen" role="tabpanel" aria-labelledby="personalizar-tab">
+              <div class="section">
+                <h2><ion-icon name="color-palette-outline"></ion-icon> Personalizar Tema</h2>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="theme-primary-color">Cor Primária</label>
+                    <input type="color" id="theme-primary-color" value="#f6f3ee">
+                  </div>
+                  <div class="form-group">
+                    <label for="theme-secondary-color">Cor Secundária</label>
+                    <input type="color" id="theme-secondary-color" value="#0e0e10">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="theme-font">Fonte Principal</label>
+                  <select id="theme-font">
+                    <option value="Inter">Inter</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Helvetica">Helvetica</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Roboto">Roboto</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="dark-mode-toggle">
+                    <input type="checkbox" id="dark-mode-toggle"> Painel escuro
+                  </label>
+                </div>
+              </div>
+              <div class="section">
+                <h2><ion-icon name="settings-outline"></ion-icon> Configurações de Funcionalidades</h2>
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="enable-services" checked> Habilitar Aba de Serviços
+                  </label>
+                </div>
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="enable-faqs" checked> Habilitar Aba de Dúvidas
+                  </label>
+                </div>
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="enable-splash" checked> Habilitar Tela de Splash
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <h2><ion-icon name="flash-outline"></ion-icon> Ações</h2>
+              <div class="actions-grid">
+                <button class="btn" id="save-hero-btn" aria-label="Salvar textos e imagens">
+                  <span class="btn-text"><ion-icon name="save-outline"></ion-icon> Salvar Textos e Imagens</span>
+                </button>
+                <button class="btn" id="save-theme-btn" aria-label="Salvar personalização">
+                  <span class="btn-text"><ion-icon name="color-palette-outline"></ion-icon> Salvar Personalização</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </main>
+
+      </div>
+
+      <!-- Arquivos -->
+      <div class="home-div-arquivos screen" id="arquivos">
+        <main class="h-full pb-16 overflow-y-auto">
+          <div>
+            <h2 class="my-6 text-2xl font-semibold">Arquivos</h2>
+
+            <section class="section">
+              <div class="arq-barra">
+                <div class="arq-migalhos" id="arq-migalhos"></div>
+
+                <div class="arq-ferramentas">
+                  <button class="btn" id="arq-ir-raiz" title="Voltar à pasta raiz">
+                    <ion-icon name="home-outline"></ion-icon> Raiz
+                  </button>
+                  <button class="btn" id="arq-nova-pasta">
+                    <ion-icon name="folder-outline"></ion-icon> Nova pasta
+                  </button>
+                  <button class="btn" id="arq-recarregar">
+                    <ion-icon name="refresh-outline"></ion-icon>
+                  </button>
+                </div>
+              </div>
+
+              <div class="arq-envio">
+                <input type="file" id="arq-envio" aria-label="Enviar arquivo">
+                <span>Envie uma imagem, vídeo, texto, PDF ou ZIP. Até 3MB por arquivo.</span>
+              </div>
+
+              <p class="arq-contagem" id="arq-contagem"></p>
+
+              <div class="arq-tabela-envolve">
+                <table class="arq-tabela">
+                  <thead>
+                    <tr>
+                      <th>Nome</th>
+                      <th class="arq-num">Tamanho</th>
+                      <th class="arq-data">Modificado</th>
+                      <th class="arq-acoes-col">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="arq-corpo"></tbody>
+                </table>
+
+                <div class="empty-state" id="arq-vazio" style="display: none;">
+                  <ion-icon name="folder-open-outline" style="font-size: 4rem; margin-bottom: 15px;"></ion-icon>
+                  <h3>Esta pasta está vazia</h3>
+                  <p>Use "Nova pasta" ou envie um arquivo para começar.</p>
+                </div>
+              </div>
+
+              <p class="arq-aviso">
+                <ion-icon name="shield-checkmark-outline"></ion-icon>
+                O painel só enxerga a pasta configurada no servidor. Caminhos que
+                saem dela são recusados.
+              </p>
+            </section>
+          </div>
+        </main>
+      </div>
+
+      <!-- Ajustes -->
+      <div class="home-div-ajustes screen" id="ajustes">
+        <main class="h-full pb-16 overflow-y-auto">
+          <div>
+            <h2 class="my-6 text-2xl font-semibold">Ajustes</h2>
+
+            <div class="section">
+              <h2><ion-icon name="moon-outline"></ion-icon> Aparência</h2>
+              <div class="form-group">
+                <label for="dark-mode-toggle">
+                  <input type="checkbox" id="dark-mode-toggle"> Painel escuro
+                </label>
+              </div>
+            </div>
+
+            <div class="section">
+              <h2><ion-icon name="color-palette-outline"></ion-icon> Cores e fonte do site</h2>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="ajustes-theme-primary">Cor Primária</label>
+                  <input type="color" id="ajustes-theme-primary">
+                </div>
+                <div class="form-group">
+                  <label for="ajustes-theme-secondary">Cor Secundária</label>
+                  <input type="color" id="ajustes-theme-secondary">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="ajustes-theme-font">Fonte Principal</label>
+                <select id="ajustes-theme-font">
+                  <option value="Inter">Inter</option>
+                  <option value="Arial">Arial</option>
+                  <option value="Helvetica">Helvetica</option>
+                  <option value="Roboto">Roboto</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="section">
+              <h2><ion-icon name="lock-closed-outline"></ion-icon> Sessão</h2>
+              <p class="empty-state" style="padding: 0; text-align: left;">
+                O acesso é pelo PIN de 4 dígitos. A sessão dura 8 horas e o botão
+                <strong>Sair</strong> no topo da tela encerra.
+              </p>
+              <div class="actions-grid" style="margin-top: 16px;">
+                <button class="btn" data-logout>
+                  <span class="btn-text">Sair do painel</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+
+  </section>
+
+
+  <!-- ====== Painel ======
+       Sem Firebase. Tudo que o painel mostra e grava vem da API do site
+       (/api/content, /api/media, /api/auth/*), via src/js/api.js. Categorias,
+       servicos, duvidas, textos de tela e agenda vao para o Postgres do site.
+  -->
+  <script type="module" src="/admin/js/admin.js"></script>
+  <!-- ====== Modais ======
+       #modalOverlay e o fundo escuro: a classe .active liga e desliga.
+       Cada #modal-* e a caixa do formulario. Os IDs dos campos sao exatamente
+       os que o js/admin.js le e grava.
+  -->
+  <div id="modalOverlay" class="modal-overlay"></div>
+
+  <!-- Categoria -->
+  <div id="modal-category" class="modal" style="display:none;" role="dialog" aria-modal="true"
+    aria-labelledby="modal-category-titulo">
+    <form id="categoryForm" class="modal-corpo">
+      <h3 id="modal-category-titulo">Categoria</h3>
+      <input type="hidden" id="cat-edit-index" value="-1">
+
+      <div class="form-group">
+        <label for="cat-name">Nome *</label>
+        <input type="text" id="cat-name" maxlength="50" required>
+      </div>
+
+      <div class="form-group">
+        <label for="cat-subtitle">Legenda</label>
+        <input type="text" id="cat-subtitle" maxlength="100">
+      </div>
+
+      <div class="form-group">
+        <label for="cat-description">Descrição</label>
+        <textarea id="cat-description" rows="3"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Imagem principal</label>
+        <div class="image-upload-area" id="cat-image-upload">
+          <p>Clique ou arraste uma imagem aqui</p>
+          <input type="file" accept="image/*" style="display:none;" id="cat-image-input"
+            aria-label="Upload de imagem da categoria">
+          <div class="upload-progress"><div class="upload-progress-bar"></div></div>
+        </div>
+        <img id="cat-image-preview" class="image-preview" style="display:none;" alt="Imagem da categoria">
+      </div>
+
+      <div class="form-group">
+        <label>Galeria</label>
+        <div class="image-upload-area" id="cat-gallery-upload">
+          <p>Clique ou arraste várias imagens aqui</p>
+          <input type="file" accept="image/*" multiple style="display:none;" id="cat-gallery-input"
+            aria-label="Upload de galeria">
+          <div class="upload-progress"><div class="upload-progress-bar"></div></div>
+        </div>
+        <div id="cat-gallery-preview" class="gallery-grid"></div>
+      </div>
+
+      <div class="modal-acoes">
+        <button type="button" class="btn btn-secundario" onclick="closeCategoryModal()">Cancelar</button>
+        <button type="submit" class="btn">Salvar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Serviço -->
+  <div id="modal-service" class="modal" style="display:none;" role="dialog" aria-modal="true"
+    aria-labelledby="modal-service-titulo">
+    <form id="serviceForm" class="modal-corpo">
+      <h3 id="modal-service-titulo">Serviço</h3>
+      <input type="hidden" id="service-edit-index" value="-1">
+
+      <div class="form-group">
+        <label for="service-name">Nome *</label>
+        <input type="text" id="service-name" maxlength="60" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="service-price">Preço</label>
+          <input type="text" id="service-price" placeholder="R$ 250,00">
+        </div>
+        <div class="form-group">
+          <label for="service-duration">Duração</label>
+          <input type="text" id="service-duration" placeholder="1h30">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="service-description">Descrição</label>
+        <textarea id="service-description" rows="3"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="service-includes">O que está incluso</label>
+        <textarea id="service-includes" rows="2"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="service-whatsapp">WhatsApp</label>
+          <input type="tel" id="service-whatsapp" placeholder="5581999999999" pattern="[0-9]{10,15}">
+        </div>
+        <div class="form-group">
+          <label for="service-whatsapp-message">Mensagem do WhatsApp</label>
+          <input type="text" id="service-whatsapp-message" maxlength="200">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Imagem</label>
+        <div class="image-upload-area" id="service-image-upload">
+          <p>Clique ou arraste uma imagem aqui</p>
+          <input type="file" accept="image/*" style="display:none;" id="service-image-input"
+            aria-label="Upload de imagem do serviço">
+          <div class="upload-progress"><div class="upload-progress-bar"></div></div>
+        </div>
+        <img id="service-image-preview" class="image-preview" style="display:none;" alt="Imagem do serviço">
+      </div>
+
+      <div class="modal-acoes">
+        <button type="button" class="btn btn-secundario" onclick="closeServiceModal()">Cancelar</button>
+        <button type="submit" class="btn">Salvar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Dúvida -->
+  <div id="modal-faq" class="modal" style="display:none;" role="dialog" aria-modal="true"
+    aria-labelledby="modal-faq-titulo">
+    <form id="faqForm" class="modal-corpo">
+      <h3 id="modal-faq-titulo">Dúvida</h3>
+      <input type="hidden" id="faq-edit-index" value="-1">
+
+      <div class="form-group">
+        <label for="faq-question">Pergunta *</label>
+        <input type="text" id="faq-question" maxlength="150" required>
+      </div>
+
+      <div class="form-group">
+        <label for="faq-answer">Resposta *</label>
+        <textarea id="faq-answer" rows="5" required></textarea>
+      </div>
+
+      <div class="modal-acoes">
+        <button type="button" class="btn btn-secundario" onclick="closeFAQModal()">Cancelar</button>
+        <button type="submit" class="btn">Salvar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Data da agenda -->
+  <div id="modal-date" class="modal" style="display:none;" role="dialog" aria-modal="true"
+    aria-labelledby="modal-date-titulo">
+    <form id="dateForm" class="modal-corpo">
+      <h3 id="modal-date-titulo">Data</h3>
+
+      <div class="form-group">
+        <label for="date-type">Tipo</label>
+        <select id="date-type">
+          <option value="Ensaio">Ensaio</option>
+          <option value="Fotografia">Fotografia</option>
+          <option value="Evento">Evento</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="date-value">Data *</label>
+        <input type="date" id="date-value" required>
+      </div>
+
+      <div class="form-group">
+        <label for="date-time">Horário</label>
+        <input type="time" id="date-time">
+      </div>
+
+      <div class="form-group">
+        <label for="date-notes">Observações</label>
+        <textarea id="date-notes" rows="2" maxlength="200"></textarea>
+      </div>
+
+      <div class="modal-acoes">
+        <button type="button" class="btn btn-secundario" onclick="closeDateModal()">Cancelar</button>
+        <button type="submit" class="btn">Salvar</button>
+      </div>
+    </form>
+  </div>
+
+
+  <!-- Editor de texto do gerenciador de arquivos -->
+  <div id="modal-arquivo" class="modal" style="display: none;" role="dialog" aria-modal="true"
+    aria-labelledby="arq-texto-titulo">
+    <div class="modal-corpo arq-editor">
+      <h3 id="arq-texto-titulo">Arquivo</h3>
+      <textarea id="arq-texto" class="arq-area" spellcheck="false"
+        aria-label="Conteúdo do arquivo"></textarea>
+      <div class="modal-acoes">
+        <button type="button" class="btn btn-secundario" id="arq-texto-fechar">Fechar</button>
+        <button type="button" class="btn" id="arq-texto-salvar">Salvar arquivo</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

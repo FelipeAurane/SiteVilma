@@ -96,6 +96,17 @@
 }
 .resumo-rodape span:last-child { opacity: .55; font-weight: 400; }
 
+.insights { display: grid; gap: 16px; padding: 20px 22px; border-radius: 20px; }
+.insights .bloco-titulo span, .insights small { color: var(--texto-3); font-size: 12px; }
+.insights-numeros { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.insights-numeros div { display: flex; flex-direction: column; gap: 3px; padding: 14px; border-radius: 13px; background: var(--cartao-2); }
+.insights-numeros strong { font-size: 27px; line-height: 1; }
+.insights-numeros span { color: var(--texto-2); font-size: 12px; }
+.insights-origens { display: flex; flex-wrap: wrap; gap: 8px; }
+.insights-origens span { display: inline-flex; gap: 8px; padding: 7px 10px; border: 1px solid var(--borda); border-radius: 999px; color: var(--texto-2); font-size: 12px; }
+.insights-origens b { color: var(--texto); }
+.insights-indisponivel { margin: 0; color: var(--texto-2); font-size: 13px; }
+
 /* ------------------------------------------------------------- atalhos */
 
 .atalhos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
@@ -280,3 +291,18 @@
   .tabela-linha > span:nth-child(3) { justify-self: end; }
   .tabela-fotos { display: none; }
 }
+
+/* Cartões, indicadores e ações com o mesmo contraste nos dois temas. */
+.tom-ambar{--tom:#c39346;--tom-suave:#f5ead6;--tom-texto:#755322}
+.tom-azul{--tom:#7f9a80;--tom-suave:#e6efe5;--tom-texto:#3e6443}
+.tom-verde{--tom:#8baa91;--tom-suave:#e3efe5;--tom-texto:#3c6547}
+:root[data-tema="escuro"] .tom-ambar{--tom:#d3ad70;--tom-suave:#423729;--tom-texto:#f0d7a9}
+:root[data-tema="escuro"] .tom-azul,:root[data-tema="escuro"] .tom-verde{--tom:#a3b39e;--tom-suave:#303e32;--tom-texto:#d6e8d1}
+.resumo.escuro,.resumo.claro{background:var(--vidro);color:var(--texto);box-shadow:var(--sombra)}
+.resumo::after{transition:transform .18s ease-out,opacity .18s ease-out;transform:translate(var(--ponto-x,0px),var(--ponto-y,0px));opacity:.16;color:var(--destaque-forte)}
+.resumo:hover::after{opacity:.32}
+.resumo-rotulo,.resumo-rodape span:last-child{opacity:1;color:var(--texto-2)}
+.resumo .resumo-icone{background:var(--destaque-suave);color:var(--destaque-forte)}
+.atalho.destaque{background:var(--acao-verde);color:var(--acao-texto)}
+.atalho.destaque .atalho-icone{background:#fff;color:var(--acao-verde)}
+.data-bloco{background:var(--destaque-suave);color:var(--destaque-forte)}

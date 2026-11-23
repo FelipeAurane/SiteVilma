@@ -653,11 +653,14 @@ export async function montar(secao) {
   cabeca.innerHTML = '';
   cabeca.insertAdjacentHTML('beforeend', `
     <div class="ms-salvar">
-      <a class="botao botao-secundario" href="/" target="_blank" rel="noopener">${icone('i-externo')} Ver site</a>
-      <button class="botao botao-primario" type="button" data-acao="salvar" id="ms-salvar" disabled>Salvar alterações</button>
+      <span class="ms-status" id="ms-status" role="status" aria-live="polite">Tudo salvo</span>
+      <div class="ms-acoes">
+        <a class="botao botao-secundario" href="/" target="_blank" rel="noopener">${icone('i-externo')} Ver site</a>
+        <button class="botao botao-primario" type="button" data-acao="salvar" id="ms-salvar" disabled>Salvar alterações</button>
+      </div>
     </div>`);
   botaoSalvar = cabeca.querySelector('#ms-salvar');
-  statusSalvar = null;
+  statusSalvar = cabeca.querySelector('#ms-status');
 
   secao.insertAdjacentHTML('beforeend', `
     <div class="ms-abas" role="tablist" aria-label="Partes do site">
@@ -668,6 +671,7 @@ export async function montar(secao) {
     </div>`);
   barraAbas = secao.querySelector('.ms-abas');
   painel = secao.querySelector('.ms-painel');
+  secao.append(cabeca);
   ligarEventos();
 
   try {

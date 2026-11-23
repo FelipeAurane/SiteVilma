@@ -14,8 +14,8 @@ import { putContent } from '../../js/api.js';
 import { montar as montarSite } from './telas/site.js';
 import { montar as montarInicio } from './telas/inicio.js';
 import { montar as montarAgenda } from './telas/agenda.js';
-import { montar as montarSelecao } from './telas/selecoes.js?v=entrega-20261123';
-import { montar as montarClientes } from './telas/clientes.js';
+import { montar as montarSelecao } from './telas/selecoes.js?v=limite-20261123';
+import { montar as montarClientes } from './telas/clientes.js?v=clientes-auto-20261123';
 import { montar as montarGaleria, ligarSeletorLocal } from './telas/galeria-local.js';
 import { montar as montarAjustes } from './telas/ajustes.js';
 
@@ -203,6 +203,15 @@ if (desktop) {
 
 window.addEventListener('hashchange', () => mostrar(rotaAtual()));
 mostrar(rotaAtual());
+
+document.addEventListener('pointermove',e=>{
+  const cartao=e.target.closest?.('.resumo');
+  if(!cartao)return;
+  const area=cartao.getBoundingClientRect();
+  cartao.style.setProperty('--ponto-x',`${Math.round((e.clientX-area.left-area.width/2)*.12)}px`);
+  cartao.style.setProperty('--ponto-y',`${Math.round((e.clientY-area.top-area.height/2)*.12)}px`);
+});
+document.addEventListener('pointerout',e=>{const cartao=e.target.closest?.('.resumo');if(cartao&&!cartao.contains(e.relatedTarget)){cartao.style.removeProperty('--ponto-x');cartao.style.removeProperty('--ponto-y');}});
 
 
 

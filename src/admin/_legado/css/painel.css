@@ -1,0 +1,1701 @@
+/* ==========================================================================
+   painel.css — layout e estética do painel. Carregado por último, de propósito.
+
+   Este arquivo é a fonte da verdade. Antes, o mesmo elemento recebia regras de
+   styles.css, navigate.css, homeview.css e admin.css ao mesmo tempo, e duas
+   delas se somavam: navigate.css punha `left: 78px` na área de conteúdo e
+   admin.css punha `margin-left: var(--sidebar-collapsed)`. O resultado era
+   156px de deslocamento em vez de 78px, e a barra de topo saía 78px para fora
+   da tela.
+
+   A paleta também é redefinida aqui. O painel nasceu de um app de escola de
+   pilotagem, amarelo #ffc60b, e esse amarelo não existe no site. As cores
+   abaixo são as de src/css/site.css — preto e cinzas profundos, creme, vidro
+   com desfoque — para o painel e o site serem a mesma coisa.
+   ========================================================================== */
+
+:root {
+  /* --- fundo, do site --- */
+  --preto: #0e0e10;
+  --preto-suave: #17171a;
+  --preto-vidro: rgba(14, 14, 16, 0.72);
+
+  /* --- acento: creme, não amarelo --- */
+  --creme: #f6f3ee;
+  --creme-fundo: #efeae1;
+  --blush: #e0abab;
+
+  /* --- texto, do site --- */
+  --branco: #ffffff;
+  --texto: rgba(255, 255, 255, 0.72);
+  --texto-fraco: rgba(255, 255, 255, 0.5);
+  --texto-forte: #f8f8f8;
+
+  /* --- bordas translúcidas, do site --- */
+  --borda: rgba(255, 255, 255, 0.08);
+  --borda-media: rgba(255, 255, 255, 0.14);
+  --borda-forte: rgba(255, 255, 255, 0.22);
+
+  /* --- vidro e desfoque, do site (blur 18px saturate 180%) --- */
+  --vidro: rgba(23, 23, 26, 0.72);
+  --vidro-cheio: rgba(14, 14, 16, 0.88);
+  --desfoque: blur(18px) saturate(180%);
+  --desfoque-forte: blur(24px) saturate(190%);
+
+  /* --- medida --- */
+  --transicao: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+  --transicao-rapida: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Redefine o que admin.css usava, agora com a paleta do site. O painel
+     inteiro segue estas daqui, então nada mais precisa saber a cor antiga. */
+  --bg-primary: var(--preto);
+  --bg-secondary: var(--preto-suave);
+  --bg-tertiary: rgba(255, 255, 255, 0.04);
+  --bg-card: rgba(255, 255, 255, 0.03);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --bg-input: rgba(255, 255, 255, 0.05);
+  --bg-input-focus: rgba(255, 255, 255, 0.08);
+
+  --text-primary: var(--texto-forte);
+  --text-secondary: var(--texto);
+  --text-muted: var(--texto-fraco);
+  --text-inverse: var(--preto);
+
+  --border-color: var(--borda-media);
+  --border-hover: var(--borda-forte);
+
+  --accent-primary: var(--creme);
+  --accent-primary-hover: var(--creme-fundo);
+  --accent-secondary: var(--blush);
+  --border-focus: rgba(246, 243, 238, 0.55);
+
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.28);
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.34);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.42);
+
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-full: 999px;
+
+  --transition-fast: var(--transicao-rapida);
+  --transition-normal: var(--transicao);
+  --transition-sidebar: var(--transicao);
+}
+
+/* ------------------------------------------------------------------ base */
+
+html,
+body {
+  /* Nenhum elemento pode criar barra horizontal. */
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+body {
+  font-family: var(--font-family);
+  /* Brilho suave no canto, como o site. Bem tênue: um tom mais forte aqui
+     deixava a linha do item ativo com cara amarelada. */
+  background:
+    radial-gradient(1200px 700px at 82% -12%, rgba(224, 171, 171, 0.035), transparent 60%),
+    radial-gradient(900px 540px at 6% 6%, rgba(246, 243, 238, 0.025), transparent 56%),
+    var(--preto);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(246, 243, 238, 0.22);
+}
+
+/* Barra de rolagem discreta, para não competir com o conteúdo. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-full);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.26);
+  background-clip: content-box;
+}
+
+/* ==========================================================================
+   ÁREA DE CONTEÚDO — o deslocamento vem só daqui
+   ========================================================================== */
+
+.home-section {
+  position: relative;
+  /* Zera o que navigate.css fazia: `left` e `width` deslocavam o bloco. */
+  left: 0;
+  width: auto;
+  /* navigate.css travava a área em `height: 100vh`, o que cortava o conteúdo
+     que passasse da primeira dobra. Aqui ela cresce com a página. */
+  height: auto;
+  min-height: 100vh;
+  margin-left: var(--sidebar-width);
+  padding-left: 0;
+  background: var(--bg-primary);
+  transition: margin-left var(--transition-sidebar);
+}
+
+/* Estados da lateral. Estes seletores têm a mesma especificidade dos que
+  navigate.css e admin.css usam para o mesmo elemento, e como esta folha é
+  carregada por último, valem eles. */
+.sidebar ~ .home-section,
+.sidebar.close ~ .home-section,
+.sidebar.collapsed ~ .home-section {
+  left: 0;
+  right: 0;
+  width: auto;
+  height: auto;
+  margin-left: var(--sidebar-width);
+}
+
+.sidebar.close ~ .home-section,
+.sidebar.close .home-section {
+  margin-left: var(--sidebar-collapsed);
+}
+
+/* O conteúdo nunca encosta na borda: respiro só nos lados, que é onde a
+   barra lateral passa de 78px para 260px. */
+.home-div {
+  padding: 28px clamp(16px, 3vw, 40px) 64px;
+  max-width: 1440px;
+  margin: 0 auto;
+  min-width: 0;
+}
+
+/* ==========================================================================
+   BARRA LATERAL
+   ========================================================================== */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  /* Vidro, como a gaveta do site: fundo translúcido + desfoque do conteúdo. */
+  background: var(--preto-vidro);
+  backdrop-filter: var(--desfoque);
+  -webkit-backdrop-filter: var(--desfoque);
+  border-right: 1px solid var(--borda);
+  width: var(--sidebar-width);
+  transition: width var(--transition-sidebar);
+}
+
+.sidebar.close {
+  width: var(--sidebar-collapsed);
+}
+
+.sidebar .logo-details {
+  display: flex;
+  align-items: center;
+  height: var(--topbar-height);
+  min-height: var(--topbar-height);
+  padding: 0 18px;
+  border-bottom: 1px solid var(--borda);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.sidebar .logo-details .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+/* O SVG do logo vinha com style="width:55px;height:45px" inline, que vencia
+   qualquer folha de estilo e estourava a barra recolhida de 78px. O inline
+   foi removido do HTML; estas medidas valem agora. */
+.sidebar .logo-details .icon svg {
+  width: 40px;
+  height: 32px;
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+/* Recolhido sobram ~77px: o logo vai para o meio e ganha o espaço do respiro.
+   O nome precisa sair do fluxo (display:none): admin.css só o deixava com
+   largura 0, e a margem de 12px continuava empurrando o logo 12px para a
+   esquerda. */
+.sidebar.close .logo-details {
+  justify-content: center;
+  padding: 0;
+}
+
+.sidebar.close .logo-details .logo_name {
+  display: none;
+}
+
+.sidebar.close .logo-details .icon svg {
+  width: 40px;
+  height: 32px;
+}
+
+/* navigate.css dá min-width:78px ao <i> do logo e admin.css dá margin à
+   direita. Com 78px de largura dentro de 77px e margem de 12px, o conjunto
+   ficava 6px fora do centro. */
+.sidebar.close .logo-details .icon {
+  min-width: 0;
+  margin: 0;
+}
+
+.sidebar .logo-details .logo_name {
+  margin-left: 12px;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  white-space: nowrap;
+  transition: opacity var(--transition-fast);
+}
+
+.sidebar .nav-links {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 12px;
+  margin: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  list-style: none;
+}
+
+/* Itens do menu ------------------------------------------------------- */
+
+.nav-links > li {
+  position: relative;
+  list-style: none;
+}
+
+.nav-links > li > a.nav-btn,
+.nav-links > li > .iocn-link > a.nav-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+  padding: 0 12px;
+  /* Borda transparente em todos: o item ativo ganha cor sem mudar de tamanho
+     quando a classe .active entra e sai. */
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+/* Barra lateral de destaque no item ativo. */
+.nav-links > li > a.nav-btn::before,
+.nav-links > li > .iocn-link > a.nav-btn::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 2px;
+  height: 0;
+  border-radius: 0 2px 2px 0;
+  background: linear-gradient(180deg, var(--creme), var(--blush));
+  transform: translateY(-50%);
+  transition: height var(--transition-normal);
+}
+
+.nav-links > li > a.nav-btn:hover,
+.nav-links > li > .iocn-link > a.nav-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.nav-links > li > a.nav-btn.active,
+.nav-links > li > .iocn-link > a.nav-btn.active {
+  /* Vidro claro em vez de mancha colorida. */
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  color: var(--creme);
+}
+
+.nav-links > li > a.nav-btn.active::before,
+.nav-links > li > .iocn-link > a.nav-btn.active::before {
+  height: 22px;
+}
+
+.nav-links > li > a.nav-btn i,
+.nav-links > li > .iocn-link > a.nav-btn i.bx:not(.arrow) {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  font-size: 1.3125rem;
+  line-height: 22px;
+  text-align: center;
+  color: inherit;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+
+.nav-links > li > a.nav-btn:hover i,
+.nav-links > li > .iocn-link > a.nav-btn:hover i.bx:not(.arrow) {
+  transform: scale(1.08);
+}
+
+.nav-links .link_name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: opacity var(--transition-fast);
+}
+
+/* Submenu ------------------------------------------------------------- */
+
+.nav-links .iocn-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-links .iocn-link .arrow {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  font-size: 1.125rem;
+  line-height: 20px;
+  text-align: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: transform var(--transition-normal), color var(--transition-fast);
+}
+
+.nav-links .iocn-link .arrow:hover {
+  color: var(--text-primary);
+}
+
+.nav-links li.showMenu .iocn-link .arrow {
+  transform: rotate(180deg);
+}
+
+.nav-links .sub-menu {
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 0 4px 22px;
+  margin: 2px 0 2px 22px;
+  border-left: 1px solid var(--border-color);
+  list-style: none;
+}
+
+.nav-links li.showMenu .sub-menu {
+  display: flex;
+}
+
+.nav-links .sub-menu a {
+  display: block;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.nav-links .sub-menu a:hover,
+.nav-links .sub-menu a.active {
+  background: var(--bg-tertiary);
+  color: var(--accent-primary);
+}
+
+/* Recolhido: só o ícone, centralizado, sem texto ao lado. */
+.sidebar.close .nav-links > li > a.nav-btn,
+.sidebar.close .nav-links > li > .iocn-link > a.nav-btn {
+  justify-content: center;
+  padding: 0;
+  gap: 0;
+}
+
+.sidebar.close .nav-links .link_name,
+.sidebar.close .nav-links .iocn-link .arrow {
+  display: none;
+}
+
+/* No recolhido, o submenu vira um balão que passa o mouse. */
+.sidebar.close .nav-links li .sub-menu {
+  display: none;
+}
+
+.sidebar.close .nav-links li:hover .sub-menu,
+.sidebar.close .nav-links li.showMenu .sub-menu {
+  display: flex;
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 0;
+  width: 200px;
+  margin: 0;
+  padding: 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-left: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-sidebar);
+}
+
+.sidebar.close .nav-links li:hover .sub-menu a,
+.sidebar.close .nav-links li.showMenu .sub-menu a {
+  font-size: 0.875rem;
+}
+
+/* Perfil no rodapé ---------------------------------------------------- */
+
+.sidebar .profile-details {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: auto;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid var(--borda);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar .profile-details .profile-content {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sidebar .profile-details img {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: var(--bg-secondary);
+}
+
+.sidebar .profile-details .name-job {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.sidebar .profile-details .profile_name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar .profile-details .job {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar.close .profile-details {
+  justify-content: center;
+  padding: 12px 0;
+  background: var(--bg-tertiary);
+}
+
+.sidebar.close .profile-details .name-job {
+  display: none;
+}
+
+/* ==========================================================================
+   BARRA SUPERIOR
+   ========================================================================== */
+
+.menutopbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-topbar);
+  height: var(--topbar-height);
+  background: rgba(14, 14, 16, 0.66);
+  backdrop-filter: var(--desfoque);
+  -webkit-backdrop-filter: var(--desfoque);
+  border-bottom: 1px solid var(--borda);
+}
+
+.home-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 3vw, 32px);
+  min-width: 0;
+}
+
+.menu-btn {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.menu-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--borda-media);
+  color: var(--texto-forte);
+}
+
+/* O hamburger tinha regras conflitantes: navigate.css fazia barras de 25x4 com
+   sombra alaranjada, admin.css fazia 20x2 sem sombra. Como a barra era um
+   bloco branco sólido com um × por cima, parecia um botão fantasma. Aqui as
+   três linhas têm uma medida só e viram × quando a lateral abre. */
+.menu-btn__burger,
+.menu-btn__burger::before,
+.menu-btn__burger::after {
+  width: 18px;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 2px;
+  box-shadow: none;
+  transition: transform var(--transicao), opacity var(--transicao-rapida),
+    background var(--transicao-rapida);
+}
+
+.menu-btn__burger {
+  position: relative;
+}
+
+.menu-btn__burger::before,
+.menu-btn__burger::after {
+  content: '';
+  position: absolute;
+  left: 0;
+}
+
+.menu-btn__burger::before {
+  transform: translateY(-6px);
+}
+
+.menu-btn__burger::after {
+  transform: translateY(6px);
+}
+
+/* Lateral aberta: as três linhas viram um X. */
+.menu-btn.open .menu-btn__burger {
+  background: transparent;
+  transform: none;
+}
+
+.menu-btn.open .menu-btn__burger::before {
+  transform: rotate(45deg);
+}
+
+.menu-btn.open .menu-btn__burger::after {
+  transform: rotate(-45deg);
+}
+
+/* Busca: pílula centralizada, ícone dentro do campo à direita. */
+.search-container {
+  position: relative;
+  flex: 1;
+  max-width: 520px;
+  margin: 0 auto;
+  min-width: 0;
+}
+
+.search-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 42px 0 18px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.875rem;
+  transition: border-color var(--transition-fast), background var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: rgba(246, 243, 238, 0.5);
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 0 0 3px rgba(246, 243, 238, 0.08);
+}
+
+/* O ícone é filho de um container flex: sem flex:none ele esticava e cobria o
+   campo inteiro, deixando a lupa em cima do texto.
+   admin.css punha `left: 16px` aqui; com left e right definidos numa caixa
+   absoluta, quem vale é o left — daí a lupa aparecer à esquerda. Por isso o
+   `left: auto` explícito. */
+.search-icon {
+  position: absolute;
+  left: auto;
+  right: 15px;
+  top: 50%;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  font-size: 0.875rem;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search-container .result {
+  display: none;
+}
+
+#suggestionsList {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-topbar);
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+#suggestionsList li {
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+#suggestionsList li:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+/* Ícones à direita ---------------------------------------------------- */
+
+.icons {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icons > i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.icons > i:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* Menu suspenso do usuário */
+.menu-content {
+  position: absolute;
+  top: calc(var(--topbar-height) - 6px);
+  right: clamp(16px, 3vw, 32px);
+  width: 200px;
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-topbar);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity var(--transition-fast), transform var(--transition-fast),
+    visibility var(--transition-fast);
+}
+
+.menu-content.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.menu-content ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu-content li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.menu-content li:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.menu-content li i {
+  font-size: 1.125rem;
+}
+
+/* ==========================================================================
+   CONTEÚDO
+   ========================================================================== */
+
+.screen {
+  display: none;
+  animation: entraTela 220ms ease;
+}
+
+.screen.active {
+  display: block;
+}
+
+@keyframes entraTela {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.home-div-inicio h1 {
+  margin: 0 0 4px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.home-div-inicio > p {
+  margin: 0 0 20px;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.section {
+  margin-bottom: 20px;
+  padding: 20px clamp(16px, 2vw, 24px);
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--borda);
+  border-radius: var(--radius-lg);
+}
+
+.section > h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.section > h2 ion-icon {
+  color: var(--accent-primary);
+  font-size: 1.125rem;
+}
+
+/* Cards: fundo liso em vez do gradiente azul/roxo, e reagem ao ponteiro.
+   Colunas explícitas em vez de auto-fit: com auto-fit a grade fechava em 3
+   colunas e o quarto card ficava sozinho numa segunda linha, com altura
+   diferente dos outros. São sempre 4 cards por tela aqui. */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (min-width: 760px) {
+  .cards-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.card {
+  position: relative;
+  padding: 18px 20px;
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--borda);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: transform var(--transition-fast), border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+/* admin.css pintava uma faixa de gradiente de 3px no topo do card. Aqui o
+   destaque é uma barra vertical à esquerda, que só aparece no hover. */
+.card::before {
+  display: none;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--accent-primary);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.card:hover::after {
+  opacity: 1;
+}
+
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.metric {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+/* Valores que são frase, não número ("API do site", "20 arquivos").
+   O seletor precisa de .card: styles.css tem ".card .metric" com 2.5rem, que
+   é mais específico que um .metric--texto sozinho. */
+.card .metric--texto,
+.metric.metric--texto {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* ==========================================================================
+   AGENDA
+   ========================================================================== */
+
+.agenda-controles {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.agenda-controles label {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.agenda-controles select,
+.form-group select,
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.875rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.agenda-controles select {
+  width: auto;
+  min-width: 130px;
+}
+
+.agenda-controles select:focus,
+.form-group select:focus,
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(246, 243, 238, 0.10);
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.agenda-ajuda {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0 0;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   DASHBOARD
+   --------------------------------------------------------------------------
+   Uma cor por estatística, tirada da paleta do site: creme, blush, um azul
+   claro e um rosa. As superfícies continuam de vidro neutro — é a cor no
+   ícone e na barra que separa uma estatística da outra, sem encher o painel
+   de manchas.
+   ========================================================================== */
+
+.painel-cabecalho {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.painel-cabecalho h1 {
+  margin: 0 0 4px;
+  font-size: 1.625rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--texto-forte);
+}
+
+.painel-cabecalho p {
+  margin: 0;
+  color: var(--texto);
+  font-size: 0.9375rem;
+}
+
+.painel-selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--borda-media);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.8125rem;
+  color: var(--texto);
+  white-space: nowrap;
+}
+
+.painel-selo-ponto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.16);
+}
+
+/* Quando a API não responde, o selo fica vermelho. */
+.painel-selo-ponto[data-offline] {
+  background: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.16);
+}
+
+/* Cartão com cor */
+.stat {
+  display: block;
+  padding-left: 22px;
+}
+
+.stat::after {
+  background: var(--stat-cor, var(--creme));
+}
+
+.stat-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 12px;
+  border-radius: 11px;
+  font-size: 1.125rem;
+  color: var(--stat-cor, var(--creme));
+  background: var(--stat-fundo, rgba(246, 243, 238, 0.1));
+}
+
+.stat h3 {
+  margin-bottom: 6px;
+}
+
+.stat-nota {
+  margin: 6px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--texto-fraco);
+}
+
+.stat--creme {
+  --stat-cor: var(--creme);
+  --stat-fundo: rgba(246, 243, 238, 0.1);
+}
+
+.stat--blush {
+  --stat-cor: var(--blush);
+  --stat-fundo: rgba(224, 171, 171, 0.14);
+}
+
+.stat--ceu {
+  --stat-cor: #a8dadc;
+  --stat-fundo: rgba(168, 218, 220, 0.14);
+}
+
+.stat--rosa {
+  --stat-cor: #e88fa4;
+  --stat-fundo: rgba(232, 143, 164, 0.14);
+}
+
+/* Duas colunas no desktop */
+.painel-duas-colunas {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.painel-duas-colunas .section {
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .painel-duas-colunas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Atalhos */
+.atalhos {
+  display: grid;
+  gap: 8px;
+}
+
+.atalho {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--texto);
+  font-family: inherit;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-rapida), border-color var(--transition-rapida),
+    transform var(--transition-rapida);
+}
+
+.atalho ion-icon {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--creme);
+  font-size: 1.125rem;
+}
+
+.atalho span {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.atalho strong {
+  font-weight: 600;
+  color: var(--texto-forte);
+}
+
+.atalho small {
+  font-size: 0.75rem;
+  color: var(--texto-fraco);
+}
+
+.atalho:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: var(--borda-media);
+  transform: translateX(2px);
+}
+
+/* Lista de sistema */
+.painel-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.painel-lista li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--borda);
+  font-size: 0.875rem;
+}
+
+.painel-lista li:last-child {
+  border-bottom: none;
+}
+
+.painel-lista span {
+  color: var(--texto-fraco);
+}
+
+.painel-lista strong {
+  font-weight: 600;
+  color: var(--texto-forte);
+  text-align: right;
+  word-break: break-word;
+}
+
+/* ==========================================================================
+   GERENCIADOR DE ARQUIVOS
+   ========================================================================== */
+
+.arq-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+/* Migalho de caminho */
+.arq-migalhos {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  min-width: 0;
+  font-size: 0.8125rem;
+}
+
+.arq-migalho {
+  padding: 5px 9px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--texto);
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  transition: background var(--transition-rapida), color var(--transition-rapida);
+}
+
+.arq-migalho:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--texto-forte);
+}
+
+.arq-migalho--atual {
+  color: var(--creme);
+  font-weight: 600;
+}
+
+.arq-sep {
+  color: var(--texto-fraco);
+}
+
+.arq-ferramentas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Envio de arquivo */
+.arq-envio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border: 1px dashed var(--borda-media);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.8125rem;
+  color: var(--texto-fraco);
+}
+
+.arq-envio input[type="file"] {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  color: var(--texto);
+}
+
+.arq-envio input[type="file"]::file-selector-button {
+  margin-right: 10px;
+  padding: 6px 12px;
+  border: 1px solid var(--borda-media);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--creme);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.arq-contagem {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  color: var(--texto-fraco);
+}
+
+/* Tabela */
+.arq-tabela-envolve {
+  overflow-x: auto;
+  border: 1px solid var(--borda);
+  border-radius: var(--radius-md);
+}
+
+.arq-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.arq-tabela th {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--borda-media);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--texto-fraco);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.arq-tabela td {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--borda);
+  vertical-align: middle;
+}
+
+.arq-tabela tr:last-child td {
+  border-bottom: none;
+}
+
+.arq-tabela tbody tr {
+  transition: background var(--transition-rapida);
+}
+
+.arq-tabela tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.arq-num {
+  color: var(--texto);
+  white-space: nowrap;
+}
+
+.arq-data {
+  color: var(--texto-fraco);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.arq-acoes-col,
+.arq-acoes {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.arq-acoes .btn-icon {
+  margin-left: 4px;
+}
+
+/* Nome do arquivo: pasta e arquivo clicáveis */
+.arq-nome {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  padding: 4px 8px 4px 4px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--texto-forte);
+  font-family: inherit;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-rapida);
+}
+
+.arq-nome:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.arq-nome span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.arq-icone {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  font-size: 1.125rem;
+  color: var(--texto-fraco);
+}
+
+.arq-icone--pasta {
+  color: var(--creme);
+}
+
+.btn-icon--perigo:hover {
+  background: rgba(239, 68, 68, 0.14) !important;
+  color: #ef4444 !important;
+}
+
+.arq-aviso {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0 0;
+  font-size: 0.75rem;
+  color: var(--texto-fraco);
+}
+
+.arq-aviso ion-icon {
+  flex: 0 0 auto;
+  font-size: 1rem;
+  color: #4ade80;
+}
+
+/* Editor de texto */
+.arq-editor {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.arq-area {
+  flex: 1;
+  min-height: 46vh;
+  padding: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--texto-forte);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  resize: vertical;
+  tab-size: 2;
+}
+
+.arq-area:focus {
+  outline: none;
+  border-color: rgba(246, 243, 238, 0.5);
+  box-shadow: 0 0 0 3px rgba(246, 243, 238, 0.08);
+}
+
+/* ==========================================================================
+   MODAIS
+   ========================================================================== */
+
+.modal-overlay {
+  background: rgba(10, 10, 12, 0.7);
+  backdrop-filter: var(--desfoque-forte);
+  -webkit-backdrop-filter: var(--desfoque-forte);
+}
+
+.modal-content,
+.modal > form,
+.modal > div {
+  background: rgba(23, 23, 26, 0.94);
+  backdrop-filter: var(--desfoque);
+  -webkit-backdrop-filter: var(--desfoque);
+  border: 1px solid var(--borda-media);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-corpo {
+  width: 100%;
+  max-width: 560px;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.modal-corpo h3 {
+  margin: 0 0 18px;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--texto-forte);
+}
+
+.modal-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--borda);
+}
+
+/* ==========================================================================
+   HERANÇAS DO AMARELO
+   --------------------------------------------------------------------------
+   admin.css foi escrito para o painel de pilotagem e pintava o amarelo
+   #ffc60b em vários componentes que este painel ainda usa. Redefinir a
+   variável --accent-primary não basta: aquelas regras têm o literal
+   rgba(255, 198, 11, ...) escrito no fundo. Aqui cada uma vira vidro claro.
+   ========================================================================== */
+
+.image-upload-area:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(246, 243, 238, 0.4);
+}
+
+.image-upload-area.dragover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(246, 243, 238, 0.6);
+}
+
+.agenda-dia:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(246, 243, 238, 0.45);
+}
+
+.sub-menu a.submenu-btn.active,
+.submenu-btn.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--creme);
+}
+
+.submenu-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* .btn aparecia em quase toda tela (Adicionar, Salvar, Sair) como gradiente
+   creme → amarelo. Vira vidro neutro, com o creme no texto e na borda.
+
+   O seletor precisa de ".modal button" também: scroll.css tem
+   ".modal button { background: #e23947 }" (vermelho) com especificidade
+   (0,1,1), que ganha de um ".btn" sozinho (0,1,0). */
+.btn,
+.modal button,
+.modal .btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--borda-media);
+  color: var(--creme);
+  box-shadow: none;
+  transition: background var(--transition-rapida), border-color var(--transition-rapida),
+    color var(--transition-rapida), transform var(--transition-rapida);
+}
+
+.modal button:hover:not(:disabled),
+.modal .btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(246, 243, 238, 0.45);
+  color: var(--creme);
+  transform: translateY(-1px);
+}
+
+.modal .btn-secondary,
+.modal .btn-secundario,
+.modal button.btn-secundario {
+  background: transparent;
+  border-color: var(--borda);
+  color: var(--texto);
+}
+
+.btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(246, 243, 238, 0.45);
+  color: var(--creme);
+  transform: translateY(-1px);
+  box-shadow: none;
+}
+
+.btn:active:not(:disabled) {
+  transform: none;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-secondary,
+.btn-secundario {
+  background: transparent;
+  border-color: var(--borda);
+  color: var(--texto);
+}
+
+/* Foco dos campos: creme discreto em vez do halo amarelo. */
+.form-control:focus,
+.search-input:focus {
+  border-color: rgba(246, 243, 238, 0.5);
+  box-shadow: 0 0 0 3px rgba(246, 243, 238, 0.08);
+}
+
+/* O spinner do preloader girava em amarelo. */
+#preloader-spinner {
+  border-top-color: var(--creme);
+}
+
+/* O item ativo do menu ganha um vidro um pouco mais presente, para ficar
+   claro qual tela está aberta sem depender de cor. */
+.nav-links > li > a.nav-btn.active,
+.nav-links > li > .iocn-link > a.nav-btn.active {
+  background: rgba(255, 255, 255, 0.09);
+  /* admin.css punha border: 1px solid rgba(255,198,11,0.2) aqui — a borda
+     amarela do item ativo. A borda continua existindo (mesmo tamanho), só
+     muda de cor. */
+  border-color: rgba(255, 255, 255, 0.07);
+  box-shadow: none;
+  color: var(--creme);
+}
+
+.nav-links > li > a.nav-btn.active::before,
+.nav-links > li > .iocn-link > a.nav-btn.active::before {
+  background: var(--creme);
+}
+
+/* ==========================================================================
+   RESPONSIVO
+   ========================================================================== */
+
+/* Abaixo de 1200px a busca encolhe antes de empurrar o resto. */
+@media (max-width: 1200px) {
+  .search-container {
+    max-width: 320px;
+  }
+}
+
+/* Em telas estreitas a lateral vira gaveta; o conteúdo toma a tela toda. */
+@media (max-width: 992px) {
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar.close {
+    width: var(--sidebar-width);
+  }
+
+  .sidebar.close .nav-links .link_name,
+  .sidebar.close .nav-links .iocn-link .arrow,
+  .sidebar.close .profile-details .name-job {
+    display: revert;
+  }
+
+  .home-section,
+  .sidebar ~ .home-section,
+  .sidebar.close ~ .home-section {
+    margin-left: 0;
+    left: 0;
+  }
+
+  .home-div {
+    padding: 20px 16px 48px;
+  }
+
+  .search-container {
+    max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .search-container {
+    display: none;
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid-container {
+    gap: 4px;
+  }
+}

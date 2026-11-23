@@ -11,6 +11,18 @@ const PIN_CORRETO = '7811'; // PIN fixo do sistema
 let authGate = null;
 let authResolved = false;
 
+window.addEventListener('vf:session-expired', () => {
+  if (!authResolved || document.getElementById('auth-overlay')?.style.display !== 'none') return;
+  authResolved = false;
+  document.body.classList.add('auth-locked');
+  authGate?.remove();
+  mostrarGateLogin(() => {
+    authResolved = true;
+    authGate.style.display = 'none';
+    document.body.classList.remove('auth-locked');
+  });
+});
+
 export async function exigirLogin() {
   if (authResolved) return Promise.resolve();
 

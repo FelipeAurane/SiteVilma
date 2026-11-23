@@ -1,0 +1,413 @@
+:root {
+  --primary-color: #ffc60b;
+}
+
+/* Progressbar */
+.progressbaraluno {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  counter-reset: step;
+  margin: 2rem 0 4rem;
+}
+
+.progressbaraluno::before,
+.progressaluno {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 4px;
+  width: 100%;
+  background-color: #50505077;
+  z-index: -1;
+}
+
+.progressaluno {
+  background-color: var(--primary-color);
+  width: 0%;
+  transition: width 0.3s;
+}
+
+.progress-step {
+  width: 2.1875rem;
+  height: 2.1875rem;
+  background-color: #1c1b2c;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.progress-step::before {
+  counter-increment: step;
+  content: counter(step);
+}
+
+.progress-step::after {
+  content: attr(data-title);
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.progress-step-active {
+  background-color: var(--primary-color);
+  color: #f3f3f3;
+}
+
+/* Form */
+.alunoForm {
+  width: clamp(320px, 30%, 430px);
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  border-radius: 0.35rem;
+  padding: 1.5rem;
+}
+
+.form-step {
+  display: none;
+  transform-origin: top;
+}
+
+.form-step-active {
+  display: block;
+  animation: animate 0.5s;
+}
+
+.input-group {
+  margin: 2rem 0;
+}
+
+@keyframes animate {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Button */
+.btns-group {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.btn {
+  padding: 0.75rem;
+  display: block;
+  text-decoration: none;
+  background-color: var(--primary-color);
+  color: #f3f3f3;
+  text-align: center;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--primary-color);
+}
+.card-mini-form {
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #11101d;
+  height: 98%;
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 99999;
+}
+
+.form {
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
+.mini-card {
+  color: white;
+  padding: 20px;
+  border-radius: 20px;
+  background-color: #fdfdfd;
+}
+
+.scrollable-menu {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.formintern {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.scrollable-menu {
+  max-height: 100%; /* Defina a altura máxima desejada */
+}
+
+/* Estilos CSS para a lista de alunos */
+.lista-alunos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 20px;
+}
+
+/* Estilos CSS para os cards dos alunos */
+.card-aluno {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  background-color: #f3f3f3;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border-bottom: 6px solid #989899;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 5px 25px rgb(1 1 1 / 15%);
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.card-aluno:hover {
+  transform: translateY(-5px);
+}
+
+.card-aluno img {
+  width: 120px;
+  height: 120px;
+  margin-top: 16px;
+  object-fit: cover;
+  margin-right: 25px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.card-aluno h2 {
+  font-size: 18px;
+  margin-bottom: 2px;
+}
+
+.card-aluno p {
+  font-size: 13px;
+  color: gray;
+  margin-bottom: 20px;
+}
+
+/* Estilos CSS para o status do aluno */
+.status-aluno {
+  color: #ffffff;
+  padding: 8px;
+  height: 25px;
+  border-radius: 50px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.status-aprovado {
+  background-color: #10b981;
+}
+
+.status-pendente {
+  background-color: #f59e0b;
+}
+
+.status-cancelado {
+  background-color: #ef4444;
+}
+
+.status-expirado {
+  background-color: #9ca3af;
+}
+
+/* Estilos CSS para o botão de visualizar */
+.botao-visualizar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  color: #888888;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.card-aluno:hover .botao-visualizar {
+  opacity: 1;
+}
+
+/* CSS */
+.tela-flutuante {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 78%;
+  height: 95%;
+  color: white;
+  background: #11101d;
+  border-radius: 20px;
+  padding: 10px;
+  z-index: 999;
+  box-shadow: 0 5px 25px rgb(1 1 1 / 15%);
+  elevation: 6; /* Adiciona a elevação */
+}
+
+.imagem-aluno {
+  width: 200px;
+  height: 200px;
+  margin-left: 30px;
+  margin-top: 20px;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 5px 25px rgba(1, 1, 1, 0.267);
+  elevation: 6; /* Adiciona a elevação */
+}
+
+.imagem-aluno-info {
+  width: 200px;
+  height: 200px;
+  margin-left: 50px;
+  margin-top: 20px;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 5px 25px rgba(1, 1, 1, 0.267);
+  elevation: 6; /* Adiciona a elevação */
+}
+
+#lista-dados {
+  margin-top: 30px;
+  margin-left: 18px;
+}
+
+.title {
+  margin-right: 30%;
+  margin-left: 40%;
+  margin-top: 12px;
+  color: white;
+  font-size: 26px;
+}
+
+.dados {
+  justify-content: center;
+  margin-top: 26px;
+  margin-left: 30px;
+}
+.apelido {
+  font-size: 26px;
+  margin-left: 70px;
+  margin-top: 16px;
+}
+
+.info-value {
+  color: #b1b8b9;
+  margin-bottom: 10;
+}
+
+.tela-flutuante-block {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: white;
+  background: rgba(16, 16, 17, 0.164);
+  border-radius: 4px;
+  padding: 10px;
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-close {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  font-size: 18px;
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.botao-fechar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  color: #888888;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.informacoes-aluno {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.informacoes-aluno li {
+  margin-bottom: 10px;
+}
+
+.numberalunos {
+  display: flex;
+  font-size: 14px;
+  justify-content: end;
+  color: rgb(129, 127, 127);
+  margin: 10px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}

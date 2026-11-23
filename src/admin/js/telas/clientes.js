@@ -1,10 +1,9 @@
 import { esc } from './comum.js';
-import { getContent, putContent } from '../../../js/api.js';
+import { getContent, putContent } from '../../../js/api.js?v=clientes-auto-20261123';
 
 export function montar(secao) {
   let clientes = [], carregado = false, ocupado = false, editando = null;
   let selecionados = new Set();
-  let importacaoPendente = null;
   function mensagemErro(err) {
     if (!err) return 'Erro desconhecido';
     if (err instanceof Error) return err.message || 'Erro';
@@ -170,8 +169,9 @@ export function montar(secao) {
     await new Promise((resolve, reject) => {
       const s = document.createElement('script');
       s.src = new URL('../vendor/xlsx.full.min.js', import.meta.url).href;
-      s.onload = () => window.XLSX ? resolve() : reject(new Error('Biblioteca de planilhas não carregou.'));
-      s.onerror = () => reject(new Error('Não foi possível baixar a biblioteca de planilhas.'));
+      const prazo=setTimeout(()=>reject(new Error('A leitura da planilha demorou demais. Tente novamente.')),15000);
+      s.onload = () => {clearTimeout(prazo);window.XLSX ? resolve() : reject(new Error('Biblioteca de planilhas não carregou.'));};
+      s.onerror = () => {clearTimeout(prazo);reject(new Error('Não foi possível carregar a biblioteca de planilhas.'));};
       document.head.appendChild(s);
     });
     if (!window.XLSX) throw new Error('Biblioteca de planilhas indisponível.');
@@ -211,120 +211,61 @@ export function montar(secao) {
 
   async function processarArquivo(arquivo) {
     status.textContent = 'Lendo arquivo…';
+    if(arquivo.size>10*1024*1024)throw new Error('Arquivo acima de 10 MB. Divida a lista em arquivos menores.');
     let headers = [], rows = [];
-    if (arquivo.name.toLowerCase().endsWith('.csv')) {
-      const texto = await arquivo.text();
-      const parsed = parseCSV(texto);
-      headers = parsed.headers; rows = parsed.rows;
-    } else {
+    {
       const XLSX = await carregarXLSX();
+      status.textContent = 'Abrindo planilha…';
       const buf = await arquivo.arrayBuffer();
-      const wb = XLSX.read(buf, { type: 'array' });
+      const wb = XLSX.read(buf, { type: 'array', cellDates: true });
       const ws = wb.Sheets[wb.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+      if(!ws)throw new Error('A planilha está vazia.');
+      const json = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '', raw: false });
       headers = (json[0] || []).map(h => String(h));
       rows = json.slice(1);
     }
+    status.textContent = 'Conferindo clientes…';
     const mapa = mapearColunas(headers);
     if (mapa.nome === undefined) throw new Error('Coluna NOME não encontrada.');
     const registros = rows.filter(r => (Array.isArray(r) ? r : Object.values(r)).some(v => String(v).trim())).map(r => {
       const arr = Array.isArray(r) ? r : headers.map(h => r[h]);
       return normalizarCliente(arr, mapa, headers);
     });
-    const atuais = await getContent('clientes');
-    const listaAtual = Array.isArray(atuais) ? atuais : [];
-    const existentesEmail = new Set(listaAtual.map(c => normalizarEmail(c.email)).filter(Boolean));
-    const existentesTel = new Set(listaAtual.map(c => normalizarTelefone(c.telefone)).filter(Boolean));
-    const preview = registros.map(r => {
-      const erros = validarCliente(r);
-      const dupEmail = r.email && existentesEmail.has(r.email);
-      const dupTel = r.telefone && existentesTel.has(normalizarTelefone(r.telefone));
-      const duplicado = dupEmail || dupTel;
-      return { ...r, erros, duplicado };
-    });
-    return { arquivo: arquivo.name, preview };
+    return registros;
   }
 
-  function abrirPreview(dados) {
-    importacaoPendente = dados;
-    const validos = dados.preview.filter(p => p.erros.length === 0);
-    const invalidos = dados.preview.filter(p => p.erros.length > 0);
-    const duplicados = dados.preview.filter(p => p.duplicado);
-    const overlay = document.createElement('div');
-    overlay.className = 'clientes-modal';
-    overlay.innerHTML = `
-      <div class="clientes-modal-caixa">
-        <h3>Pré-visualização da importação</h3>
-        <p><strong>Arquivo:</strong> ${esc(dados.arquivo)}</p>
-        <p>Registros: ${dados.preview.length} · Válidos: ${validos.length} · Inválidos: ${invalidos.length} · Duplicados: ${duplicados.length}</p>
-        <div class="clientes-modal-tabela">
-          <table><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Status</th></tr></thead><tbody>
-            ${dados.preview.map(p => `<tr class="${p.erros.length ? 'invalido' : p.duplicado ? 'duplicado' : ''}"><td>${esc(p.nome)}</td><td>${esc(p.email)}</td><td>${esc(p.telefone)}</td><td>${p.erros.length ? esc(p.erros.join(', ')) : (p.duplicado ? 'Duplicado' : 'OK')}</td></tr>`).join('')}
-          </tbody></table>
-        </div>
-        <div class="clientes-modal-acoes">
-          <label><input type="checkbox" id="import-atualizar"> Atualizar clientes existentes (correspondência por e-mail/telefone)</label>
-          <div>
-            <button type="button" data-fechar>Cancelar</button>
-            <button type="button" class="botao-primario" data-confirmar ${validos.length === 0 ? 'disabled' : ''}>Confirmar importação</button>
-          </div>
-        </div>
-      </div>`;
-    document.body.appendChild(overlay);
-    overlay.querySelector('[data-fechar]').addEventListener('click', () => { overlay.remove(); importacaoPendente = null; });
-    overlay.querySelector('[data-confirmar]').addEventListener('click', async () => {
-      await confirmarImportacao(overlay);
-    });
-  }
-
-  async function confirmarImportacao(overlay) {
-    if (!importacaoPendente || ocupado) return;
-    ocupado = true;
-    const btn = overlay.querySelector('[data-confirmar]');
-    btn.disabled = true; btn.textContent = 'Importando…';
-    const atualizar = overlay.querySelector('#import-atualizar')?.checked;
-    try {
-      const atuais = await getContent('clientes');
-      const lista = Array.isArray(atuais) ? atuais : [];
-      const porEmail = new Map(lista.filter(c => c.email).map(c => [normalizarEmail(c.email), c]));
-      const porTel = new Map(lista.filter(c => c.telefone).map(c => [normalizarTelefone(c.telefone), c]));
-      let importados = 0, atualizados = 0, ignorados = 0;
-      for (const p of importacaoPendente.preview) {
-        if (p.erros.length) continue;
-        const existente = (p.email && porEmail.get(p.email)) || (p.telefone && porTel.get(normalizarTelefone(p.telefone)));
-        if (existente) {
-          if (atualizar) {
-            Object.assign(existente, { nome: p.nome || existente.nome, telefone: p.telefone || existente.telefone, email: p.email || existente.email, empresa: p.empresa || existente.empresa, cidade: p.cidade || existente.cidade, observacoes: p.observacoes || existente.observacoes });
-            atualizados++;
-          } else {
-            ignorados++;
-          }
-        } else {
-          lista.push({ id: p.id, nome: p.nome, telefone: p.telefone, email: p.email, empresa: p.empresa, cidade: p.cidade, observacoes: p.observacoes });
-          importados++;
-        }
-      }
-      await putContent('clientes', lista);
-      clientes = lista; carregado = true; listar();
-      overlay.remove();
-      importacaoPendente = null;
-      status.textContent = `Importação concluída: ${importados} importados, ${atualizados} atualizados, ${ignorados} duplicados ignorados.`;
-    } catch (err) {
-      status.textContent = `Falha ao importar: ${mensagemErro(err)}`;
-      btn.disabled = false; btn.textContent = 'Confirmar importação';
-    } finally {
-      ocupado = false;
+  async function importarClientes(registros) {
+    if(!carregado)throw new Error('A lista atual não carregou. Atualize a página antes de importar.');
+    const lista=clientes.slice();
+    const porEmail=new Set(lista.map(c=>normalizarEmail(c.email)).filter(Boolean));
+    const porTelefone=new Set(lista.map(c=>normalizarTelefone(c.telefone)).filter(Boolean));
+    let incluidos=0,duplicados=0,invalidos=0;
+    for(const contato of registros){
+      if(validarCliente(contato).length){invalidos++;continue;}
+      const email=normalizarEmail(contato.email),telefone=normalizarTelefone(contato.telefone);
+      if((email&&porEmail.has(email))||(telefone&&porTelefone.has(telefone))){duplicados++;continue;}
+      lista.push(contato);incluidos++;
+      if(email)porEmail.add(email);
+      if(telefone)porTelefone.add(telefone);
     }
+    if(!incluidos){status.textContent=`Nenhum cliente novo: ${duplicados} duplicado(s), ${invalidos} inválido(s).`;return;}
+    status.textContent=`Salvando ${incluidos} cliente(s)…`;
+    const controle=new AbortController();
+    const prazo=setTimeout(()=>controle.abort(),30000);
+    try{await putContent('clientes',lista,{signal:controle.signal});}
+    catch(erro){if(erro.name==='AbortError')throw new Error('O servidor demorou para salvar. Atualize a página para conferir antes de tentar novamente.');throw erro;}
+    finally{clearTimeout(prazo);}
+    clientes=lista;listar();
+    status.textContent=`Importação concluída: ${incluidos} incluído(s), ${duplicados} duplicado(s) e ${invalidos} inválido(s) ignorado(s).`;
   }
-
   inputImportar?.addEventListener('change', async (e) => {
     const arquivo = e.target.files?.[0];
     if (!arquivo) return;
     if (ocupado) return;
     ocupado = true;
     try {
-      const dados = await processarArquivo(arquivo);
-      abrirPreview(dados);
+      const registros = await processarArquivo(arquivo);
+      await importarClientes(registros);
     } catch (err) {
       status.textContent = `Falha ao importar: ${mensagemErro(err)}`;
     } finally {
