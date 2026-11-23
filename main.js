@@ -14,16 +14,22 @@ const path = require('path');
 const express = require('express');
 
 const app = express();
+const { block: blockClientGalleries } = require('./lib/client-galleries-feature');
 const port = Number(process.env.PORT) || 3000;
 const host = '0.0.0.0';
 
 // As requisições recebem o corpo JSON convertido (limite expandido para suportar uploads de fotos originais em alta resolução)
 app.use(express.json({ limit: '30mb' }));
+app.use((req, res, next) => {
+  if (/^\/(?:login(?:\.html)?|entrar|catalogo(?:\.html)?\/?|galeria-cliente|cliente|pages\/selecao\.html|js\/login-cliente\.js|src\/(?:login\.html|pages\/selecao\.html))\/?$/i.test(req.path) && blockClientGalleries(req, res)) return;
+  next();
+});
 
 // ------------------------------------------------------------------ API
 
 const rotas = {
   '/api/content': require('./api/content'),
+  '/api/analytics': require('./api/analytics'),
   '/api/media': require('./api/media'),
   '/api/media/protection': require('./api/media/protection'),
   '/api/media/reprocess': require('./api/media/reprocess'),
@@ -32,6 +38,9 @@ const rotas = {
   '/api/auth/logout': require('./api/auth/logout'),
   '/api/auth/session': require('./api/auth/session'),
   '/api/selecao': require('./api/selecao'),
+  '/api/galerias': require('./lib/galerias-admin'),
+  '/api/galeria': require('./lib/galeria-cliente'),
+  '/api/entrega': require('./lib/entrega'),
   '/api/arquivos': require('./api/arquivos')
 };
 
@@ -56,6 +65,8 @@ app.all('/api/media/:id', (req, res) => {
 
 // ------------------------------------------------------------- estáticos
 
+app.get(['/catalogo.html','/catalogo.html/:galeria'],(req,res)=>{res.setHeader('Cache-Control','no-store');res.sendFile(path.join(__dirname,'src','pages','selecao.html'));});
+app.get(['/download.html','/download.html/:galeria'],(req,res)=>{res.setHeader('Cache-Control','no-store');res.sendFile(path.join(__dirname,'src','pages','download.html'));});
 app.use(express.static(path.join(__dirname, 'src'), { index: false }));
 
 // Arquivos da raiz que o site ou PWA solicitam
@@ -86,7 +97,7 @@ app.get(['/login', '/entrar'], (req, res) => {
 
 app.get(['/catalogo', '/galeria-cliente', '/cliente'], (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
-  res.sendFile(path.join(__dirname, 'src', 'catalogo.html'));
+  res.sendFile(path.join(__dirname, 'src', 'pages', 'selecao.html'));
 });
 
 app.use((req, res) => {

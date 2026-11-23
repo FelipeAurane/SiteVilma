@@ -2,23 +2,97 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "outputDirectory": ".",
   "rewrites": [
-    { "source": "/", "destination": "/src/index.html" },
-    { "source": "/index.html", "destination": "/src/index.html" },
-    { "source": "/config", "destination": "/src/config.html" },
-    { "source": "/painel", "destination": "/src/admin/index.html" },
-    { "source": "/admin", "destination": "/src/admin/index.html" },
-    { "source": "/admin/:path*", "destination": "/src/admin/:path*" },
-    { "source": "/catalogo", "destination": "/src/catalogo.html" },
-    { "source": "/catalogo.html", "destination": "/src/catalogo.html" },
-    { "source": "/login", "destination": "/src/login.html" },
-    { "source": "/login.html", "destination": "/src/login.html" },
-    { "source": "/robots.txt", "destination": "/public/robots.txt" },
-    { "source": "/sitemap.xml", "destination": "/public/sitemap.xml" },
-    { "source": "/pages/:path*", "destination": "/src/pages/:path*" },
-    { "source": "/js/:path*", "destination": "/src/js/:path*" },
-    { "source": "/css/:path*", "destination": "/src/css/:path*" },
-    { "source": "/img/:path*", "destination": "/src/img/:path*" },
-    { "source": "/font/:path*", "destination": "/src/font/:path*" }
+    {
+      "source": "/catalogo.html/",
+      "destination": "/src/pages/selecao.html"
+    },
+    {
+      "source": "/catalogo.html/:galeria/",
+      "destination": "/src/pages/selecao.html?g=:galeria"
+    },
+    {
+      "source": "/catalogo.html/:galeria",
+      "destination": "/src/pages/selecao.html?g=:galeria"
+    },
+    { "source": "/api/entrega", "destination": "/api/selecao?modo=entrega" },
+    { "source": "/api/galerias", "destination": "/api/selecao?modo=galerias" },
+    { "source": "/api/galeria", "destination": "/api/selecao?modo=galeria" },
+    {
+      "source": "/",
+      "destination": "/src/index.html"
+    },
+    {
+      "source": "/index.html",
+      "destination": "/src/index.html"
+    },
+    {
+      "source": "/config",
+      "destination": "/src/admin/index.html"
+    },
+    {
+      "source": "/painel",
+      "destination": "/src/admin/index.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/src/admin/index.html"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/src/admin/:path*"
+    },
+    {
+      "source": "/catalogo",
+      "destination": "/src/pages/selecao.html"
+    },
+    {
+      "source": "/catalogo.html",
+      "destination": "/src/pages/selecao.html"
+    },
+    {
+      "source": "/download.html",
+      "destination": "/src/pages/download.html"
+    },
+    {
+      "source": "/download.html/:galeria",
+      "destination": "/src/pages/download.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/src/login.html"
+    },
+    {
+      "source": "/login.html",
+      "destination": "/src/login.html"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/public/robots.txt"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/public/sitemap.xml"
+    },
+    {
+      "source": "/pages/:path*",
+      "destination": "/src/pages/:path*"
+    },
+    {
+      "source": "/js/:path*",
+      "destination": "/src/js/:path*"
+    },
+    {
+      "source": "/css/:path*",
+      "destination": "/src/css/:path*"
+    },
+    {
+      "source": "/img/:path*",
+      "destination": "/src/img/:path*"
+    },
+    {
+      "source": "/font/:path*",
+      "destination": "/src/font/:path*"
+    }
   ],
   "headers": [
     {
@@ -32,9 +106,18 @@
           "key": "Strict-Transport-Security",
           "value": "max-age=63072000; includeSubDomains; preload"
         },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
         {
           "key": "Permissions-Policy",
           "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
@@ -43,11 +126,39 @@
     },
     {
       "source": "/config",
-      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/admin/js/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/catalogo.html/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
     },
     {
       "source": "/font/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ]
 }
