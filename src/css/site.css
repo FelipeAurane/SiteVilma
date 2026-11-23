@@ -90,6 +90,11 @@ body::-webkit-scrollbar {
   }
 }
 
+html, body { scrollbar-width: none; -ms-overflow-style: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; height: 0; }
+* { scrollbar-width: none; -ms-overflow-style: none; }
+*::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
 body {
   font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
   background: var(--preto);
@@ -2871,6 +2876,12 @@ footer p {
 body.section-2-active .hero-pinterest-grid .pinterest-card.portfolio-vazio,
 .hero-pinterest-grid.section-2-active .pinterest-card[data-card-tipo="imagem"],
 body.section-2-active .hero-pinterest-grid .pinterest-card[data-card-tipo="imagem"] { display: none !important; }
+/* No mobile, o JS move a grade para a Section 2 sem ativar .section-2-active.
+   O filtro acompanha essa posição, independentemente do estado da animação desktop. */
+@media (max-width: 899px) {
+  #next-section #hero-pinterest-grid .pinterest-card[data-card-tipo="imagem"],
+  #next-section #hero-pinterest-grid .pinterest-card.portfolio-vazio { display: none !important; }
+}
 .hero-pinterest-grid .pinterest-card.portfolio-vazio .pinterest-badge,
 .hero-pinterest-grid .pinterest-card.portfolio-vazio .card-ver-mais,
 .hero-pinterest-grid .pinterest-card.portfolio-vazio .play-icon,
