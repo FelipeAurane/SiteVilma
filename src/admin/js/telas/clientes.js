@@ -1,4 +1,3 @@
-import { getContent, putContent } from '../../../js/api.js';
 import { esc } from './comum.js';
 import { getContent, putContent } from '../../../js/api.js';
 
