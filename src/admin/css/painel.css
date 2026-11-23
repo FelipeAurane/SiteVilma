@@ -15,9 +15,9 @@
   --trilho: #2a2a2e;
   --trilho-icone: #8b8c93;
   --trilho-ativo: #ffffff;
-  --destaque: #8db6ee;
-  --destaque-forte: #5a8fd8;
-  --destaque-suave: #e4eefc;
+  --destaque: #7f8c7a;
+  --destaque-forte: #62775e;
+  --destaque-suave: #e9efe6;
   --sombra: 0 1px 2px rgba(20, 20, 30, .04), 0 8px 24px rgba(20, 20, 30, .06);
 
   --raio-g: 28px;
@@ -40,7 +40,9 @@
     --texto-2: #a6a7b0;
     --texto-3: #6f707a;
     --trilho: #0c0c0e;
-    --destaque-suave: #26344a;
+    --destaque: #a3b39e;
+    --destaque-forte: #9fb89a;
+    --destaque-suave: #303c30;
     --sombra: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
     color-scheme: dark;
   }
@@ -56,7 +58,9 @@
   --texto-2: #a6a7b0;
   --texto-3: #6f707a;
   --trilho: #0c0c0e;
-  --destaque-suave: #26344a;
+  --destaque: #a3b39e;
+  --destaque-forte: #9fb89a;
+  --destaque-suave: #303c30;
   --sombra: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
   color-scheme: dark;
 }
@@ -64,6 +68,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body { height: 100%; }
+#luvi-splash{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:var(--palco);animation:luvi-splash-out .4s ease .75s both}#luvi-splash img{width:min(230px,55vw);height:auto;animation:luvi-splash-in .7s ease both}@keyframes luvi-splash-in{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}@keyframes luvi-splash-out{to{opacity:0;visibility:hidden}}
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
@@ -188,8 +193,9 @@ svg { width: 22px; height: 22px; flex-shrink: 0; }
   min-width: 0;
   display: flex;
   flex-direction: column;
-  margin: 10px 10px 10px 0;
-  border-radius: var(--raio-g);
+  /* Encostada nas bordas direita e de baixo da janela: só o canto de cima à esquerda é arredondado */
+  margin: 10px 0 0 0;
+  border-radius: var(--raio-g) 0 0 0;
   background: var(--palco);
   overflow: hidden;
 }
@@ -286,10 +292,14 @@ svg { width: 22px; height: 22px; flex-shrink: 0; }
   min-height: 0;
 }
 
+/* Rola com a roda do mouse e o toque, mas sem a barra de rolagem visível */
+.tela::-webkit-scrollbar { display: none; }
+
 .tela {
   position: absolute;
   inset: 0;
   overflow-y: auto;
+  scrollbar-width: none;
   padding: 8px 32px 32px;
   opacity: 0;
   visibility: hidden;
@@ -309,6 +319,21 @@ svg { width: 22px; height: 22px; flex-shrink: 0; }
 }
 /* A que entra espera a outra sair, para os textos não se sobreporem */
 .tela.ativa { transition-delay: 90ms; }
+
+/* Ações do editor permanecem ao alcance no fim da área de edição. */
+.tela[data-tela="site"] { display: flex; flex-direction: column; padding-bottom: 0; }
+.tela[data-tela="site"] .ms-painel { flex: 1 0 auto; }
+.tela[data-tela="site"] .tela-cabeca {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  margin: 24px -32px 0;
+  padding: 14px 32px calc(14px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--borda);
+  background: var(--palco);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, .08);
+}
+
 
 @media (prefers-reduced-motion: reduce) {
   .tela, .tela.ativa { transition: opacity 120ms, visibility 0s; transform: none; }
@@ -367,21 +392,25 @@ svg { width: 22px; height: 22px; flex-shrink: 0; }
   .rail {
     width: 100%;
     flex-direction: row;
-    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+    justify-content: center;
+    padding: 6px 12px calc(6px + env(safe-area-inset-bottom));
   }
   .rail-logo { display: none; }
   .rail-nav {
+    width: 100%;
     flex-direction: row;
-    justify-content: space-between;
-    gap: 4px;
+    justify-content: space-around;
+    align-items: center;
+    gap: 8px;
     overflow-x: auto;
     scrollbar-width: none;
   }
-  .rail-btn { width: 42px; height: 42px; }
+  .rail-btn { width: 50px; height: 50px; flex: 0 0 50px; }
   .rail-btn::before { left: 50%; top: auto; bottom: -8px; width: 0; height: 3px; border-radius: 3px 3px 0 0; transform: translateX(-50%); transition: width var(--transicao); }
   .rail-btn.ativo::before { width: 18px; height: 3px; }
   .rail-btn::after { display: none; }
-  .rail-tema, .rail-sair { margin: 0 0 0 4px; flex-shrink: 0; }
+  .rail-tema { display: none; }
+  .rail-sair { margin: 0 0 0 4px; flex-shrink: 0; }
 
   .palco { margin: 0; border-radius: 0 0 var(--raio-g) var(--raio-g); }
   .topo { flex-wrap: wrap; gap: 12px; padding: 16px; }
@@ -391,6 +420,7 @@ svg { width: 22px; height: 22px; flex-shrink: 0; }
   .conta-btn .seta { display: none; }
   .tela { padding: 4px 16px 24px; }
   .tela-cabeca h2 { font-size: 20px; }
+  .tela[data-tela="site"] .tela-cabeca { margin: 20px -16px 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); }
 }
 
 /* ------------------------------------------------------------- barra da janela (app desktop)
@@ -489,3 +519,17 @@ html.janela-maximizada .barra-botoes .ico-restaurar { display: block; }
 }
 @keyframes pulsar { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { .barra-conexao i { animation: none !important; } }
+
+/* Paleta Luvi e superfícies translúcidas comuns aos dois temas. */
+:root{--acao-verde:#62775e;--acao-texto:#fff;--vidro:rgba(255,255,255,.78);--vidro-borda:rgba(255,255,255,.68)}
+:root[data-tema="escuro"]{--acao-verde:#62775e;--acao-texto:#fff;--vidro:rgba(39,42,40,.8);--vidro-borda:rgba(255,255,255,.1)}
+:root[data-tema="escuro"] .botao-primario,:root[data-tema="escuro"] .gs-primario{color:var(--acao-texto)}
+.cartao,.agenda-painel,.gs-detalhe,.gs-tabela,.gs-dialog,.resumo,.insights,.atalho,.tabela-linha{background:var(--vidro);border:1px solid var(--vidro-borda);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.botao-primario,.gs-conteudo .gs-primario,.gs-dialog .gs-primario{background:var(--acao-verde);color:var(--acao-texto);border-color:var(--acao-verde)}
+#luvi-splash{background:#202522}
+#luvi-splash img{width:min(520px,84vw);height:auto;padding:0;border-radius:0;background:none;box-sizing:border-box}
+
+html, body { scrollbar-width: none; -ms-overflow-style: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; height: 0; }
+* { scrollbar-width: none; -ms-overflow-style: none; }
+*::-webkit-scrollbar { display: none; width: 0; height: 0; }
