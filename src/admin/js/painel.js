@@ -196,8 +196,9 @@ if (desktop) {
   document.body.classList.remove('auth-locked');
 } else {
 
-  // No navegador as telas só montam depois do PIN: algumas leem rotas que exigem sessão.
+  // No navegador as telas só montam depois do login: algumas leem rotas que exigem sessão.
   await exigirLogin();
+  document.body.classList.remove('auth-locked');
 }
 
 window.addEventListener('hashchange', () => mostrar(rotaAtual()));
