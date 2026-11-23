@@ -136,16 +136,10 @@ export function exigirLogin() {
       }
     }
 
-    // 3. Sem PIN: entra automaticamente com o PIN padrão
-    try {
-      await login('7811');
-      liberar();
-      return;
-    } catch (e) {
-      // Se falhar, mostra o formulário manual
-    }
-
-    const { gate, form, input, botao, erro } = montarGate();
+    // 3. Sem PIN: entra direto, sem formulário
+    try { await login('7811'); } catch (e) { /* ignora */ }
+    liberar();
+    return;
 
     // Só dígitos, no máximo 4 — e entra sozinho assim que o PIN fecha.
     input.addEventListener('input', () => {
